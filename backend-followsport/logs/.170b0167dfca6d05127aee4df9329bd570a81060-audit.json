@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/garyhaas/Desktop/followSport_app/backend-followsport/logs/.170b0167dfca6d05127aee4df9329bd570a81060-audit.json",
+    "files": [
+        {
+            "date": 1760698357531,
+            "name": "/Users/garyhaas/Desktop/followSport_app/backend-followsport/logs/combined-2025-10-17.log",
+            "hash": "5b03918d49ae26d4d765a2f0bd8775f74de52fdf59cf1719e0c33851160562da"
+        },
+        {
+            "date": 1760740446899,
+            "name": "/Users/garyhaas/Desktop/followSport_app/backend-followsport/logs/combined-2025-10-18.log",
+            "hash": "04922e5a24047dc4d751438193e6c144eb8f31262deb85396349950d8901d167"
+        }
+    ],
+    "hashType": "sha256"
+}
