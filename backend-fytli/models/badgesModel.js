@@ -20,6 +20,8 @@ const badgesModel = {
         name,
         description,
         COALESCE(icon, '🏆') as icon,
+        COALESCE(color, '#FF4D3A') as color,
+        COALESCE(gradient, 'from-fytli-red to-fytli-orange') as gradient,
         COALESCE(criteria, '') as requirement,
         COALESCE(category, 'achievement') as category,
         COALESCE(points, 10) as points
@@ -41,6 +43,8 @@ const badgesModel = {
         name,
         description,
         COALESCE(icon, '🏆') as icon,
+        COALESCE(color, '#FF4D3A') as color,
+        COALESCE(gradient, 'from-fytli-red to-fytli-orange') as gradient,
         COALESCE(criteria, '') as requirement,
         COALESCE(category, 'achievement') as category,
         COALESCE(points, 10) as points
@@ -61,6 +65,8 @@ const badgesModel = {
         name,
         description,
         COALESCE(icon, '🏆') as icon,
+        COALESCE(color, '#FF4D3A') as color,
+        COALESCE(gradient, 'from-fytli-red to-fytli-orange') as gradient,
         COALESCE(criteria, '') as requirement,
         category,
         COALESCE(points, 10) as points
@@ -87,6 +93,8 @@ const badgesModel = {
         b.name,
         b.description,
         COALESCE(b.icon, '🏆') as icon,
+        COALESCE(b.color, '#FF4D3A') as color,
+        COALESCE(b.gradient, 'from-fytli-red to-fytli-orange') as gradient,
         COALESCE(b.category, 'achievement') as category,
         COALESCE(b.criteria, '') as requirement,
         COALESCE(b.points, 10) as points,
@@ -116,6 +124,8 @@ const badgesModel = {
         b.name,
         b.description,
         COALESCE(b.icon, '🏆') as icon,
+        COALESCE(b.color, '#FF4D3A') as color,
+        COALESCE(b.gradient, 'from-fytli-red to-fytli-orange') as gradient,
         COALESCE(b.category, 'achievement') as category,
         COALESCE(b.points, 10) as points,
         ub.earned_at

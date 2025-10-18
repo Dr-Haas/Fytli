@@ -173,6 +173,8 @@ CREATE TABLE IF NOT EXISTS badges (
   name VARCHAR(100) NOT NULL,
   description TEXT,
   icon VARCHAR(50),
+  color VARCHAR(20),
+  gradient VARCHAR(100),
   category ENUM('routine', 'performance', 'health', 'achievement') DEFAULT 'achievement',
   points INT DEFAULT 0,
   criteria TEXT,
@@ -210,18 +212,24 @@ ON DUPLICATE KEY UPDATE name = VALUES(name);
 -- =====================================================
 -- DONNÉES INITIALES : BADGES
 -- =====================================================
-INSERT INTO badges (name, description, icon, category, points, criteria) VALUES
-('Constance', '5 séances en 7 jours', '🔥', 'routine', 50, '5 completions in 7 days'),
-('Progression', 'Augmenter les charges', '💪', 'performance', 75, 'Increase weights by 10%'),
-('Sérénité', '10 séances de yoga/stretching', '🧘', 'health', 60, '10 yoga/stretching sessions'),
-('Niveau Supérieur', 'Terminer un programme complet', '🚀', 'achievement', 100, 'Complete a full program'),
-('Santé Cardiaque', '20 séances de cardio', '❤️', 'health', 80, '20 cardio sessions'),
-('Routine Matinale', '10 séances avant 10h', '🌅', 'routine', 50, '10 sessions before 10am'),
-('Routine du Soir', '10 séances après 18h', '🌙', 'routine', 50, '10 sessions after 6pm'),
-('Objectif Atteint', 'Atteindre un objectif personnel', '🎯', 'achievement', 100, 'Reach personal goal'),
-('Challenge Réussi', 'Compléter un challenge', '🏆', 'achievement', 150, 'Complete a challenge'),
-('Esprit Fytli', '30 jours consécutifs', '💫', 'achievement', 200, '30 consecutive days')
-ON DUPLICATE KEY UPDATE name = VALUES(name);
+INSERT INTO badges (name, description, icon, color, gradient, category, points, criteria) VALUES
+('Constance', 'Enchaîne 7 jours d\'entraînement sans interruption', '🔥', '#FF4D3A', 'from-fytli-red to-fytli-orange', 'routine', 50, '7 jours consécutifs'),
+('Progression', 'Améliore tes performances de 20%', '💪', '#FF8A3D', 'from-fytli-orange to-amber-500', 'performance', 75, '+20% de performances'),
+('Sérénité', 'Complète 5 séances de stretching ou yoga', '🧘', '#FBFAF7', 'from-fytli-cream to-fytli-orange', 'health', 60, '5 séances zen'),
+('Niveau Supérieur', 'Passe du niveau débutant à intermédiaire', '🚀', '#FF6B3D', 'from-fytli-red via-fytli-orange to-amber-400', 'achievement', 100, 'Level up'),
+('Santé Cardiaque', 'Maintiens ton pouls dans la zone optimale pendant 30 min', '❤️', '#FF4D3A', 'from-red-500 to-fytli-red', 'health', 80, '30 min zone optimale'),
+('Routine Matinale', 'Entraîne-toi avant 9h pendant 5 jours', '🌅', '#FFB84D', 'from-amber-400 to-fytli-orange', 'routine', 50, '5 matins actifs'),
+('Routine du Soir', 'Entraîne-toi après 18h pendant 5 jours', '🌙', '#8B7355', 'from-amber-600 to-fytli-orange', 'routine', 50, '5 soirs actifs'),
+('Objectif Atteint', 'Atteins ton objectif de la semaine', '🎯', '#2BB673', 'from-fytli-success to-green-600', 'achievement', 100, 'Objectif hebdo'),
+('Challenge Réussi', 'Complète un programme d\'entraînement du début à la fin', '🏆', '#FFD700', 'from-yellow-400 to-amber-600', 'achievement', 150, 'Programme complété'),
+('Esprit Fytli', 'Incarne la philosophie Fytli : régularité, bienveillance, progression', '💫', '#FF6B3D', 'from-fytli-red via-fytli-orange to-amber-400', 'achievement', 200, 'Badge légendaire')
+ON DUPLICATE KEY UPDATE 
+  description = VALUES(description),
+  icon = VALUES(icon),
+  color = VALUES(color),
+  gradient = VALUES(gradient),
+  criteria = VALUES(criteria),
+  points = VALUES(points);
 
 -- =====================================================
 -- DONNÉES DE TEST : EXERCICES
