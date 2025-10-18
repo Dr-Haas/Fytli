@@ -4,9 +4,10 @@
 -- À exécuter sur votre DB OVH via phpMyAdmin
 
 -- 1. Ajouter les colonnes color et gradient à la table badges
+-- Note : Si les colonnes existent déjà, commentez cette partie
 ALTER TABLE badges 
-ADD COLUMN IF NOT EXISTS color VARCHAR(20) AFTER icon,
-ADD COLUMN IF NOT EXISTS gradient VARCHAR(100) AFTER color;
+ADD COLUMN color VARCHAR(20) AFTER icon,
+ADD COLUMN gradient VARCHAR(100) AFTER color;
 
 -- 2. Mettre à jour les badges existants avec les bonnes valeurs
 UPDATE badges SET 
