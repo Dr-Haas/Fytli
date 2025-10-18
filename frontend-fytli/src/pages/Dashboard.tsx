@@ -79,12 +79,18 @@ export const Dashboard = () => {
       if (!user) return;
       
       try {
+        console.log('🔍 Dashboard - Chargement des données pour user:', user.id);
+        
         // Fetch all data in parallel
         const [programsData, completionsData, badgesData] = await Promise.all([
           enrollmentsService.getProgramsByUser(user.id),
           completionsService.getByUser(user.id),
           badgesService.getUserEarnedBadges(user.id).catch(() => []),
         ]);
+
+        console.log('📊 Dashboard - Programmes récupérés:', programsData);
+        console.log('✅ Dashboard - Completions récupérées:', completionsData);
+        console.log('🏆 Dashboard - Badges récupérés:', badgesData);
 
         setPrograms(programsData.slice(0, 3) as any); // Top 3 programs
         
@@ -124,9 +130,17 @@ export const Dashboard = () => {
         // Generate week data
         const week = generateWeekData(completionsData);
         setWeekData(week);
+        
+        console.log('📅 Dashboard - Week data générée:', week);
+        console.log('📈 Dashboard - Stats calculées:', {
+          activePrograms: programsData.length,
+          sessionsThisWeek,
+          badgesEarned: badgesData.length,
+          currentStreak: streak,
+        });
 
       } catch (error) {
-        console.error('Erreur lors du chargement du dashboard:', error);
+        console.error('❌ Erreur lors du chargement du dashboard:', error);
       } finally {
         setLoading(false);
       }

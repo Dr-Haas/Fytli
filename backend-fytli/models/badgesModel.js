@@ -92,16 +92,16 @@ const badgesModel = {
   async getUserBadgesWithProgress(userId) {
     const [rows] = await pool.query(
       `SELECT 
-        b.badge_id,
+        COALESCE(b.badge_id, b.id) as badge_id,
         b.name,
         b.description,
         b.icon,
         b.color,
-        b.gradient,
-        b.category,
-        b.requirement,
-        b.points,
-        b.is_secret,
+        COALESCE(b.gradient, '') as gradient,
+        COALESCE(b.category, 'accomplissement') as category,
+        COALESCE(b.requirement, '') as requirement,
+        COALESCE(b.points, 10) as points,
+        COALESCE(b.is_secret, FALSE) as is_secret,
         CASE 
           WHEN ub.id IS NOT NULL THEN TRUE 
           ELSE FALSE 
@@ -109,11 +109,11 @@ const badgesModel = {
         ub.earned_at,
         COALESCE(bp.progress_percent, 0) as progress_percent
       FROM badges b
-      LEFT JOIN user_badges ub ON b.badge_id = ub.badge_id AND ub.user_id = ?
-      LEFT JOIN badge_progress bp ON b.badge_id = bp.badge_id AND bp.user_id = ?
+      LEFT JOIN user_badges ub ON b.id = ub.badge_id AND ub.user_id = ?
+      LEFT JOIN badge_progress bp ON b.id = bp.badge_id AND bp.user_id = ?
       ORDER BY 
-        FIELD(b.category, 'routine', 'performance', 'sante', 'accomplissement'),
-        b.points ASC`,
+        COALESCE(b.category, 'accomplissement'),
+        COALESCE(b.points, 10) ASC`,
       [userId, userId]
     );
     return rows;
@@ -125,18 +125,18 @@ const badgesModel = {
   async getUserEarnedBadges(userId) {
     const [rows] = await pool.query(
       `SELECT 
-        b.badge_id,
+        COALESCE(b.badge_id, b.id) as badge_id,
         b.name,
         b.description,
         b.icon,
         b.color,
-        b.gradient,
-        b.category,
-        b.points,
+        COALESCE(b.gradient, '') as gradient,
+        COALESCE(b.category, 'accomplissement') as category,
+        COALESCE(b.points, 10) as points,
         ub.earned_at,
-        ub.progress
+        COALESCE(ub.progress, 100) as progress
       FROM user_badges ub
-      INNER JOIN badges b ON ub.badge_id = b.badge_id
+      INNER JOIN badges b ON ub.badge_id = b.id
       WHERE ub.user_id = ?
       ORDER BY ub.earned_at DESC`,
       [userId]
