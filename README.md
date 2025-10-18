@@ -112,7 +112,19 @@ git clone https://github.com/yourusername/fytli.git
 cd fytli
 ```
 
-### 2. Backend Setup
+### 2. Installation rapide (depuis la racine)
+
+```bash
+# Installer toutes les dépendances (frontend + admin + backend)
+npm run install:all
+
+# Ou installer manuellement chaque projet
+npm install --prefix frontend-followsport
+npm install --prefix admin-panel
+npm install --prefix backend-followsport
+```
+
+### 3. Backend Setup
 
 ```bash
 cd backend-followsport
@@ -131,7 +143,7 @@ npm start
 
 Le backend démarre sur **http://localhost:9001**
 
-### 3. Frontend Setup
+### 4. Frontend Setup
 
 ```bash
 cd frontend-followsport
@@ -147,7 +159,26 @@ npm run dev
 
 Le frontend démarre sur **http://localhost:5173**
 
-### 4. Accéder à l'application
+### 5. Lancer les applications (depuis la racine)
+
+```bash
+# Développement
+npm run dev:frontend   # Lance le frontend sur http://localhost:5173
+npm run dev:admin      # Lance l'admin panel sur http://localhost:5174
+npm run dev:backend    # Lance le backend sur http://localhost:9001
+
+# Build
+npm run build          # Build frontend + admin
+npm run build:frontend # Build seulement le frontend
+npm run build:admin    # Build seulement l'admin panel
+
+# Production
+npm run start:backend  # Démarre le backend en production
+npm run preview:frontend  # Preview du build frontend
+npm run preview:admin     # Preview du build admin
+```
+
+### 6. Accéder à l'application
 
 Ouvre ton navigateur sur **http://localhost:5173**
 
@@ -344,22 +375,48 @@ npm run test:watch    # Watch mode
 
 ### Production Build
 
+#### Depuis la racine (recommandé)
+
+```bash
+# Build tout (frontend + admin panel)
+npm run build
+
+# Build spécifique
+npm run build:frontend  # Build seulement le frontend
+npm run build:admin     # Build seulement l'admin panel
+
+# Preview des builds
+npm run preview:frontend  # Preview du frontend build
+npm run preview:admin     # Preview de l'admin panel build
+```
+
+#### Build manuel par projet
+
 ```bash
 # Frontend
 cd frontend-followsport
 npm run build         # Build pour production
 npm run preview       # Preview du build
 
-# Le build génère :
-# - dist/index.html
-# - dist/assets/
-# - dist/sw.js (Service Worker)
-# - dist/manifest.webmanifest
+# Admin Panel
+cd admin-panel
+npm run build         # Build pour production
+npm run preview       # Preview du build
 ```
+
+Les builds génèrent :
+- `frontend-followsport/dist/` - Application frontend
+  - index.html
+  - assets/
+  - sw.js (Service Worker)
+  - manifest.webmanifest
+- `admin-panel/dist/` - Panel d'administration
+  - index.html
+  - assets/
 
 ### Deploy
 
-Le dossier `dist/` peut être déployé sur :
+Les dossiers `dist/` peuvent être déployés sur :
 - **Vercel**
 - **Netlify**
 - **GitHub Pages**

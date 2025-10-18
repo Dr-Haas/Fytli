@@ -1,0 +1,28 @@
+{
+  "name": "followsport-app",
+  "version": "1.0.0",
+  "description": "FollowSport - Application de suivi sportif avec frontend, admin et backend",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix frontend-followsport && npm install --prefix admin-panel && npm install --prefix backend-followsport",
+    "dev:frontend": "npm run dev --prefix frontend-followsport",
+    "dev:admin": "npm run dev --prefix admin-panel",
+    "dev:backend": "npm run dev --prefix backend-followsport",
+    "build": "npm run build:frontend && npm run build:admin && npm run build:backend",
+    "build:frontend": "npm run build --prefix frontend-followsport",
+    "build:admin": "npm run build --prefix admin-panel",
+    "build:backend": "npm run build --prefix backend-followsport",
+    "start:backend": "npm start --prefix backend-followsport",
+    "preview:frontend": "npm run preview --prefix frontend-followsport",
+    "preview:admin": "npm run preview --prefix admin-panel"
+  },
+  "keywords": [
+    "sport",
+    "fitness",
+    "workout",
+    "training"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+
