@@ -50,7 +50,12 @@ const updateStatus = async (userId, programId, status) => {
 const getUsersByProgram = async (programId) => {
   const [rows] = await pool.query(
     `SELECT 
-      pe.*,
+      pe.id,
+      pe.user_id,
+      pe.program_id,
+      pe.status,
+      pe.started_at,
+      pe.completed_at,
       u.first_name,
       u.last_name,
       u.email,
@@ -59,7 +64,7 @@ const getUsersByProgram = async (programId) => {
     JOIN users u ON pe.user_id = u.id
     LEFT JOIN session_completions sc ON sc.user_id = pe.user_id AND sc.program_id = pe.program_id
     WHERE pe.program_id = ?
-    GROUP BY pe.id, u.id
+    GROUP BY pe.id, pe.user_id, pe.program_id, pe.status, pe.started_at, pe.completed_at, u.first_name, u.last_name, u.email
     ORDER BY sessions_completed DESC, pe.started_at ASC`,
     [programId]
   );
