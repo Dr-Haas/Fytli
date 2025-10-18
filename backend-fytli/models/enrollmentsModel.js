@@ -9,7 +9,7 @@ const { pool } = require('../db');
  */
 const enroll = async (userId, programId) => {
   const [result] = await pool.query(
-    `INSERT INTO program_enrollments (user_id, program_id) 
+    `INSERT INTO enrollments (user_id, program_id) 
      VALUES (?, ?)`,
     [userId, programId]
   );
@@ -27,7 +27,7 @@ const enroll = async (userId, programId) => {
  */
 const unenroll = async (userId, programId) => {
   const [result] = await pool.query(
-    'DELETE FROM program_enrollments WHERE user_id = ? AND program_id = ?',
+    'DELETE FROM enrollments WHERE user_id = ? AND program_id = ?',
     [userId, programId]
   );
   return result.affectedRows > 0;
@@ -38,7 +38,7 @@ const unenroll = async (userId, programId) => {
  */
 const updateStatus = async (userId, programId, status) => {
   const [result] = await pool.query(
-    'UPDATE program_enrollments SET status = ? WHERE user_id = ? AND program_id = ?',
+    'UPDATE enrollments SET status = ? WHERE user_id = ? AND program_id = ?',
     [status, userId, programId]
   );
   return result.affectedRows > 0;
@@ -55,12 +55,12 @@ const getUsersByProgram = async (programId) => {
       u.last_name,
       u.email,
       COUNT(DISTINCT sc.id) as sessions_completed
-    FROM program_enrollments pe
+    FROM enrollments pe
     JOIN users u ON pe.user_id = u.id
     LEFT JOIN session_completions sc ON sc.user_id = pe.user_id AND sc.program_id = pe.program_id
     WHERE pe.program_id = ?
     GROUP BY pe.id, u.id
-    ORDER BY sessions_completed DESC, pe.enrolled_at ASC`,
+    ORDER BY sessions_completed DESC, pe.started_at ASC`,
     [programId]
   );
   return rows;
@@ -80,13 +80,13 @@ const getProgramsByUser = async (userId) => {
       p.duration_weeks,
       COUNT(DISTINCT sc.id) as sessions_completed,
       COUNT(DISTINCT s.id) as total_sessions
-    FROM program_enrollments pe
+    FROM enrollments pe
     JOIN programs p ON pe.program_id = p.id
     LEFT JOIN sessions s ON s.program_id = p.id
     LEFT JOIN session_completions sc ON sc.user_id = pe.user_id AND sc.program_id = pe.program_id
     WHERE pe.user_id = ?
     GROUP BY pe.id, p.id
-    ORDER BY pe.enrolled_at DESC`,
+    ORDER BY pe.started_at DESC`,
     [userId]
   );
   return rows;
@@ -97,7 +97,7 @@ const getProgramsByUser = async (userId) => {
  */
 const isEnrolled = async (userId, programId) => {
   const [rows] = await pool.query(
-    'SELECT id FROM program_enrollments WHERE user_id = ? AND program_id = ?',
+    'SELECT id FROM enrollments WHERE user_id = ? AND program_id = ?',
     [userId, programId]
   );
   return rows.length > 0;
@@ -112,7 +112,7 @@ const getProgramStats = async (programId) => {
       COUNT(DISTINCT pe.user_id) as total_enrolled,
       COUNT(DISTINCT CASE WHEN pe.status = 'active' THEN pe.user_id END) as active_users,
       COUNT(DISTINCT sc.id) as total_completions
-    FROM program_enrollments pe
+    FROM enrollments pe
     LEFT JOIN session_completions sc ON sc.program_id = pe.program_id
     WHERE pe.program_id = ?`,
     [programId]
