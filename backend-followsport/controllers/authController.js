@@ -59,9 +59,9 @@ const register = async (req, res) => {
       last_name
     });
     
-    // Générer le token JWT
+    // Générer le token JWT (inclut le role pour les middlewares)
     const token = jwt.sign(
-      { userId: newUser.id, email: newUser.email },
+      { userId: newUser.id, email: newUser.email, role: newUser.role || 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -119,9 +119,9 @@ const login = async (req, res) => {
       });
     }
     
-    // Générer le token JWT
+    // Générer le token JWT (inclut le role pour les middlewares)
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, role: user.role || 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );

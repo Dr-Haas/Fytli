@@ -9,7 +9,7 @@ const { pool } = require('../db');
  * @returns {Promise<Array>} Liste des sessions
  */
 const findAll = async () => {
-  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY session_number ASC');
+  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY `order` ASC');
   return rows;
 };
 
@@ -30,7 +30,7 @@ const findById = async (id) => {
  */
 const findByProgramId = async (programId) => {
   const [rows] = await pool.query(
-    'SELECT * FROM sessions WHERE program_id = ? ORDER BY session_number ASC',
+    'SELECT * FROM sessions WHERE program_id = ? ORDER BY `order` ASC',
     [programId]
   );
   return rows;
@@ -42,17 +42,22 @@ const findByProgramId = async (programId) => {
  * @returns {Promise<Object>} Session créée avec son ID
  */
 const create = async (data) => {
-  const { program_id, session_number, name, description, duration_minutes } = data;
+  const { program_id, title, order, day_number } = data;
+  
+  // day_number peut être utilisé comme order si order n'est pas fourni
+  const finalOrder = order !== undefined ? order : (day_number || 1);
   
   const [result] = await pool.query(
-    `INSERT INTO sessions (program_id, session_number, name, description, duration_minutes) 
-     VALUES (?, ?, ?, ?, ?)`,
-    [program_id, session_number, name, description, duration_minutes]
+    `INSERT INTO sessions (program_id, title, \`order\`) 
+     VALUES (?, ?, ?)`,
+    [program_id, title, finalOrder]
   );
   
   return {
     id: result.insertId,
-    ...data
+    program_id,
+    title,
+    order: finalOrder
   };
 };
 
@@ -70,21 +75,17 @@ const update = async (id, data) => {
     fields.push('program_id = ?');
     values.push(data.program_id);
   }
-  if (data.session_number !== undefined) {
-    fields.push('session_number = ?');
-    values.push(data.session_number);
+  if (data.title !== undefined) {
+    fields.push('title = ?');
+    values.push(data.title);
   }
-  if (data.name !== undefined) {
-    fields.push('name = ?');
-    values.push(data.name);
+  if (data.order !== undefined) {
+    fields.push('`order` = ?');
+    values.push(data.order);
   }
-  if (data.description !== undefined) {
-    fields.push('description = ?');
-    values.push(data.description);
-  }
-  if (data.duration_minutes !== undefined) {
-    fields.push('duration_minutes = ?');
-    values.push(data.duration_minutes);
+  if (data.day_number !== undefined && data.order === undefined) {
+    fields.push('`order` = ?');
+    values.push(data.day_number);
   }
   
   if (fields.length === 0) {

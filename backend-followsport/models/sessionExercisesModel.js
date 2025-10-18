@@ -9,7 +9,7 @@ const { pool } = require('../db');
  * @returns {Promise<Array>} Liste des associations
  */
 const findAll = async () => {
-  const [rows] = await pool.query('SELECT * FROM session_exercises ORDER BY session_id, order_index ASC');
+  const [rows] = await pool.query('SELECT * FROM session_exercises ORDER BY session_id, `order` ASC');
   return rows;
 };
 
@@ -30,11 +30,11 @@ const findById = async (id) => {
  */
 const findBySessionId = async (sessionId) => {
   const [rows] = await pool.query(
-    `SELECT se.*, e.name as exercise_name, e.description as exercise_description, e.difficulty
+    `SELECT se.*, e.name as exercise_name
      FROM session_exercises se
      LEFT JOIN exercises e ON se.exercise_id = e.id
      WHERE se.session_id = ?
-     ORDER BY se.order_index ASC`,
+     ORDER BY se.\`order\` ASC`,
     [sessionId]
   );
   return rows;
@@ -52,20 +52,31 @@ const create = async (data) => {
     order_index, 
     sets, 
     reps, 
-    duration_seconds, 
-    rest_seconds, 
-    notes 
+    weight_kg,
+    tempo,
+    rest_time_sec,
+    rest_sec
   } = data;
   
+  // rest_time_sec (frontend) -> rest_sec (DB)
+  const finalRestSec = rest_sec !== undefined ? rest_sec : rest_time_sec;
+  
   const [result] = await pool.query(
-    `INSERT INTO session_exercises (session_id, exercise_id, order_index, sets, reps, duration_seconds, rest_seconds, notes) 
+    `INSERT INTO session_exercises (session_id, exercise_id, \`order\`, sets, reps, weight_kg, tempo, rest_sec) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [session_id, exercise_id, order_index, sets, reps, duration_seconds, rest_seconds, notes]
+    [session_id, exercise_id, order_index, sets, reps, weight_kg, tempo, finalRestSec]
   );
   
   return {
     id: result.insertId,
-    ...data
+    session_id,
+    exercise_id,
+    order: order_index,
+    sets,
+    reps,
+    weight_kg,
+    tempo,
+    rest_sec: finalRestSec
   };
 };
 
@@ -88,7 +99,7 @@ const update = async (id, data) => {
     values.push(data.exercise_id);
   }
   if (data.order_index !== undefined) {
-    fields.push('order_index = ?');
+    fields.push('`order` = ?');
     values.push(data.order_index);
   }
   if (data.sets !== undefined) {
@@ -99,17 +110,21 @@ const update = async (id, data) => {
     fields.push('reps = ?');
     values.push(data.reps);
   }
-  if (data.duration_seconds !== undefined) {
-    fields.push('duration_seconds = ?');
-    values.push(data.duration_seconds);
+  if (data.weight_kg !== undefined) {
+    fields.push('weight_kg = ?');
+    values.push(data.weight_kg);
   }
-  if (data.rest_seconds !== undefined) {
-    fields.push('rest_seconds = ?');
-    values.push(data.rest_seconds);
+  if (data.tempo !== undefined) {
+    fields.push('tempo = ?');
+    values.push(data.tempo);
   }
-  if (data.notes !== undefined) {
-    fields.push('notes = ?');
-    values.push(data.notes);
+  if (data.rest_time_sec !== undefined) {
+    fields.push('rest_sec = ?');
+    values.push(data.rest_time_sec);
+  }
+  if (data.rest_sec !== undefined) {
+    fields.push('rest_sec = ?');
+    values.push(data.rest_sec);
   }
   
   if (fields.length === 0) {

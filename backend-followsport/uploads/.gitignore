@@ -1,0 +1,4 @@
+# Ignorer toutes les photos uploadées sauf le .gitignore
+*
+!.gitignore
+

@@ -7,6 +7,8 @@ const express = require('express');
 const router = express.Router();
 const { uploadImage, uploadVideo, uploadDocument, getFileUrl } = require('../config/multer');
 const authMiddleware = require('../middleware/auth');
+const upload = require('../middleware/upload');
+const uploadController = require('../controllers/uploadController');
 
 /**
  * Upload d'une image
@@ -147,6 +149,18 @@ router.post('/images', authMiddleware, uploadImage.array('images', 10), (req, re
     });
   }
 });
+
+/**
+ * Upload d'une photo de session
+ * POST /uploads/session-photo
+ */
+router.post('/session-photo', authMiddleware, upload.single('photo'), uploadController.uploadSessionPhoto);
+
+/**
+ * Supprime une photo de session
+ * DELETE /uploads/session-photo/:filename
+ */
+router.delete('/session-photo/:filename', authMiddleware, uploadController.deleteSessionPhoto);
 
 module.exports = router;
 

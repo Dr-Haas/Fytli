@@ -71,13 +71,13 @@ const getById = async (req, res) => {
  */
 const create = async (req, res) => {
   try {
-    const { program_id, session_number, name } = req.body;
+    const { program_id, title } = req.body;
     
     // Validation des champs obligatoires
-    if (!program_id || !session_number || !name) {
+    if (!program_id || !title) {
       return res.status(400).json({
         success: false,
-        message: 'Les champs program_id, session_number et name sont obligatoires'
+        message: 'Les champs program_id et title sont obligatoires'
       });
     }
     

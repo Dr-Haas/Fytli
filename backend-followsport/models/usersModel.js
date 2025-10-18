@@ -39,12 +39,12 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<Object>} Utilisateur créé avec son ID
  */
 const createUser = async (userData) => {
-  const { first_name, last_name, email, password } = userData;
+  const { first_name, last_name, email, password, role = 'user' } = userData;
   
   const [result] = await pool.query(
-    `INSERT INTO users (first_name, last_name, email, password_hash) 
-     VALUES (?, ?, ?, ?)`,
-    [first_name, last_name, email, password]
+    `INSERT INTO users (first_name, last_name, email, password_hash, role) 
+     VALUES (?, ?, ?, ?, ?)`,
+    [first_name, last_name, email, password, role]
   );
   
   return {
@@ -52,6 +52,7 @@ const createUser = async (userData) => {
     first_name,
     last_name,
     email,
+    role,
     created_at: new Date()
   };
 };
@@ -95,6 +96,10 @@ const updateUser = async (id, userData) => {
     fields.push('fitness_level = ?');
     values.push(userData.fitness_level);
   }
+  if (userData.role !== undefined) {
+    fields.push('role = ?');
+    values.push(userData.role);
+  }
   
   if (fields.length === 0) {
     return false; // Aucune donnée à mettre à jour
@@ -120,12 +125,47 @@ const deleteUser = async (id) => {
   return result.affectedRows > 0;
 };
 
+/**
+ * Met à jour le rôle d'un utilisateur
+ * @param {number} id - ID de l'utilisateur
+ * @param {string} role - Nouveau rôle ('user', 'admin', 'coach')
+ * @returns {Promise<boolean>} true si mis à jour, false sinon
+ */
+const updateUserRole = async (id, role) => {
+  // Vérifier que le rôle est valide
+  if (!['user', 'admin', 'coach'].includes(role)) {
+    throw new Error(`Rôle invalide: ${role}. Rôles autorisés: user, admin, coach`);
+  }
+  
+  const [result] = await pool.query(
+    'UPDATE users SET role = ? WHERE id = ?',
+    [role, id]
+  );
+  
+  return result.affectedRows > 0;
+};
+
+/**
+ * Récupère tous les utilisateurs par rôle
+ * @param {string} role - Rôle à filtrer ('user', 'admin', 'coach')
+ * @returns {Promise<Array>} Liste des utilisateurs avec ce rôle
+ */
+const getUsersByRole = async (role) => {
+  const [rows] = await pool.query(
+    'SELECT id, email, first_name, last_name, role, created_at FROM users WHERE role = ? ORDER BY created_at DESC',
+    [role]
+  );
+  return rows;
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   getUserByEmail,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  getUsersByRole
 };
 

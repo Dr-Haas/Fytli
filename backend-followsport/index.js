@@ -20,6 +20,10 @@ const exercisesRoutes = require('./routes/exercises');
 const sessionExercisesRoutes = require('./routes/sessionExercises');
 const progressRoutes = require('./routes/progress');
 const uploadsRoutes = require('./routes/uploads');
+const badgesRoutes = require('./routes/badges');
+const adminRoutes = require('./routes/admin');
+const enrollmentsRoutes = require('./routes/enrollments');
+const completionsRoutes = require('./routes/completions');
 
 // Initialisation de l'application Express
 const app = express();
@@ -60,6 +64,10 @@ app.use('/exercises', exercisesRoutes);
 app.use('/session-exercises', sessionExercisesRoutes);
 app.use('/progress', progressRoutes);
 app.use('/uploads', uploadsRoutes);
+app.use('/badges', badgesRoutes);
+app.use('/admin', adminRoutes);
+app.use('/enrollments', enrollmentsRoutes);
+app.use('/completions', completionsRoutes);
 
 // Route 404 - Non trouvé
 app.use((req, res) => {
