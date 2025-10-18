@@ -3,6 +3,9 @@
 -- =====================================================
 -- À exécuter sur votre DB OVH via phpMyAdmin
 
+-- 0. Sélectionner la base de données
+USE lyfti;
+
 -- 1. Ajouter les colonnes color et gradient à la table badges
 -- Note : Si les colonnes existent déjà, commentez cette partie
 ALTER TABLE badges 
