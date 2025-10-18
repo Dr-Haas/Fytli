@@ -51,8 +51,8 @@ const getUsersByProgram = async (programId) => {
   const [rows] = await pool.query(
     `SELECT 
       pe.*,
-      u.firstname,
-      u.lastname,
+      u.first_name,
+      u.last_name,
       u.email,
       COUNT(DISTINCT sc.id) as sessions_completed
     FROM enrollments pe

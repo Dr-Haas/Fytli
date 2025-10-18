@@ -65,8 +65,8 @@ const getByProgram = async (programId) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
-      u.firstname,
-      u.lastname,
+      u.first_name,
+      u.last_name,
       s.title as session_title,
       s.order_index as session_order
     FROM session_completions sc
@@ -87,8 +87,8 @@ const getBySession = async (sessionId) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
-      u.firstname,
-      u.lastname
+      u.first_name,
+      u.last_name
     FROM session_completions sc
     JOIN users u ON sc.user_id = u.id
     WHERE sc.session_id = ?
@@ -105,8 +105,8 @@ const getById = async (id) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
-      u.firstname as user_first_name,
-      u.lastname as user_last_name,
+      u.first_name as user_first_name,
+      u.last_name as user_last_name,
       u.email as user_email,
       p.title as program_title,
       p.description as program_description,
@@ -157,8 +157,8 @@ const getProgramActivityFeed = async (programId, limit = 20) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
-      u.firstname,
-      u.lastname,
+      u.first_name,
+      u.last_name,
       s.title as session_title,
       s.order_index as session_order
     FROM session_completions sc
