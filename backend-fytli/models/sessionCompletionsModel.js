@@ -47,7 +47,7 @@ const getByUser = async (userId) => {
       sc.*,
       p.title as program_title,
       s.title as session_title,
-      s.order as session_order
+      s.order_index as session_order
     FROM session_completions sc
     JOIN programs p ON sc.program_id = p.id
     JOIN sessions s ON sc.session_id = s.id
@@ -68,7 +68,7 @@ const getByProgram = async (programId) => {
       u.first_name,
       u.last_name,
       s.title as session_title,
-      s.order as session_order
+      s.order_index as session_order
     FROM session_completions sc
     JOIN users u ON sc.user_id = u.id
     JOIN sessions s ON sc.session_id = s.id
@@ -111,7 +111,7 @@ const getById = async (id) => {
       p.title as program_title,
       p.description as program_description,
       s.title as session_title,
-      s.order as session_order
+      s.order_index as session_order
     FROM session_completions sc
     JOIN users u ON sc.user_id = u.id
     JOIN programs p ON sc.program_id = p.id
@@ -160,7 +160,7 @@ const getProgramActivityFeed = async (programId, limit = 20) => {
       u.first_name,
       u.last_name,
       s.title as session_title,
-      s.order as session_order
+      s.order_index as session_order
     FROM session_completions sc
     JOIN users u ON sc.user_id = u.id
     JOIN sessions s ON sc.session_id = s.id
