@@ -76,10 +76,14 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (!user) return;
+      if (!user) {
+        console.log('⚠️ Dashboard - Pas d\'utilisateur connecté');
+        return;
+      }
       
       try {
         console.log('🔍 Dashboard - Chargement des données pour user:', user.id);
+        console.log('👤 Dashboard - User complet:', user);
         
         // Fetch all data in parallel
         const [programsData, completionsData, badgesData] = await Promise.all([
