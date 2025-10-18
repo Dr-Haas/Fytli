@@ -30,7 +30,53 @@ const app = express();
 const PORT = process.env.PORT || 9001;
 
 // Middlewares
-app.use(cors()); // Active CORS pour toutes les routes
+// Configuration CORS pour autoriser frontend local et production
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Liste des origines autorisées
+    const allowedOrigins = [
+      // Développement local
+      'http://localhost:5173',           // Frontend local
+      'http://localhost:5174',           // Admin local
+      'http://localhost:3000',           // Alternative locale
+      
+      // Domaines personnalisés Fytli
+      'https://fytli.fr',                // Site principal
+      'http://fytli.fr',
+      'https://www.fytli.fr',
+      'http://www.fytli.fr',
+      'https://app.fytli.fr',            // Application
+      'http://app.fytli.fr',
+      'https://admin.fytli.fr',          // Admin panel
+      'http://admin.fytli.fr',
+      
+      // URLs Render (temporaires)
+      'https://fytli-frontend.onrender.com',
+      'https://fytli-admin.onrender.com',
+      
+      // Variable d'environnement
+      process.env.FRONTEND_URL           // Frontend production configurable
+    ].filter(Boolean); // Retire les undefined
+    
+    // Autoriser les requêtes sans origin (Postman, apps mobiles, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // En développement, autoriser quand même
+      if (process.env.NODE_ENV !== 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error('Non autorisé par CORS'));
+      }
+    }
+  },
+  credentials: true, // Autoriser les cookies/credentials
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions)); // Active CORS avec configuration personnalisée
 app.use(express.json()); // Parse le body JSON
 app.use(express.urlencoded({ extended: true })); // Parse les données URL-encoded
 
