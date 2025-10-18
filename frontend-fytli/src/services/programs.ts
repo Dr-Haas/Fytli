@@ -15,9 +15,11 @@ interface ProgramResponse {
 interface CreateProgramData {
   title: string;
   description?: string;
-  goal?: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks?: number;
+  sessions_per_week?: number;
+  category_id?: number;
+  is_public?: boolean;
 }
 
 export const programsService = {
@@ -39,11 +41,10 @@ export const programsService = {
   },
 
   async create(data: CreateProgramData): Promise<Program> {
-    // Le backend attend "name" mais la DB a "title", on transforme
+    // Envoi direct sans transformation (backend corrigé)
     const backendPayload = {
-      name: data.title,  // Transformation title -> name pour le backend
+      title: data.title,
       description: data.description,
-      goal: data.goal,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
     };
@@ -54,9 +55,8 @@ export const programsService = {
 
   async update(id: number, data: Partial<CreateProgramData>): Promise<Program> {
     const backendPayload = {
-      name: data.title,
+      title: data.title,
       description: data.description,
-      goal: data.goal,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
     };

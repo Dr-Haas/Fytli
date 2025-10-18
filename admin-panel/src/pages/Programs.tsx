@@ -322,8 +322,8 @@ export default function Programs() {
               label="Durée (semaines) *"
               type="number"
               min="1"
-              value={formData.duration_weeks}
-              onChange={(e) => setFormData({ ...formData, duration_weeks: parseInt(e.target.value) })}
+              value={formData.duration_weeks || ''}
+              onChange={(e) => setFormData({ ...formData, duration_weeks: parseInt(e.target.value) || 0 })}
               required
             />
           </div>
@@ -333,8 +333,8 @@ export default function Programs() {
             type="number"
             min="1"
             max="7"
-            value={formData.sessions_per_week}
-            onChange={(e) => setFormData({ ...formData, sessions_per_week: parseInt(e.target.value) })}
+            value={formData.sessions_per_week || ''}
+            onChange={(e) => setFormData({ ...formData, sessions_per_week: parseInt(e.target.value) || 0 })}
             required
           />
 

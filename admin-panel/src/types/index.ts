@@ -22,9 +22,9 @@ export interface Program {
   created_by: number;
   is_public: boolean;
   category_id: number;
-  goal?: string;
   image_url?: string;
   created_at: string;
+  updated_at?: string;
   category_name?: string;
   enrollment_count?: number;
   session_count?: number;

@@ -38,9 +38,12 @@ export interface Program {
   user_id?: number;           // ⚠️ créateur du programme
   title: string;              // ⚠️ pas name
   description?: string;
-  goal?: string;              // ⚠️ objectif du programme
   duration_weeks?: number;
   level?: 'beginner' | 'intermediate' | 'advanced';  // ⚠️ pas difficulty_level
+  sessions_per_week?: number; // ⚠️ nombre de sessions par semaine
+  category_id?: number;       // ⚠️ catégorie du programme
+  is_public?: boolean;        // ⚠️ programme visible publiquement
+  image_url?: string;
   created_at?: string;
   updated_at?: string;
 }
