@@ -402,7 +402,7 @@ export const UserProfile = () => {
                           <Trophy className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                         </div>
                         <h3 className="font-bold text-sm lg:text-base text-fytli-dark mb-1">
-                          {badge.badge_id}
+                          {badge.name || 'Badge'}
                         </h3>
                         <p className="text-[10px] lg:text-xs text-muted-foreground">
                           {new Date(badge.earned_at).toLocaleDateString('fr-FR', {
