@@ -7,7 +7,9 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import Modal from '@/components/Modal';
-import { Trash2, Search } from 'lucide-react';
+import Input from '@/components/Input';
+import Select from '@/components/Select';
+import { Trash2, Edit, Plus, Search } from 'lucide-react';
 import { formatDateShort } from '@/utils/format';
 import toast from 'react-hot-toast';
 
@@ -17,8 +19,20 @@ export default function Programs() {
   const [loading, setLoading] = useState(true);
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
+  
+  // Formulaire
+  const [formData, setFormData] = useState<Partial<Program>>({
+    title: '',
+    description: '',
+    difficulty_level: 'débutant',
+    duration_weeks: 4,
+    sessions_per_week: 3,
+    category_id: undefined,
+    is_public: true,
+  });
 
   useEffect(() => {
     loadPrograms();
@@ -61,9 +75,57 @@ export default function Programs() {
     setFilteredPrograms(filtered);
   };
 
+  const handleCreateClick = () => {
+    setSelectedProgram(null);
+    setFormData({
+      title: '',
+      description: '',
+      difficulty_level: 'débutant',
+      duration_weeks: 4,
+      sessions_per_week: 3,
+      category_id: undefined,
+      is_public: true,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleEditClick = (program: Program) => {
+    setSelectedProgram(program);
+    setFormData({
+      title: program.title,
+      description: program.description || '',
+      difficulty_level: program.difficulty_level,
+      duration_weeks: program.duration_weeks,
+      sessions_per_week: program.sessions_per_week,
+      category_id: program.category_id,
+      is_public: program.is_public,
+    });
+    setShowEditModal(true);
+  };
+
   const handleDeleteClick = (program: Program) => {
     setSelectedProgram(program);
     setShowDeleteModal(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      if (selectedProgram) {
+        await programsService.update(selectedProgram.id, formData);
+        toast.success('Programme mis à jour avec succès');
+      } else {
+        await programsService.create(formData);
+        toast.success('Programme créé avec succès');
+      }
+      
+      setShowEditModal(false);
+      loadPrograms();
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast.error('Erreur lors de l\'enregistrement');
+    }
   };
 
   const deleteProgram = async () => {
@@ -111,6 +173,10 @@ export default function Programs() {
             Total : {filteredPrograms.length} programme{filteredPrograms.length > 1 ? 's' : ''}
           </p>
         </div>
+        <Button onClick={handleCreateClick}>
+          <Plus className="h-5 w-5 mr-2" />
+          Nouveau programme
+        </Button>
       </div>
 
       {/* Filtres */}
@@ -186,6 +252,13 @@ export default function Programs() {
                       <Button
                         size="sm"
                         variant="ghost"
+                        onClick={() => handleEditClick(program)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => handleDeleteClick(program)}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
@@ -204,6 +277,90 @@ export default function Programs() {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal d'édition/création */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title={selectedProgram ? 'Modifier le programme' : 'Nouveau programme'}
+        size="lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            label="Titre *"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            required
+          />
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Description du programme..."
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Difficulté *"
+              value={formData.difficulty_level}
+              onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value })}
+              required
+            >
+              <option value="débutant">Débutant</option>
+              <option value="intermédiaire">Intermédiaire</option>
+              <option value="avancé">Avancé</option>
+            </Select>
+
+            <Input
+              label="Durée (semaines) *"
+              type="number"
+              min="1"
+              value={formData.duration_weeks}
+              onChange={(e) => setFormData({ ...formData, duration_weeks: parseInt(e.target.value) })}
+              required
+            />
+          </div>
+
+          <Input
+            label="Sessions par semaine *"
+            type="number"
+            min="1"
+            max="7"
+            value={formData.sessions_per_week}
+            onChange={(e) => setFormData({ ...formData, sessions_per_week: parseInt(e.target.value) })}
+            required
+          />
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="is_public"
+              checked={formData.is_public}
+              onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
+              className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+            />
+            <label htmlFor="is_public" className="text-sm font-medium text-gray-700">
+              Programme public (visible par tous les utilisateurs)
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-6">
+            <Button type="button" variant="secondary" onClick={() => setShowEditModal(false)}>
+              Annuler
+            </Button>
+            <Button type="submit">
+              {selectedProgram ? 'Mettre à jour' : 'Créer'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal de suppression */}
       <Modal

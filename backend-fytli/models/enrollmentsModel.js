@@ -51,8 +51,8 @@ const getUsersByProgram = async (programId) => {
   const [rows] = await pool.query(
     `SELECT 
       pe.*,
-      u.first_name,
-      u.last_name,
+      u.firstname,
+      u.lastname,
       u.email,
       COUNT(DISTINCT sc.id) as sessions_completed
     FROM enrollments pe
@@ -72,12 +72,18 @@ const getUsersByProgram = async (programId) => {
 const getProgramsByUser = async (userId) => {
   const [rows] = await pool.query(
     `SELECT 
-      pe.*,
-      p.title,
-      p.description,
-      p.level,
-      p.goal,
-      p.duration_weeks,
+      pe.id,
+      pe.user_id,
+      pe.program_id,
+      pe.status,
+      pe.started_at,
+      pe.completed_at,
+      p.id as program_id,
+      p.title as program_title,
+      p.description as program_description,
+      p.level as program_level,
+      p.goal as program_goal,
+      p.duration_weeks as program_duration_weeks,
       COUNT(DISTINCT sc.id) as sessions_completed,
       COUNT(DISTINCT s.id) as total_sessions
     FROM enrollments pe

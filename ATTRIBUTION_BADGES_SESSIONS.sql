@@ -5,7 +5,33 @@
 -- À exécuter sur la base de données OVH via phpMyAdmin
 
 -- =====================================================
--- 1. ATTRIBUTION DE BADGES AUX UTILISATEURS
+-- 1. INSCRIPTION DES UTILISATEURS AUX PROGRAMMES
+-- =====================================================
+
+-- Inscrire les utilisateurs aux programmes
+-- User 1 : Programme 1 (Débutant)
+INSERT INTO enrollments (user_id, program_id, status, started_at) VALUES
+  (1, 1, 'active', DATE_SUB(NOW(), INTERVAL 14 DAY))
+ON DUPLICATE KEY UPDATE status = VALUES(status);
+
+-- User 2 : Programme 1 (Débutant)
+INSERT INTO enrollments (user_id, program_id, status, started_at) VALUES
+  (2, 1, 'active', DATE_SUB(NOW(), INTERVAL 20 DAY))
+ON DUPLICATE KEY UPDATE status = VALUES(status);
+
+-- User 3 : Programme 1 et 2 (très actif)
+INSERT INTO enrollments (user_id, program_id, status, started_at) VALUES
+  (3, 1, 'active', DATE_SUB(NOW(), INTERVAL 25 DAY)),
+  (3, 2, 'active', DATE_SUB(NOW(), INTERVAL 10 DAY))
+ON DUPLICATE KEY UPDATE status = VALUES(status);
+
+-- User 4 : Programme 1 (nouveau)
+INSERT INTO enrollments (user_id, program_id, status, started_at) VALUES
+  (4, 1, 'active', DATE_SUB(NOW(), INTERVAL 3 DAY))
+ON DUPLICATE KEY UPDATE status = VALUES(status);
+
+-- =====================================================
+-- 2. ATTRIBUTION DE BADGES AUX UTILISATEURS
 -- =====================================================
 
 -- Attribuer des badges aux utilisateurs existants
@@ -40,7 +66,7 @@ INSERT INTO user_badges (user_id, badge_id, earned_at) VALUES
 ON DUPLICATE KEY UPDATE earned_at = VALUES(earned_at);
 
 -- =====================================================
--- 2. CRÉATION DE SESSIONS D'EXERCICES
+-- 3. CRÉATION DE SESSIONS D'EXERCICES
 -- =====================================================
 
 -- Ajouter des exercices à la Session 1 (Programme 1 - Cardio)
@@ -87,7 +113,7 @@ ON DUPLICATE KEY UPDATE
   rest_seconds = VALUES(rest_seconds);
 
 -- =====================================================
--- 3. AJOUT D'EXERCICES SPÉCIFIQUES
+-- 4. AJOUT D'EXERCICES SPÉCIFIQUES
 -- =====================================================
 
 -- S'assurer que l'exercice "Marche en pente" existe
@@ -127,8 +153,34 @@ WHERE @marche_pente_id IS NOT NULL
   );
 
 -- =====================================================
--- 4. VÉRIFICATIONS
+-- 5. VÉRIFICATIONS
 -- =====================================================
+
+-- Compter les inscriptions par utilisateur
+SELECT 'Inscriptions par utilisateur:' as Info;
+SELECT 
+  u.id,
+  u.firstname,
+  u.lastname,
+  COUNT(e.id) as total_programs_enrolled
+FROM users u
+LEFT JOIN enrollments e ON u.id = e.user_id
+GROUP BY u.id, u.firstname, u.lastname
+ORDER BY total_programs_enrolled DESC;
+
+-- Voir toutes les inscriptions
+SELECT 'Toutes les inscriptions:' as Info;
+SELECT 
+  e.id,
+  u.firstname,
+  u.lastname,
+  p.title as program_title,
+  e.status,
+  e.started_at
+FROM enrollments e
+JOIN users u ON e.user_id = u.id
+JOIN programs p ON e.program_id = p.id
+ORDER BY e.started_at DESC;
 
 -- Compter les badges par utilisateur
 SELECT 'Badges par utilisateur:' as Info;
