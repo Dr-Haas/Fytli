@@ -1,17 +1,23 @@
 {
   "name": "backend-followsport",
   "version": "1.0.0",
+  "description": "Fytli - Backend API REST pour l'application de suivi sportif",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "echo \"Backend build completed - Node.js doesn't require compilation\"",
+    "build": "npm install --production=false",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "api",
+    "express",
+    "fitness",
+    "sport",
+    "backend"
+  ],
+  "author": "Gary Haas",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

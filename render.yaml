@@ -1,0 +1,75 @@
+services:
+  # Backend API
+  - type: web
+    name: fytli-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend-followsport
+    buildCommand: npm install --production=false
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /
+
+  # Frontend (Static Site)
+  - type: web
+    name: fytli-frontend
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: frontend-followsport
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Admin Panel (Static Site)
+  - type: web
+    name: fytli-admin
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: admin-panel
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: fytli-mysql
+    plan: free
+    databaseName: followsport
+    user: followsport_user
+

@@ -24,20 +24,13 @@ Ce guide explique comment builder et déployer l'application Fytli (frontend + a
 
 ## Installation
 
-### Option 1 : Installation depuis la racine (recommandé)
+Chaque projet a son propre `package.json` et doit être installé séparément :
 
 ```bash
 # Cloner le repository
 git clone https://github.com/yourusername/fytli.git
 cd fytli
 
-# Installer toutes les dépendances
-npm run install:all
-```
-
-### Option 2 : Installation manuelle
-
-```bash
 # Frontend
 cd frontend-followsport
 npm install
@@ -55,31 +48,18 @@ npm install
 
 ## Development
 
-### Lancer depuis la racine
+Chaque application se lance depuis son propre dossier :
 
 ```bash
 # Frontend (port 5173)
-npm run dev:frontend
-
-# Admin Panel (port 5174)
-npm run dev:admin
-
-# Backend (port 9001)
-npm run dev:backend
-```
-
-### Lancer manuellement
-
-```bash
-# Frontend
 cd frontend-followsport
 npm run dev
 
-# Admin Panel
+# Admin Panel (port 5174)
 cd admin-panel
 npm run dev
 
-# Backend
+# Backend (port 9001)
 cd backend-followsport
 npm run dev
 ```
@@ -88,20 +68,9 @@ npm run dev
 
 ## Build Production
 
-### 🚀 Build depuis la racine (recommandé)
+Chaque projet se build indépendamment :
 
-```bash
-# Build TOUT (frontend + admin)
-npm run build
-
-# Build spécifique
-npm run build:frontend   # Seulement le frontend
-npm run build:admin      # Seulement l'admin panel
-```
-
-### Build manuel par projet
-
-#### Frontend
+### Frontend
 
 ```bash
 cd frontend-followsport
@@ -132,16 +101,13 @@ npm run build
 Tester les builds en local avant de déployer :
 
 ```bash
-# Depuis la racine
-npm run preview:frontend   # Port 4173
-npm run preview:admin      # Port 4173
-
-# Manuellement
+# Frontend
 cd frontend-followsport
-npm run preview
+npm run preview   # Port 4173
 
+# Admin Panel
 cd admin-panel
-npm run preview
+npm run preview   # Port 4173
 ```
 
 ---
@@ -341,15 +307,20 @@ NODE_ENV=production
 
 ### ❌ Erreur : "Missing script: build"
 
-**Problème** : Vous exécutez `npm run build` depuis un mauvais dossier.
+**Problème** : Vous devez exécuter les commandes depuis le dossier du projet concerné.
 
 **Solution** :
 ```bash
-# Depuis la racine
+# Pour le frontend
+cd frontend-followsport
 npm run build
 
-# OU depuis le projet spécifique
-cd frontend-followsport
+# Pour l'admin panel
+cd admin-panel
+npm run build
+
+# Pour le backend
+cd backend-followsport
 npm run build
 ```
 
@@ -359,7 +330,9 @@ npm run build
 
 **Solution** :
 ```bash
-npm run install:all
+# Installer les dépendances du projet concerné
+cd frontend-followsport   # ou admin-panel ou backend-followsport
+npm install
 ```
 
 ### ❌ Build qui échoue avec TypeScript

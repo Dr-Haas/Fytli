@@ -12,7 +12,7 @@
 [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=flat&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[Démo](#-démo) • [Features](#-features) • [Installation](#-installation) • [Technologies](#-technologies) • [Documentation](#-documentation)
+[⚡ Quick Start](QUICK_START.md) • [🚀 Déployer](RENDER_CONFIG.md) • [Features](#-features) • [Installation](#-installation) • [Documentation](#-documentation)
 
 </div>
 
@@ -112,16 +112,22 @@ git clone https://github.com/yourusername/fytli.git
 cd fytli
 ```
 
-### 2. Installation rapide (depuis la racine)
+### 2. Installation des dépendances
+
+Chaque projet a son propre `package.json` et doit être installé séparément :
 
 ```bash
-# Installer toutes les dépendances (frontend + admin + backend)
-npm run install:all
+# Frontend
+cd frontend-followsport
+npm install
 
-# Ou installer manuellement chaque projet
-npm install --prefix frontend-followsport
-npm install --prefix admin-panel
-npm install --prefix backend-followsport
+# Admin Panel
+cd ../admin-panel
+npm install
+
+# Backend
+cd ../backend-followsport
+npm install
 ```
 
 ### 3. Backend Setup
@@ -159,23 +165,22 @@ npm run dev
 
 Le frontend démarre sur **http://localhost:5173**
 
-### 5. Lancer les applications (depuis la racine)
+### 5. Lancer les applications
+
+Chaque application se lance depuis son propre dossier :
 
 ```bash
-# Développement
-npm run dev:frontend   # Lance le frontend sur http://localhost:5173
-npm run dev:admin      # Lance l'admin panel sur http://localhost:5174
-npm run dev:backend    # Lance le backend sur http://localhost:9001
+# Frontend (port 5173)
+cd frontend-followsport
+npm run dev
 
-# Build
-npm run build          # Build frontend + admin
-npm run build:frontend # Build seulement le frontend
-npm run build:admin    # Build seulement l'admin panel
+# Admin Panel (port 5174)
+cd admin-panel
+npm run dev
 
-# Production
-npm run start:backend  # Démarre le backend en production
-npm run preview:frontend  # Preview du build frontend
-npm run preview:admin     # Preview du build admin
+# Backend (port 9001)
+cd backend-followsport
+npm run dev
 ```
 
 ### 6. Accéder à l'application
@@ -304,6 +309,14 @@ followSport_app/
 
 ## 📚 Documentation
 
+### Guides Essentiels
+
+- [🔧 Fix Render](RENDER_FIX.md) - Résoudre "Cannot find module" sur Render
+- [🚀 Guide de Déploiement](DEPLOY.md) - Déployer sur Render, Vercel, VPS
+- [🏗️ Guide de Build](BUILD.md) - Builder pour production
+- [⚡ Commandes Rapides](COMMANDS.md) - Aide-mémoire des commandes
+- [🗄️ Base de Données](DATABASE.md) - Schéma et structure
+
 ### Documentation Complète
 
 - [Features - Session Workout](docs/FEATURE_SESSION_WORKOUT.md)
@@ -375,22 +388,7 @@ npm run test:watch    # Watch mode
 
 ### Production Build
 
-#### Depuis la racine (recommandé)
-
-```bash
-# Build tout (frontend + admin panel)
-npm run build
-
-# Build spécifique
-npm run build:frontend  # Build seulement le frontend
-npm run build:admin     # Build seulement l'admin panel
-
-# Preview des builds
-npm run preview:frontend  # Preview du frontend build
-npm run preview:admin     # Preview de l'admin panel build
-```
-
-#### Build manuel par projet
+Chaque projet se build indépendamment :
 
 ```bash
 # Frontend
@@ -402,6 +400,10 @@ npm run preview       # Preview du build
 cd admin-panel
 npm run build         # Build pour production
 npm run preview       # Preview du build
+
+# Backend
+cd backend-followsport
+npm run build         # Vérifie que tout est prêt
 ```
 
 Les builds génèrent :
