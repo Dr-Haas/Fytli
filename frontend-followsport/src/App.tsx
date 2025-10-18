@@ -8,8 +8,9 @@ import { Programs } from './pages/Programs';
 import { ProgramDetail } from './pages/ProgramDetail';
 import { SessionWorkout } from './pages/SessionWorkout';
 import { SessionSummary } from './pages/SessionSummary';
-import { Badges } from './pages/Badges';
+import { CompletionDetail } from './pages/CompletionDetail';
 import { Profile } from './pages/Profile';
+import { UserProfile } from './pages/UserProfile';
 
 function App() {
   return (
@@ -62,10 +63,10 @@ function App() {
             }
           />
           <Route
-            path="/badges"
+            path="/completion/:id"
             element={
               <PrivateRoute>
-                <Badges />
+                <CompletionDetail />
               </PrivateRoute>
             }
           />
@@ -74,6 +75,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile/:userId"
+            element={
+              <PrivateRoute>
+                <UserProfile />
               </PrivateRoute>
             }
           />

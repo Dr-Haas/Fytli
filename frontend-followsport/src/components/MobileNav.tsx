@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Dumbbell, Trophy, User, Menu, X, LogOut } from 'lucide-react';
+import { Home, Dumbbell, User, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../lib/utils';
 
 const navItems = [
   { to: '/dashboard', icon: Home, label: 'Dashboard' },
   { to: '/programs', icon: Dumbbell, label: 'Programmes' },
-  { to: '/badges', icon: Trophy, label: 'Badges' },
   { to: '/profile', icon: User, label: 'Profil' },
 ];
 

@@ -25,13 +25,13 @@ export const Login = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-sm lg:max-w-md"
       >
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gradient font-brand mb-2">
+        <div className="text-center mb-6 lg:mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gradient font-brand mb-1 lg:mb-2">
             Fytli
           </h1>
-          <p className="text-muted-foreground font-medium">
+          <p className="text-sm lg:text-base text-muted-foreground font-medium">
             Bouge mieux, vis mieux.
           </p>
         </div>

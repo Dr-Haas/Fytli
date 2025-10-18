@@ -15,6 +15,7 @@ interface ProgramResponse {
 interface CreateProgramData {
   title: string;
   description?: string;
+  goal?: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks?: number;
 }
@@ -42,6 +43,7 @@ export const programsService = {
     const backendPayload = {
       name: data.title,  // Transformation title -> name pour le backend
       description: data.description,
+      goal: data.goal,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
     };
@@ -54,6 +56,7 @@ export const programsService = {
     const backendPayload = {
       name: data.title,
       description: data.description,
+      goal: data.goal,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
     };

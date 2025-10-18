@@ -28,6 +28,7 @@ interface CreateProgramModalProps {
 export interface ProgramFormData {
   title: string;
   description: string;
+  goal?: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   duration_weeks: number;
   exercises: SelectedExercise[];
@@ -42,6 +43,7 @@ export const CreateProgramModal = ({
   const [formData, setFormData] = useState<ProgramFormData>({
     title: '',
     description: '',
+    goal: '',
     level: 'beginner',
     duration_weeks: 4,
     exercises: [],
@@ -71,6 +73,7 @@ export const CreateProgramModal = ({
       setFormData({
         title: '',
         description: '',
+        goal: '',
         level: 'beginner',
         duration_weeks: 4,
         exercises: [],
@@ -123,17 +126,25 @@ export const CreateProgramModal = ({
 
   return (
     <AnimatePresence>
-      {/* Overlay - hidden on mobile (fullscreen) */}
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden lg:block" onClick={onClose} />
-      
-      {/* Modal/Page */}
-      <motion.div
-        initial={{ opacity: 0, y: '100%' }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-0 z-50 bg-background lg:inset-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 lg:w-full lg:max-w-4xl lg:max-h-[90vh] lg:rounded-fytli-lg lg:shadow-fytli-hover overflow-hidden"
-      >
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Overlay */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+          onClick={onClose} 
+        />
+        
+        {/* Modal/Page */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="relative w-full max-w-4xl max-h-[90vh] bg-background rounded-fytli-lg shadow-fytli-hover overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
         <div className="h-full flex flex-col">
           {/* Header - mobile-optimized */}
           <div className="sticky top-0 bg-background border-b px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between z-10">
@@ -176,6 +187,17 @@ export const CreateProgramModal = ({
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   disabled={isLoading}
                   className="flex w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="goal">Objectif</Label>
+                <Input
+                  id="goal"
+                  placeholder="ex: Prise de masse, Perte de poids, Remise en forme..."
+                  value={formData.goal}
+                  onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -360,6 +382,7 @@ export const CreateProgramModal = ({
           </div>
         </div>
       </motion.div>
+      </div>
     </AnimatePresence>
   );
 };

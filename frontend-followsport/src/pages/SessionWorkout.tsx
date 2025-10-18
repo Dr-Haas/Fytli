@@ -8,6 +8,7 @@ import { Session, SessionExercise, Exercise } from '../types';
 import { ArrowLeft, Check, ChevronRight, Timer } from 'lucide-react';
 import { Spinner } from '../components/ui/Spinner';
 import { showToast, getErrorMessage } from '../utils/toast';
+import api from '../services/api';
 
 interface ExerciseWithDetails extends SessionExercise {
   exercise: Exercise;
@@ -32,10 +33,29 @@ export const SessionWorkout = () => {
       
       try {
         const sessionData = await sessionsService.getById(parseInt(id));
-        // TODO: Implémenter la récupération des exercices de la session
-        // Pour le moment, on utilise des données de test
         setSession(sessionData);
-        setExercises([]);
+        
+        // Récupérer les exercices de la session
+        const response = await api.get(`/session-exercises?session_id=${id}`);
+        
+        if (response.data.success && response.data.data.length > 0) {
+          // Transformer les données pour correspondre au format attendu
+          const formattedExercises: ExerciseWithDetails[] = response.data.data.map((item: any) => ({
+            id: item.id,
+            session_id: item.session_id,
+            exercise_id: item.exercise_id,
+            sets: item.sets,
+            reps: item.reps,
+            rest_time_sec: item.rest_sec, // Transformation rest_sec -> rest_time_sec
+            order_index: item.order, // Transformation order -> order_index
+            exercise: {
+              id: item.exercise_id,
+              name: item.exercise_name,
+              type: 'strength',
+            },
+          }));
+          setExercises(formattedExercises);
+        }
       } catch (error) {
         console.error('Erreur lors du chargement:', error);
         const message = getErrorMessage(error);
@@ -94,6 +114,7 @@ export const SessionWorkout = () => {
         session,
         exercises,
         duration,
+        programId: session?.program_id,
       },
     });
   };
@@ -179,21 +200,21 @@ export const SessionWorkout = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
+          className="text-center w-full max-w-md"
         >
-          <div className="mb-6">
-            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-fytli-red to-fytli-orange flex items-center justify-center mx-auto mb-4">
-              <Check className="h-12 w-12 text-white" />
+          <div className="mb-6 lg:mb-8">
+            <div className="h-20 w-20 lg:h-24 lg:w-24 rounded-full bg-gradient-to-br from-fytli-red to-fytli-orange flex items-center justify-center mx-auto mb-4">
+              <Check className="h-10 w-10 lg:h-12 lg:w-12 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-gradient mb-2">Bien joué ! 🎉</h1>
-            <p className="text-lg text-muted-foreground">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gradient mb-2">Bien joué ! 🎉</h1>
+            <p className="text-base lg:text-lg text-muted-foreground">
               Tu as terminé ta séance
             </p>
           </div>
 
           <Button
             onClick={handleFinishSession}
-            className="btn-brand"
+            className="btn-brand w-full"
             size="lg"
           >
             Voir le résumé
@@ -208,21 +229,21 @@ export const SessionWorkout = () => {
     <div className="min-h-screen bg-fytli-cream">
       {/* Header */}
       <div className="bg-background border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 lg:py-4 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1 lg:gap-2 text-muted-foreground hover:text-foreground transition-colors touch-target"
           >
             <ArrowLeft className="h-4 w-4" />
-            Quitter
+            <span className="text-sm lg:text-base">Quitter</span>
           </button>
-          <div className="text-center">
-            <h2 className="font-bold text-fytli-dark">{session.title}</h2>
-            <p className="text-sm text-muted-foreground">
-              Exercice {currentExerciseIndex + 1}/{displayExercises.length}
+          <div className="text-center flex-1 px-2">
+            <h2 className="font-bold text-sm lg:text-base text-fytli-dark truncate">{session.title}</h2>
+            <p className="text-xs lg:text-sm text-muted-foreground">
+              {currentExerciseIndex + 1}/{displayExercises.length}
             </p>
           </div>
-          <div className="w-20" />
+          <div className="w-16 lg:w-20" />
         </div>
 
         {/* Progress bar */}
@@ -239,7 +260,7 @@ export const SessionWorkout = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-4 lg:py-8 max-w-2xl">
         <AnimatePresence mode="wait">
           {isResting ? (
             <motion.div
@@ -247,18 +268,18 @@ export const SessionWorkout = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="text-center space-y-6"
+              className="text-center space-y-4 lg:space-y-6"
             >
-              <div className="p-8 rounded-full bg-gradient-to-br from-fytli-orange/20 to-fytli-red/20 inline-block">
-                <Timer className="h-16 w-16 text-fytli-red" />
+              <div className="p-6 lg:p-8 rounded-full bg-gradient-to-br from-fytli-orange/20 to-fytli-red/20 inline-block">
+                <Timer className="h-12 w-12 lg:h-16 lg:w-16 text-fytli-red" />
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold mb-2">Temps de repos</h2>
-                <div className="text-6xl font-bold text-gradient mb-4">
+                <h2 className="text-xl lg:text-2xl font-bold mb-2">Temps de repos</h2>
+                <div className="text-5xl lg:text-6xl font-bold text-gradient mb-3 lg:mb-4">
                   {restTimeLeft}s
                 </div>
-                <p className="text-muted-foreground">
+                <p className="text-sm lg:text-base text-muted-foreground">
                   Prochain : Série {currentSet}
                 </p>
               </div>
@@ -267,6 +288,7 @@ export const SessionWorkout = () => {
                 onClick={handleSkipRest}
                 variant="outline"
                 size="lg"
+                className="w-full lg:w-auto"
               >
                 Passer
                 <ChevronRight className="h-5 w-5 ml-2" />
@@ -282,38 +304,38 @@ export const SessionWorkout = () => {
             >
               {/* Exercise Info */}
               <Card className="card-fytli">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-4">
+                <CardHeader className="p-4 lg:p-6">
+                  <div className="flex items-start justify-between mb-3 lg:mb-4">
                     <div className="flex-1">
-                      <CardTitle className="text-3xl mb-2">
+                      <CardTitle className="text-2xl lg:text-3xl mb-1 lg:mb-2">
                         {displayCurrentExercise.exercise.name}
                       </CardTitle>
                       {displayCurrentExercise.exercise.muscle_group && (
-                        <p className="text-muted-foreground">
+                        <p className="text-sm lg:text-base text-muted-foreground">
                           {displayCurrentExercise.exercise.muscle_group}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 p-4 bg-fytli-cream rounded-lg">
+                  <div className="grid grid-cols-3 gap-3 lg:gap-4 p-3 lg:p-4 bg-fytli-cream rounded-lg">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-fytli-red">
+                      <div className="text-xl lg:text-2xl font-bold text-fytli-red">
                         {currentSet}/{displayCurrentExercise.sets}
                       </div>
-                      <div className="text-sm text-muted-foreground">Série</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Série</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-fytli-orange">
+                      <div className="text-xl lg:text-2xl font-bold text-fytli-orange">
                         {displayCurrentExercise.reps}
                       </div>
-                      <div className="text-sm text-muted-foreground">Reps</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Reps</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-fytli-gray">
+                      <div className="text-xl lg:text-2xl font-bold text-fytli-gray">
                         {displayCurrentExercise.rest_time_sec}s
                       </div>
-                      <div className="text-sm text-muted-foreground">Repos</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Repos</div>
                     </div>
                   </div>
                 </CardHeader>
@@ -331,25 +353,25 @@ export const SessionWorkout = () => {
 
               {/* Remaining exercises */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardHeader className="p-4 lg:p-6">
+                  <CardTitle className="text-xs lg:text-sm font-medium text-muted-foreground">
                     À venir
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 p-4 lg:p-6">
                   {displayExercises.slice(currentExerciseIndex + 1).map((ex) => (
                     <div
                       key={ex.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-fytli-cream"
+                      className="flex items-center justify-between p-2 lg:p-3 rounded-lg bg-fytli-cream"
                     >
-                      <span className="font-medium">{ex.exercise.name}</span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="font-medium text-sm lg:text-base">{ex.exercise.name}</span>
+                      <span className="text-xs lg:text-sm text-muted-foreground">
                         {ex.sets} × {ex.reps}
                       </span>
                     </div>
                   ))}
                   {displayExercises.slice(currentExerciseIndex + 1).length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-2">
+                    <p className="text-xs lg:text-sm text-muted-foreground text-center py-2">
                       Dernier exercice ! 💪
                     </p>
                   )}

@@ -15,7 +15,8 @@ interface SessionResponse {
 interface CreateSessionData {
   program_id: number;
   title: string;
-  day_number: number;
+  order?: number;
+  day_number?: number;
   notes?: string;
 }
 
@@ -30,7 +31,7 @@ interface AddExerciseToSessionData {
 
 export const sessionsService = {
   async getByProgramId(programId: number): Promise<Session[]> {
-    const response = await api.get<SessionsResponse>(`/programs/${programId}/sessions`);
+    const response = await api.get<SessionsResponse>(`/sessions?program_id=${programId}`);
     return response.data.data;
   },
 

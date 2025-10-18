@@ -1,46 +1,98 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { BadgeCard } from '../components/BadgeCard';
 import { Card, CardContent } from '../components/ui/Card';
-import { BADGES, BADGE_CATEGORIES, BadgeId, UserBadge } from '../types/badges';
-import { Trophy, Award, TrendingUp } from 'lucide-react';
+import { BADGE_CATEGORIES, Badge } from '../types/badges';
+import { Trophy, Award, TrendingUp, Loader2 } from 'lucide-react';
+import { badgesService } from '../services/badges';
+import { useAuth } from '../hooks/useAuth';
+import { showToast, getErrorMessage } from '../utils/toast';
+
+interface UserBadgeWithProgress {
+  badge_id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  gradient: string;
+  category: string;
+  requirement: string;
+  points: number;
+  is_secret: number; // 0 or 1 from DB
+  earned: number; // 0 or 1 from DB
+  earned_at?: string | null;
+  progress_percent: number;
+}
 
 export const Badges = () => {
-  // TODO: Récupérer depuis l'API
-  const [userBadges] = useState<UserBadge[]>([
-    { badge_id: 'constance', earned_at: '2025-10-10T10:00:00Z' },
-    { badge_id: 'routine_matinale', earned_at: '2025-10-15T08:30:00Z' },
-    { badge_id: 'objectif_atteint', earned_at: '2025-10-16T20:00:00Z' },
-  ]);
-
-  // Badges en cours de progression (données de test)
-  const [badgeProgress] = useState<Partial<Record<BadgeId, number>>>({
-    progression: 65,
-    sante_cardiaque: 40,
-    challenge_reussi: 80,
+  const { user } = useAuth();
+  const [badges, setBadges] = useState<UserBadgeWithProgress[]>([]);
+  const [overview, setOverview] = useState({
+    badges_earned: 0,
+    total_points: 0,
+    total_badges: 10,
+    completion_percent: 0,
   });
+  const [loading, setLoading] = useState(true);
 
-  const earnedBadgeIds = new Set(userBadges.map(ub => ub.badge_id));
-  const allBadges = Object.values(BADGES);
-  
-  const earnedCount = userBadges.length;
-  const totalCount = allBadges.length;
-  const completionRate = Math.round((earnedCount / totalCount) * 100);
+  // Fetch badges from API
+  useEffect(() => {
+    const fetchBadges = async () => {
+      if (!user) return;
+
+      try {
+        const data = await badgesService.getUserBadgesWithProgress(user.id);
+        console.log('Badges data received:', data);
+        
+        if (data && data.data && Array.isArray(data.data)) {
+          setBadges(data.data as UserBadgeWithProgress[]);
+          setOverview(data.overview);
+        } else {
+          console.error('Invalid data structure:', data);
+          setBadges([]);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des badges:', error);
+        const message = getErrorMessage(error);
+        showToast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBadges();
+  }, [user]);
+
+  const earnedCount = overview.badges_earned;
+  const totalCount = overview.total_badges;
+  const completionRate = Math.round(overview.completion_percent);
 
   // Filtrer par catégorie
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const filteredBadges = selectedCategory
-    ? allBadges.filter(badge => badge.category === selectedCategory)
-    : allBadges;
+    ? badges.filter(badge => badge.category === selectedCategory)
+    : badges;
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-fytli-red mx-auto mb-4" />
+          <p className="text-muted-foreground">Chargement des badges...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-6 lg:p-8">
+      <Sidebar />
+
+      <main className="lg:ml-64 p-4 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -152,8 +204,8 @@ export const Badges = () => {
               >
                 Tous ({totalCount})
               </button>
-              {Object.entries(BADGE_CATEGORIES).map(([key, category]) => {
-                const count = allBadges.filter(b => b.category === key).length;
+              {Object.entries(BADGE_CATEGORIES).map(([key, label]) => {
+                const count = badges.filter(b => b.category === key).length;
                 return (
                   <button
                     key={key}
@@ -166,7 +218,7 @@ export const Badges = () => {
                       }
                     `}
                   >
-                    {category.icon} {category.name} ({count})
+                    {label} ({count})
                   </button>
                 );
               })}
@@ -175,26 +227,34 @@ export const Badges = () => {
             {/* Grille de badges */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredBadges.map((badge, index) => {
-                const earned = earnedBadgeIds.has(badge.id);
-                const userBadge = userBadges.find(ub => ub.badge_id === badge.id);
-                const progress = badgeProgress[badge.id];
-
+                // Sécurité : vérifier que le badge a toutes les propriétés requises
+                if (!badge || !badge.badge_id) {
+                  console.warn('Invalid badge data:', badge);
+                  return null;
+                }
+                
                 return (
                   <motion.div
-                    key={badge.id}
+                    key={badge.badge_id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                   >
                     <BadgeCard
-                      badge={badge}
-                      earned={earned}
-                      earnedAt={userBadge?.earned_at}
-                      progress={progress}
-                      onClick={() => {
-                        // TODO: Ouvrir une modal avec les détails du badge
-                        console.log('Badge clicked:', badge.id);
+                      badge={{
+                        id: badge.badge_id,
+                        name: badge.name || 'Badge',
+                        description: badge.description || '',
+                        icon: badge.icon || '🏆',
+                        color: badge.color || '#FF4D3A',
+                        gradient: badge.gradient || 'from-fytli-red to-fytli-orange',
+                        category: badge.category || 'routine',
+                        requirement: badge.requirement || '',
+                        points: badge.points || 0,
+                        is_secret: Boolean(badge.is_secret),
                       }}
+                      isEarned={Boolean(badge.earned)}
+                      progress={badge.progress_percent || 0}
                     />
                   </motion.div>
                 );
@@ -230,7 +290,6 @@ export const Badges = () => {
             </Card>
           </motion.div>
         </main>
-      </div>
     </div>
   );
 };

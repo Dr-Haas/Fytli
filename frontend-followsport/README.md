@@ -73,12 +73,12 @@ Inspiré de **Revolut** et **Stripe Dashboard** :
 
 ### Backend API
 
-L'application se connecte au backend sur `http://localhost:3001`
+L'application se connecte au backend sur `http://localhost:9001`
 
 Pour changer l'URL, modifiez `src/services/api.ts` :
 
 ```ts
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'http://localhost:9001';
 ```
 
 ### Variables d'environnement
@@ -86,7 +86,7 @@ const API_BASE_URL = 'http://localhost:3001';
 Créez un fichier `.env` à la racine :
 
 ```env
-VITE_API_URL=http://localhost:3001
+VITE_API_URL=http://localhost:9001
 ```
 
 ## 📝 Scripts disponibles

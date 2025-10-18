@@ -1,11 +1,10 @@
-import { Home, Dumbbell, Trophy, User, BarChart3 } from 'lucide-react';
+import { Home, Dumbbell, User, BarChart3 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
 const navItems = [
   { to: '/dashboard', icon: Home, label: 'Dashboard' },
   { to: '/programs', icon: Dumbbell, label: 'Programmes' },
-  { to: '/badges', icon: Trophy, label: 'Badges' },
   { to: '/profile', icon: User, label: 'Profil' },
 ];
 

@@ -63,6 +63,7 @@ export const Programs = () => {
       const newProgram = await programsService.create({
         title: formData.title,
         description: formData.description,
+        goal: formData.goal,
         level: formData.level,
         duration_weeks: formData.duration_weeks,
       });
@@ -71,8 +72,8 @@ export const Programs = () => {
       const session = await sessionsService.create({
         program_id: newProgram.id,
         title: 'Session principale',
-        day_number: 1,
-        notes: formData.description,
+        order: 1,
+        day_number: 1,  // Pour compatibilité
       });
 
       // 3. Ajouter les exercices à la session
@@ -109,36 +110,34 @@ export const Programs = () => {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:ml-64 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="max-w-7xl mx-auto space-y-8">
+            <div className="max-w-7xl mx-auto space-y-4 lg:space-y-8">
               {/* Header */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">Programmes d'entraînement</h1>
-                  
-                  <Button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="btn-brand"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau programme
-                  </Button>
-                </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 lg:gap-4">
+                <h1 className="text-2xl lg:text-3xl font-bold">Programmes d'entraînement</h1>
+                
+                <Button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="btn-brand w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouveau programme
+                </Button>
               </div>
 
               {/* Search Bar */}
-              <div className="relative max-w-md">
+              <div className="relative w-full lg:max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher un programme..."
+                  placeholder="Rechercher..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full"
                 />
               </div>
 
@@ -149,7 +148,7 @@ export const Programs = () => {
                 </div>
               ) : filteredPrograms.length > 0 ? (
                 <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
                   initial="hidden"
                   animate="visible"
                   variants={{
