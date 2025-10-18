@@ -34,6 +34,10 @@ export const UserProfile = () => {
           completionsService.getByUser(parseInt(userId)).catch(() => [])
         ]);
         
+        console.log('📊 UserProfile - programmes récupérés:', programsData);
+        console.log('🏆 UserProfile - badges récupérés:', badgesData);
+        console.log('✅ UserProfile - sessions récupérées:', sessionsData);
+        
         setPrograms(programsData);
         setBadges(badgesData);
         
@@ -213,7 +217,7 @@ export const UserProfile = () => {
                       >
                         <Card 
                           className="card-fytli hover:shadow-fytli-hover transition-all cursor-pointer"
-                          onClick={() => navigate(`/programs/${program.id}`)}
+                          onClick={() => navigate(`/programs/${program.program_id}`)}
                         >
                           <CardHeader className="p-4 lg:p-6">
                             <div className="flex items-start justify-between mb-2 lg:mb-3">
