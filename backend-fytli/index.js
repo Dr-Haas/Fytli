@@ -34,7 +34,7 @@ const PORT = process.env.PORT || 9001;
 // Configuration CORS pour autoriser frontend local et production
 const corsOptions = {
   origin: function (origin, callback) {
-    // Liste des origines autorisées
+    // Liste des origines autorisées 
     const allowedOrigins = [
       // Développement local (tous les ports possibles)
       'http://localhost:5173',           // Frontend local
