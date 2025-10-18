@@ -72,7 +72,8 @@ export const Programs = () => {
       const session = await sessionsService.create({
         program_id: newProgram.id,
         title: 'Session principale',
-        order: 1,
+        order_index: 1,
+        order: 1,  // Fallback pour compatibilité
         day_number: 1,  // Pour compatibilité
       });
 

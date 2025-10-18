@@ -42,22 +42,22 @@ const findByProgramId = async (programId) => {
  * @returns {Promise<Object>} Session créée avec son ID
  */
 const create = async (data) => {
-  const { program_id, title, order, day_number } = data;
+  const { program_id, title, order, order_index, day_number } = data;
   
-  // day_number peut être utilisé comme order si order n'est pas fourni
-  const finalOrder = order !== undefined ? order : (day_number || 1);
+  // Utiliser order_index en priorité, sinon order, sinon day_number
+  const finalOrderIndex = order_index !== undefined ? order_index : (order !== undefined ? order : (day_number || 1));
   
   const [result] = await pool.query(
-    `INSERT INTO sessions (program_id, title, \`order\`) 
+    `INSERT INTO sessions (program_id, title, order_index) 
      VALUES (?, ?, ?)`,
-    [program_id, title, finalOrder]
+    [program_id, title, finalOrderIndex]
   );
   
   return {
     id: result.insertId,
     program_id,
     title,
-    order: finalOrder
+    order_index: finalOrderIndex
   };
 };
 
