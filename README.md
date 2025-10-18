@@ -125,6 +125,10 @@ npm install
 cd ../admin-panel
 npm install
 
+# Landing Page 🆕
+cd ../website
+npm install
+
 # Backend
 cd ../backend-followsport
 npm install
@@ -181,11 +185,18 @@ npm run dev
 # Backend (port 9001)
 cd backend-followsport
 npm run dev
+
+# Landing Page (port 3000) 🆕
+cd website
+npm run dev
 ```
 
-### 6. Accéder à l'application
+### 6. Accéder aux applications
 
-Ouvre ton navigateur sur **http://localhost:5173**
+- **Application principale** : http://localhost:5173
+- **Admin Panel** : http://localhost:5174
+- **Landing Page** : http://localhost:3000
+- **Backend API** : http://localhost:9001
 
 ---
 
@@ -211,6 +222,20 @@ followSport_app/
 │   │   └── styles/              # Styles globaux
 │   ├── public/                  # Assets statiques
 │   └── vite.config.ts           # Configuration Vite + PWA
+│
+├── admin-panel/                  # Panel d'administration
+│   ├── src/
+│   │   ├── pages/               # Pages admin
+│   │   ├── components/          # Composants admin
+│   │   ├── services/            # Services API
+│   │   └── types/               # Types TypeScript
+│   └── vite.config.ts           # Configuration Vite
+│
+├── website/                      # Landing Page Next.js 🆕
+│   ├── app/                     # Next.js App Router
+│   ├── components/              # Composants de la landing
+│   ├── lib/                     # Services API
+│   └── README.md                # Documentation
 │
 └── docs/                        # Documentation complète
 ```
