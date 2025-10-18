@@ -79,12 +79,14 @@ const update = async (id, data) => {
     fields.push('title = ?');
     values.push(data.title);
   }
-  if (data.order !== undefined) {
-    fields.push('`order` = ?');
+  if (data.order_index !== undefined) {
+    fields.push('order_index = ?');
+    values.push(data.order_index);
+  } else if (data.order !== undefined) {
+    fields.push('order_index = ?');
     values.push(data.order);
-  }
-  if (data.day_number !== undefined && data.order === undefined) {
-    fields.push('`order` = ?');
+  } else if (data.day_number !== undefined) {
+    fields.push('order_index = ?');
     values.push(data.day_number);
   }
   

@@ -9,7 +9,7 @@ const { pool } = require('../db');
  * @returns {Promise<Array>} Liste des associations
  */
 const findAll = async () => {
-  const [rows] = await pool.query('SELECT * FROM session_exercises ORDER BY session_id, `order` ASC');
+  const [rows] = await pool.query('SELECT * FROM session_exercises ORDER BY session_id, order_index ASC');
   return rows;
 };
 
@@ -34,7 +34,7 @@ const findBySessionId = async (sessionId) => {
      FROM session_exercises se
      LEFT JOIN exercises e ON se.exercise_id = e.id
      WHERE se.session_id = ?
-     ORDER BY se.\`order\` ASC`,
+     ORDER BY se.order_index ASC`,
     [sessionId]
   );
   return rows;
@@ -62,7 +62,7 @@ const create = async (data) => {
   const finalRestSec = rest_sec !== undefined ? rest_sec : rest_time_sec;
   
   const [result] = await pool.query(
-    `INSERT INTO session_exercises (session_id, exercise_id, \`order\`, sets, reps, weight_kg, tempo, rest_sec) 
+    `INSERT INTO session_exercises (session_id, exercise_id, order_index, sets, reps, weight_kg, tempo, rest_sec) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [session_id, exercise_id, order_index, sets, reps, weight_kg, tempo, finalRestSec]
   );
@@ -71,7 +71,7 @@ const create = async (data) => {
     id: result.insertId,
     session_id,
     exercise_id,
-    order: order_index,
+    order_index: order_index,
     sets,
     reps,
     weight_kg,
@@ -99,7 +99,7 @@ const update = async (id, data) => {
     values.push(data.exercise_id);
   }
   if (data.order_index !== undefined) {
-    fields.push('`order` = ?');
+    fields.push('order_index = ?');
     values.push(data.order_index);
   }
   if (data.sets !== undefined) {

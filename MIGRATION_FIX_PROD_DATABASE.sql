@@ -90,7 +90,44 @@ INSERT INTO exercises (
 ) ON DUPLICATE KEY UPDATE name = name;
 
 -- =====================================================
--- 4. VÉRIFICATIONS
+-- 4. RENOMMAGE DES COLONNES ORDER EN ORDER_INDEX
+-- =====================================================
+-- Ces colonnes utilisaient le mot-clé réservé SQL `order` ce qui cause des problèmes
+
+-- 4.1. Table SESSIONS - Renommer order en order_index
+-- Vérifier d'abord si la colonne order_index n'existe pas déjà
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns 
+                   WHERE table_schema = DATABASE() 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'order_index');
+
+-- Si order_index n'existe pas, renommer order en order_index
+SET @alter_sessions = IF(@col_exists = 0, 
+  'ALTER TABLE sessions CHANGE COLUMN `order` order_index INT DEFAULT 0;',
+  'SELECT "La colonne order_index existe déjà dans sessions";'
+);
+PREPARE stmt FROM @alter_sessions;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- 4.2. Table SESSION_EXERCISES - Renommer order en order_index  
+-- Vérifier d'abord si la colonne order_index n'existe pas déjà
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns 
+                   WHERE table_schema = DATABASE() 
+                   AND table_name = 'session_exercises' 
+                   AND column_name = 'order_index');
+
+-- Si order_index n'existe pas, renommer order en order_index
+SET @alter_session_exercises = IF(@col_exists = 0,
+  'ALTER TABLE session_exercises CHANGE COLUMN `order` order_index INT DEFAULT 0;',
+  'SELECT "La colonne order_index existe déjà dans session_exercises";'
+);
+PREPARE stmt FROM @alter_session_exercises;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- =====================================================
+-- 5. VÉRIFICATIONS
 -- =====================================================
 -- Vérifier la structure des badges
 SELECT 'Structure badges:' as Info;
@@ -99,6 +136,14 @@ DESCRIBE badges;
 -- Vérifier que badge_progress existe
 SELECT 'Structure badge_progress:' as Info;
 DESCRIBE badge_progress;
+
+-- Vérifier la structure des sessions (order_index)
+SELECT 'Structure sessions:' as Info;
+DESCRIBE sessions;
+
+-- Vérifier la structure des session_exercises (order_index)
+SELECT 'Structure session_exercises:' as Info;
+DESCRIBE session_exercises;
 
 -- Vérifier les badges
 SELECT 'Badges existants:' as Info;
