@@ -9,7 +9,7 @@ const { pool } = require('../db');
  * @returns {Promise<Array>} Liste des sessions
  */
 const findAll = async () => {
-  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY `order` ASC');
+  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY `order_index` ASC');
   return rows;
 };
 
@@ -30,7 +30,7 @@ const findById = async (id) => {
  */
 const findByProgramId = async (programId) => {
   const [rows] = await pool.query(
-    'SELECT * FROM sessions WHERE program_id = ? ORDER BY `order` ASC',
+    'SELECT * FROM sessions WHERE program_id = ? ORDER BY `order_index` ASC',
     [programId]
   );
   return rows;
