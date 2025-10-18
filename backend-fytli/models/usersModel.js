@@ -39,18 +39,22 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<Object>} Utilisateur créé avec son ID
  */
 const createUser = async (userData) => {
-  const { first_name, last_name, email, password, role = 'user' } = userData;
+  const { first_name, last_name, firstname, lastname, email, password, role = 'user' } = userData;
+  
+  // Support des deux formats (avec/sans underscore)
+  const finalFirstname = firstname || first_name;
+  const finalLastname = lastname || last_name;
   
   const [result] = await pool.query(
-    `INSERT INTO users (first_name, last_name, email, password_hash, role) 
+    `INSERT INTO users (firstname, lastname, email, password_hash, role) 
      VALUES (?, ?, ?, ?, ?)`,
-    [first_name, last_name, email, password, role]
+    [finalFirstname, finalLastname, email, password, role]
   );
   
   return {
     id: result.insertId,
-    first_name,
-    last_name,
+    firstname: finalFirstname,
+    lastname: finalLastname,
     email,
     role,
     created_at: new Date()
@@ -68,13 +72,14 @@ const updateUser = async (id, userData) => {
   const values = [];
   
   // Construction dynamique de la requête UPDATE
-  if (userData.first_name !== undefined) {
-    fields.push('first_name = ?');
-    values.push(userData.first_name);
+  // Support des deux formats (avec/sans underscore)
+  if (userData.firstname !== undefined || userData.first_name !== undefined) {
+    fields.push('firstname = ?');
+    values.push(userData.firstname || userData.first_name);
   }
-  if (userData.last_name !== undefined) {
-    fields.push('last_name = ?');
-    values.push(userData.last_name);
+  if (userData.lastname !== undefined || userData.last_name !== undefined) {
+    fields.push('lastname = ?');
+    values.push(userData.lastname || userData.last_name);
   }
   if (userData.email !== undefined) {
     fields.push('email = ?');
@@ -152,7 +157,7 @@ const updateUserRole = async (id, role) => {
  */
 const getUsersByRole = async (role) => {
   const [rows] = await pool.query(
-    'SELECT id, email, first_name, last_name, role, created_at FROM users WHERE role = ? ORDER BY created_at DESC',
+    'SELECT id, email, firstname, lastname, role, created_at FROM users WHERE role = ? ORDER BY created_at DESC',
     [role]
   );
   return rows;
