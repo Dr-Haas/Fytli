@@ -35,9 +35,11 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Liste des origines autorisées
     const allowedOrigins = [
-      // Développement local
+      // Développement local (tous les ports possibles)
       'http://localhost:5173',           // Frontend local
       'http://localhost:5174',           // Admin local
+      'http://localhost:5183',           // Frontend local (alternatif)
+      'http://localhost:5184',           // Admin local (alternatif)
       'http://localhost:3000',           // Alternative locale
       
       // Domaines personnalisés Fytli
@@ -53,6 +55,7 @@ const corsOptions = {
       // URLs Render (temporaires)
       'https://fytli-frontend.onrender.com',
       'https://fytli-admin.onrender.com',
+      'https://fytli.onrender.com',         // Backend Render (pour tests)
       
       // Variable d'environnement
       process.env.FRONTEND_URL           // Frontend production configurable
