@@ -49,7 +49,8 @@ export interface Session {
   id: number;
   program_id: number;
   title: string;              // ⚠️ pas name
-  order: number;              // ⚠️ Ordre de la session dans le programme
+  order?: number;             // ⚠️ Ordre de la session (deprecated, utiliser order_index)
+  order_index?: number;       // ⚠️ Ordre de la session dans le programme (nom correct dans la DB)
   day_number?: number;        // ⚠️ Alias pour compatibilité (même valeur que order)
   notes?: string;             // ⚠️ pas description
   created_at?: string;

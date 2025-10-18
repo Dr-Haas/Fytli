@@ -262,7 +262,7 @@ export const ProgramDetail = () => {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 lg:gap-3 mb-2">
                                 <span className="flex items-center justify-center h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-to-br from-fytli-red to-fytli-orange text-white font-bold text-sm lg:text-base">
-                                  {session.order || session.day_number || index + 1}
+                                  {session.order_index || session.order || session.day_number || index + 1}
                                 </span>
                                 <div>
                                   <h3 className="text-lg lg:text-xl font-bold">{session.title}</h3>
