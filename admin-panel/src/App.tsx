@@ -11,6 +11,8 @@ import Dashboard from '@/pages/Dashboard';
 import Users from '@/pages/Users';
 import Programs from '@/pages/Programs';
 import Sessions from '@/pages/Sessions';
+import Exercises from '@/pages/Exercises';
+import Categories from '@/pages/Categories';
 import Enrollments from '@/pages/Enrollments';
 import Badges from '@/pages/Badges';
 import Stats from '@/pages/Stats';
@@ -90,6 +92,26 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <Sessions />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/exercises"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Exercises />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Categories />
               </Layout>
             </PrivateRoute>
           }

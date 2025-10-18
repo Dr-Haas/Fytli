@@ -1,13 +1,18 @@
 import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:9001';
+import API_CONFIG from '@/config/api.config';
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_CONFIG.baseURL,
+  timeout: API_CONFIG.timeout,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Log de l'URL API utilisée (en développement uniquement)
+if (import.meta.env.DEV) {
+  console.log('🔗 Admin Panel - API URL:', API_CONFIG.baseURL);
+}
 
 // Intercepteur pour ajouter le token à chaque requête
 api.interceptors.request.use(

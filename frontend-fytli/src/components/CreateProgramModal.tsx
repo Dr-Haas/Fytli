@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Label } from './ui/Label';
@@ -122,6 +122,26 @@ export const CreateProgramModal = ({
     });
   };
 
+  const moveExerciseUp = (index: number) => {
+    if (index === 0) return; // Déjà en haut
+    const newExercises = [...formData.exercises];
+    [newExercises[index - 1], newExercises[index]] = [newExercises[index], newExercises[index - 1]];
+    setFormData({
+      ...formData,
+      exercises: newExercises,
+    });
+  };
+
+  const moveExerciseDown = (index: number) => {
+    if (index === formData.exercises.length - 1) return; // Déjà en bas
+    const newExercises = [...formData.exercises];
+    [newExercises[index], newExercises[index + 1]] = [newExercises[index + 1], newExercises[index]];
+    setFormData({
+      ...formData,
+      exercises: newExercises,
+    });
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -142,12 +162,11 @@ export const CreateProgramModal = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-4xl max-h-[90vh] bg-background rounded-fytli-lg shadow-fytli-hover overflow-hidden"
+          className="relative w-full max-w-4xl max-h-[90vh] bg-background rounded-fytli-lg shadow-fytli-hover overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-        <div className="h-full flex flex-col">
           {/* Header - mobile-optimized */}
-          <div className="sticky top-0 bg-background border-b px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between z-10">
+          <div className="flex-shrink-0 bg-background border-b px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between z-10">
             <h2 className="text-lg lg:text-2xl font-bold text-gradient">Créer un programme</h2>
             <button
               onClick={onClose}
@@ -159,7 +178,7 @@ export const CreateProgramModal = ({
           </div>
           
           {/* Content - scrollable */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto min-h-0">
 
             <form id="create-program-form" onSubmit={handleSubmit} className="p-4 lg:p-6 space-y-6 pb-24 lg:pb-6">
             {/* Informations du programme */}
@@ -273,13 +292,36 @@ export const CreateProgramModal = ({
                               </span>
                             )}
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => removeExercise(exercise.id)}
-                            className="p-1 hover:bg-destructive/10 rounded transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            {/* Boutons de déplacement */}
+                            <button
+                              type="button"
+                              onClick={() => moveExerciseUp(index)}
+                              disabled={index === 0}
+                              className="p-1 hover:bg-accent rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Monter"
+                            >
+                              <ArrowUp className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveExerciseDown(index)}
+                              disabled={index === formData.exercises.length - 1}
+                              className="p-1 hover:bg-accent rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Descendre"
+                            >
+                              <ArrowDown className="h-4 w-4" />
+                            </button>
+                            {/* Bouton de suppression */}
+                            <button
+                              type="button"
+                              onClick={() => removeExercise(exercise.id)}
+                              className="p-1 hover:bg-destructive/10 rounded transition-colors ml-1"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </button>
+                          </div>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 lg:gap-3">
@@ -354,7 +396,7 @@ export const CreateProgramModal = ({
           </div>
           
           {/* Fixed bottom actions on mobile */}
-          <div className="lg:hidden sticky bottom-0 bg-background border-t p-4 flex gap-3">
+          <div className="lg:hidden flex-shrink-0 bg-background border-t p-4 flex gap-3">
             <Button
               type="button"
               variant="outline"
@@ -380,8 +422,7 @@ export const CreateProgramModal = ({
               {isLoading ? 'Création...' : 'Créer'}
             </Button>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
       </div>
     </AnimatePresence>
   );
