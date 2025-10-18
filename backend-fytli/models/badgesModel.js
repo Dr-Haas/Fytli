@@ -394,29 +394,76 @@ const badgesModel = {
     const [rows] = await pool.query(
       `SELECT 
         id,
+        user_id,
         week_start_date,
         goal_type,
         goal_target,
         goal_current,
-        goal_achieved
+        goal_achieved,
+        description,
+        target_programs,
+        target_sessions,
+        created_at,
+        updated_at
       FROM weekly_goals
       WHERE user_id = ? 
         AND week_start_date = DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)`,
       [userId]
     );
-    return rows[0] || null;
+    
+    if (rows[0]) {
+      // Parser les JSON si présents
+      const goal = rows[0];
+      if (goal.target_programs) {
+        try {
+          goal.target_programs = JSON.parse(goal.target_programs);
+        } catch (e) {
+          goal.target_programs = [];
+        }
+      }
+      if (goal.target_sessions) {
+        try {
+          goal.target_sessions = JSON.parse(goal.target_sessions);
+        } catch (e) {
+          goal.target_sessions = [];
+        }
+      }
+      return goal;
+    }
+    
+    return null;
   },
 
   /**
    * Créer ou mettre à jour un objectif hebdomadaire
    */
-  async setWeeklyGoal(userId, goalType, goalTarget) {
+  async setWeeklyGoal(userId, data) {
+    const { 
+      goal_type, 
+      goal_target, 
+      description, 
+      target_programs, 
+      target_sessions 
+    } = data;
+    
     const [result] = await pool.query(
-      `INSERT INTO weekly_goals (user_id, week_start_date, goal_type, goal_target)
-      VALUES (?, DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), ?, ?)
+      `INSERT INTO weekly_goals (
+        user_id, 
+        week_start_date, 
+        goal_type, 
+        goal_target,
+        description,
+        target_programs,
+        target_sessions
+      )
+      VALUES (?, DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE 
-        goal_target = VALUES(goal_target)`,
-      [userId, goalType, goalTarget]
+        goal_type = VALUES(goal_type),
+        goal_target = VALUES(goal_target),
+        description = VALUES(description),
+        target_programs = VALUES(target_programs),
+        target_sessions = VALUES(target_sessions)`,
+      [userId, goal_type, goal_target, description, target_programs, target_sessions]
     );
     return result;
   }

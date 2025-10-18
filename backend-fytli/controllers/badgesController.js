@@ -419,30 +419,63 @@ const badgesController = {
   /**
    * POST /api/badges/user/:userId/weekly-goal
    * Définir un objectif hebdomadaire
-   * Body: { goalType: 'workouts', goalTarget: 3 }
+   * Body: { 
+   *   goal_type: 'workouts', 
+   *   goal_target: 3,
+   *   description: 'Description personnalisée',
+   *   target_programs: [1, 2],
+   *   target_sessions: [5, 6]
+   * }
    */
   async setWeeklyGoal(req, res) {
     try {
       const { userId } = req.params;
-      const { goalType, goalTarget } = req.body;
+      const { 
+        goal_type,
+        goalType, // Support ancien format
+        goal_target, 
+        goalTarget, // Support ancien format
+        description,
+        target_programs,
+        target_sessions
+      } = req.body;
+
+      // Support des deux formats (snake_case et camelCase)
+      const type = goal_type || goalType;
+      const target = goal_target || goalTarget;
 
       // Validation
-      const validGoalTypes = ['workouts', 'duration', 'exercises'];
-      if (!validGoalTypes.includes(goalType)) {
+      const validGoalTypes = ['workouts', 'duration', 'exercises', 'streak', 'programs', 'sessions'];
+      if (!validGoalTypes.includes(type)) {
         return res.status(400).json({
           success: false,
-          message: 'goalType invalide. Types valides: workouts, duration, exercises'
+          message: 'goal_type invalide. Types valides: workouts, duration, exercises, streak, programs, sessions'
         });
       }
 
-      if (!goalTarget || goalTarget < 1) {
+      if (!target || target < 1) {
         return res.status(400).json({
           success: false,
-          message: 'goalTarget doit être un nombre positif'
+          message: 'goal_target doit être un nombre positif'
         });
       }
 
-      await badgesModel.setWeeklyGoal(userId, goalType, goalTarget);
+      // Validation spécifique pour les programmes
+      if (type === 'programs' && (!target_programs || target_programs.length === 0)) {
+        return res.status(400).json({
+          success: false,
+          message: 'target_programs requis pour le type "programs"'
+        });
+      }
+
+      // Créer l'objectif avec tous les champs
+      await badgesModel.setWeeklyGoal(userId, {
+        goal_type: type,
+        goal_target: target,
+        description,
+        target_programs: target_programs ? JSON.stringify(target_programs) : null,
+        target_sessions: target_sessions ? JSON.stringify(target_sessions) : null
+      });
       
       res.json({
         success: true,

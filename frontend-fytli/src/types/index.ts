@@ -187,3 +187,50 @@ export interface UserProgramEnrollment extends Program {
   sessions_completed: number;
   total_sessions: number;
 }
+
+// =====================================================
+// OBJECTIFS HEBDOMADAIRES
+// =====================================================
+
+export type WeeklyGoalType = 
+  | 'workouts'          // Nombre de séances
+  | 'duration'          // Durée totale (minutes)
+  | 'exercises'         // Nombre d'exercices
+  | 'streak'            // Jours consécutifs
+  | 'programs'          // Programmes spécifiques
+  | 'sessions';         // Sessions spécifiques
+
+export interface WeeklyGoal {
+  id: number;
+  user_id: number;
+  week_start_date: string;
+  goal_type: WeeklyGoalType;
+  goal_target: number;
+  goal_current: number;
+  goal_achieved: boolean;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Données supplémentaires selon le type
+  target_programs?: number[];      // IDs des programmes à compléter
+  target_sessions?: number[];      // IDs des sessions à compléter
+  description?: string;            // Description personnalisée
+}
+
+export interface WeeklyGoalProgress {
+  goal: WeeklyGoal;
+  progress_percent: number;
+  remaining: number;
+  days_left: number;
+  is_achievable: boolean;
+  streak_current?: number;
+  streak_required?: number;
+}
+
+export interface CreateWeeklyGoalData {
+  goal_type: WeeklyGoalType;
+  goal_target: number;
+  target_programs?: number[];
+  target_sessions?: number[];
+  description?: string;
+}
