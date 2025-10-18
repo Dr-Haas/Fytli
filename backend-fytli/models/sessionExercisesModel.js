@@ -38,7 +38,7 @@ const findBySessionId = async (sessionId) => {
       se.sets,
       se.reps,
       se.duration_seconds,
-      se.rest_seconds as rest_sec,
+      se.rest_seconds,
       se.notes,
       se.created_at,
       se.updated_at,
@@ -64,31 +64,31 @@ const create = async (data) => {
     order_index, 
     sets, 
     reps, 
-    weight_kg,
-    tempo,
+    duration_seconds,
     rest_time_sec,
-    rest_sec
+    rest_seconds,
+    notes
   } = data;
   
-  // rest_time_sec (frontend) -> rest_sec (DB)
-  const finalRestSec = rest_sec !== undefined ? rest_sec : rest_time_sec;
+  // rest_time_sec (frontend) -> rest_seconds (DB)
+  const finalRestSeconds = rest_seconds !== undefined ? rest_seconds : rest_time_sec;
   
   const [result] = await pool.query(
-    `INSERT INTO session_exercises (session_id, exercise_id, order_index, sets, reps, weight_kg, tempo, rest_sec) 
+    `INSERT INTO session_exercises (session_id, exercise_id, order_index, sets, reps, duration_seconds, rest_seconds, notes) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [session_id, exercise_id, order_index, sets, reps, weight_kg, tempo, finalRestSec]
+    [session_id, exercise_id, order_index, sets, reps, duration_seconds, finalRestSeconds, notes]
   );
   
   return {
     id: result.insertId,
     session_id,
     exercise_id,
-    order_index: order_index,
+    order_index,
     sets,
     reps,
-    weight_kg,
-    tempo,
-    rest_sec: finalRestSec
+    duration_seconds,
+    rest_seconds: finalRestSeconds,
+    notes
   };
 };
 
@@ -122,21 +122,21 @@ const update = async (id, data) => {
     fields.push('reps = ?');
     values.push(data.reps);
   }
-  if (data.weight_kg !== undefined) {
-    fields.push('weight_kg = ?');
-    values.push(data.weight_kg);
-  }
-  if (data.tempo !== undefined) {
-    fields.push('tempo = ?');
-    values.push(data.tempo);
+  if (data.duration_seconds !== undefined) {
+    fields.push('duration_seconds = ?');
+    values.push(data.duration_seconds);
   }
   if (data.rest_time_sec !== undefined) {
-    fields.push('rest_sec = ?');
+    fields.push('rest_seconds = ?');
     values.push(data.rest_time_sec);
   }
-  if (data.rest_sec !== undefined) {
-    fields.push('rest_sec = ?');
-    values.push(data.rest_sec);
+  if (data.rest_seconds !== undefined) {
+    fields.push('rest_seconds = ?');
+    values.push(data.rest_seconds);
+  }
+  if (data.notes !== undefined) {
+    fields.push('notes = ?');
+    values.push(data.notes);
   }
   
   if (fields.length === 0) {
