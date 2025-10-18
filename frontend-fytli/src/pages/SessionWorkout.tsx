@@ -44,13 +44,14 @@ export const SessionWorkout = () => {
             id: item.id,
             session_id: item.session_id,
             exercise_id: item.exercise_id,
-            sets: item.sets,
-            reps: item.reps,
-            rest_time_sec: item.rest_sec, // Transformation rest_sec -> rest_time_sec
-            order_index: item.order_index || item.order, // Support order_index et order pour compatibilité
+            sets: item.sets || 3,
+            reps: item.reps || 0,
+            duration_seconds: item.duration_seconds || 0,
+            rest_time_sec: item.rest_sec || item.rest_seconds || 60,
+            order_index: item.order_index || item.order || 0,
             exercise: {
               id: item.exercise_id,
-              name: item.exercise_name,
+              name: item.exercise_name || 'Exercice',
               type: 'strength',
             },
           }));

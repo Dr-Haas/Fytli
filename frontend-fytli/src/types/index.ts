@@ -73,7 +73,8 @@ export interface SessionExercise {
   exercise_id: number;
   sets: number;
   reps: number;
-  rest_time_sec: number;
+  duration_seconds?: number;      // ⚠️ Durée de l'exercice en secondes (pour cardio)
+  rest_time_sec: number;          // ⚠️ Temps de repos en secondes
   order_index: number;
 }
 

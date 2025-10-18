@@ -30,7 +30,19 @@ const findById = async (id) => {
  */
 const findBySessionId = async (sessionId) => {
   const [rows] = await pool.query(
-    `SELECT se.*, e.name as exercise_name
+    `SELECT 
+      se.id,
+      se.session_id,
+      se.exercise_id,
+      se.order_index,
+      se.sets,
+      se.reps,
+      se.duration_seconds,
+      se.rest_seconds as rest_sec,
+      se.notes,
+      se.created_at,
+      se.updated_at,
+      e.name as exercise_name
      FROM session_exercises se
      LEFT JOIN exercises e ON se.exercise_id = e.id
      WHERE se.session_id = ?
