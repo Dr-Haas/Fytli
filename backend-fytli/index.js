@@ -39,6 +39,7 @@ const corsOptions = {
       // Développement local (tous les ports possibles)
       'http://localhost:5173',           // Frontend local
       'http://localhost:5174',           // Admin local
+      'http://localhost:5175',           // Admin local (port alternatif)
       'http://localhost:5183',           // Frontend local (alternatif)
       'http://localhost:5184',           // Admin local (alternatif)
       'http://localhost:3000',           // Alternative locale
