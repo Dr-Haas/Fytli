@@ -1,0 +1,21 @@
+# Documentation
+*.md
+docs/
+
+# Development files
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
