@@ -29,12 +29,12 @@ const findById = async (id) => {
  * @returns {Promise<Object>} Programme créé avec son ID
  */
 const create = async (data) => {
-  const { title, description, level, duration_weeks, goal } = data;
+  const { title, description, level, duration_weeks, sessions_per_week, category_id, is_public } = data;
   
   const [result] = await pool.query(
-    `INSERT INTO programs (title, description, level, duration_weeks, goal) 
-     VALUES (?, ?, ?, ?, ?)`,
-    [title, description, level, duration_weeks, goal]
+    `INSERT INTO programs (title, description, level, duration_weeks, sessions_per_week, category_id, is_public) 
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [title, description, level, duration_weeks, sessions_per_week, category_id, is_public]
   );
   
   return {
@@ -69,9 +69,17 @@ const update = async (id, data) => {
     fields.push('duration_weeks = ?');
     values.push(data.duration_weeks);
   }
-  if (data.goal !== undefined) {
-    fields.push('goal = ?');
-    values.push(data.goal);
+  if (data.sessions_per_week !== undefined) {
+    fields.push('sessions_per_week = ?');
+    values.push(data.sessions_per_week);
+  }
+  if (data.category_id !== undefined) {
+    fields.push('category_id = ?');
+    values.push(data.category_id);
+  }
+  if (data.is_public !== undefined) {
+    fields.push('is_public = ?');
+    values.push(data.is_public ? 1 : 0);
   }
   
   if (fields.length === 0) {

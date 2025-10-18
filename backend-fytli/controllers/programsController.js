@@ -62,32 +62,49 @@ const getById = async (req, res) => {
  */
 const create = async (req, res) => {
   try {
-    // Transformation: name (frontend) -> title (database)
-    const { name, description, difficulty_level, duration_weeks, goal } = req.body;
+    const { title, description, difficulty_level, duration_weeks } = req.body;
     
     // Validation des champs obligatoires
-    if (!name) {
+    if (!title) {
       return res.status(400).json({
         success: false,
-        message: 'Le champ name est obligatoire'
+        message: 'Le champ title est obligatoire'
       });
     }
     
-    // Validation du niveau de difficulté (si fourni)
-    if (difficulty_level && !['beginner', 'intermediate', 'advanced'].includes(difficulty_level)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Le difficulty_level doit être: beginner, intermediate ou advanced'
-      });
+    // Mapping des niveaux de difficulté français -> anglais
+    const levelMapping = {
+      'débutant': 'beginner',
+      'intermédiaire': 'intermediate',
+      'avancé': 'advanced',
+      'beginner': 'beginner',
+      'intermediate': 'intermediate',
+      'advanced': 'advanced'
+    };
+    
+    // Validation et transformation du niveau de difficulté
+    let level = difficulty_level;
+    if (difficulty_level) {
+      level = levelMapping[difficulty_level.toLowerCase()];
+      if (!level) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le difficulty_level doit être: débutant, intermédiaire, avancé (ou beginner, intermediate, advanced)'
+        });
+      }
     }
     
-    // Transformation pour la base de données
+    // Transformation pour la base de données - extraire les champs du body
+    const { sessions_per_week, category_id, is_public } = req.body;
+    
     const dbData = {
-      title: name,  // name -> title
+      title,
       description,
-      level: difficulty_level,  // difficulty_level -> level
+      level,
       duration_weeks,
-      goal
+      sessions_per_week,
+      category_id,
+      is_public
     };
     
     const newProgram = await programsModel.create(dbData);
@@ -124,22 +141,33 @@ const update = async (req, res) => {
       });
     }
     
-    // Validation du niveau de difficulté (si fourni)
-    if (req.body.difficulty_level && !['beginner', 'intermediate', 'advanced'].includes(req.body.difficulty_level)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Le difficulty_level doit être: beginner, intermediate ou advanced'
-      });
+    // Mapping des niveaux de difficulté français -> anglais
+    const levelMapping = {
+      'débutant': 'beginner',
+      'intermédiaire': 'intermediate',
+      'avancé': 'advanced',
+      'beginner': 'beginner',
+      'intermediate': 'intermediate',
+      'advanced': 'advanced'
+    };
+    
+    // Validation et transformation du niveau de difficulté (si fourni)
+    if (req.body.difficulty_level) {
+      const level = levelMapping[req.body.difficulty_level.toLowerCase()];
+      if (!level) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le difficulty_level doit être: débutant, intermédiaire, avancé (ou beginner, intermediate, advanced)'
+        });
+      }
     }
     
-    // Transformation: name (frontend) -> title (database), difficulty_level -> level
+    // Transformation pour la base de données
     const dbData = { ...req.body };
-    if (dbData.name !== undefined) {
-      dbData.title = dbData.name;
-      delete dbData.name;
-    }
+    
+    // Transformer difficulty_level en level avec mapping français -> anglais
     if (dbData.difficulty_level !== undefined) {
-      dbData.level = dbData.difficulty_level;
+      dbData.level = levelMapping[dbData.difficulty_level.toLowerCase()];
       delete dbData.difficulty_level;
     }
     
