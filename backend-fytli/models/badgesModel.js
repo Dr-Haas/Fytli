@@ -19,13 +19,10 @@ const badgesModel = {
         id as badge_id,
         name,
         description,
-        icon,
-        COALESCE(color, '') as color,
-        COALESCE(gradient, '') as gradient,
+        COALESCE(icon, '🏆') as icon,
         COALESCE(criteria, '') as requirement,
         COALESCE(category, 'achievement') as category,
-        COALESCE(points, 10) as points,
-        FALSE as is_secret
+        COALESCE(points, 10) as points
       FROM badges
       ORDER BY 
         FIELD(category, 'routine', 'performance', 'health', 'achievement'),
@@ -43,13 +40,10 @@ const badgesModel = {
         id as badge_id,
         name,
         description,
-        icon,
-        COALESCE(color, '') as color,
-        COALESCE(gradient, '') as gradient,
+        COALESCE(icon, '🏆') as icon,
         COALESCE(criteria, '') as requirement,
         COALESCE(category, 'achievement') as category,
-        COALESCE(points, 10) as points,
-        FALSE as is_secret
+        COALESCE(points, 10) as points
       FROM badges
       WHERE id = ?`,
       [badgeId]
@@ -66,13 +60,10 @@ const badgesModel = {
         id as badge_id,
         name,
         description,
-        icon,
-        COALESCE(color, '') as color,
-        COALESCE(gradient, '') as gradient,
+        COALESCE(icon, '🏆') as icon,
         COALESCE(criteria, '') as requirement,
         category,
-        COALESCE(points, 10) as points,
-        FALSE as is_secret
+        COALESCE(points, 10) as points
       FROM badges
       WHERE category = ?
       ORDER BY points ASC`,
@@ -95,13 +86,10 @@ const badgesModel = {
         b.id as badge_id,
         b.name,
         b.description,
-        b.icon,
-        COALESCE(b.color, '') as color,
-        COALESCE(b.gradient, '') as gradient,
+        COALESCE(b.icon, '🏆') as icon,
         COALESCE(b.category, 'achievement') as category,
         COALESCE(b.criteria, '') as requirement,
         COALESCE(b.points, 10) as points,
-        FALSE as is_secret,
         CASE 
           WHEN ub.id IS NOT NULL THEN TRUE 
           ELSE FALSE 
@@ -127,13 +115,10 @@ const badgesModel = {
         b.id as badge_id,
         b.name,
         b.description,
-        b.icon,
-        COALESCE(b.color, '') as color,
-        COALESCE(b.gradient, '') as gradient,
+        COALESCE(b.icon, '🏆') as icon,
         COALESCE(b.category, 'achievement') as category,
         COALESCE(b.points, 10) as points,
-        ub.earned_at,
-        100 as progress
+        ub.earned_at
       FROM user_badges ub
       INNER JOIN badges b ON ub.badge_id = b.id
       WHERE ub.user_id = ?

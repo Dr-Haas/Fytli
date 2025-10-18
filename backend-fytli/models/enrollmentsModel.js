@@ -87,7 +87,6 @@ const getProgramsByUser = async (userId) => {
       p.title as program_title,
       p.description as program_description,
       p.level as program_level,
-      p.goal as program_goal,
       p.duration_weeks as program_duration_weeks,
       COUNT(DISTINCT sc.id) as sessions_completed,
       COUNT(DISTINCT s.id) as total_sessions
@@ -96,7 +95,8 @@ const getProgramsByUser = async (userId) => {
     LEFT JOIN sessions s ON s.program_id = p.id
     LEFT JOIN session_completions sc ON sc.user_id = pe.user_id AND sc.program_id = pe.program_id
     WHERE pe.user_id = ?
-    GROUP BY pe.id, p.id
+    GROUP BY pe.id, pe.user_id, pe.program_id, pe.status, pe.started_at, pe.completed_at, 
+             p.id, p.title, p.description, p.level, p.duration_weeks
     ORDER BY pe.started_at DESC`,
     [userId]
   );
