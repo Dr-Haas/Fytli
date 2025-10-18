@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { programsService } from '@/services/programs';
 import { Program } from '@/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card';
+import { Card, CardContent } from '@/components/Card';
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/components/Table';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import Modal from '@/components/Modal';
-import { Trash2, Eye, Plus, Search } from 'lucide-react';
+import { Trash2, Search } from 'lucide-react';
 import { formatDateShort } from '@/utils/format';
 import toast from 'react-hot-toast';
 

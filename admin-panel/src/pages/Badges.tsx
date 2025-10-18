@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { badgesService } from '@/services/badges';
 import { Badge as BadgeType, UserBadge } from '@/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card';
+import { Card, CardContent } from '@/components/Card';
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/components/Table';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Badge from '@/components/Badge';

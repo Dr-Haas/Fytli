@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { adminService } from '@/services/admin';
 import { User } from '@/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card';
+import { Card, CardContent } from '@/components/Card';
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/components/Table';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import Select from '@/components/Select';
 import Modal from '@/components/Modal';
-import { Trash2, Edit2, UserCog, Search } from 'lucide-react';
+import { Trash2, UserCog, Search } from 'lucide-react';
 import { formatDateShort } from '@/utils/format';
 import toast from 'react-hot-toast';
 

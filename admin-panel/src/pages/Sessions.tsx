@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { sessionsService } from '@/services/sessions';
 import { SessionCompletion } from '@/types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card';
+import { Card, CardContent } from '@/components/Card';
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/components/Table';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
