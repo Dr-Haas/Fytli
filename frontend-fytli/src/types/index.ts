@@ -176,6 +176,9 @@ export interface ProgramStats {
 
 export interface UserProgramEnrollment extends Program {
   enrollment_id: number;
+  program_id: number;  // ⚠️ ID du programme (pour navigation)
+  program_title?: string;  // ⚠️ Titre du programme
+  program_level?: string;  // ⚠️ Niveau du programme
   enrolled_at: string;
   status: 'active' | 'paused' | 'completed' | 'abandoned';
   sessions_completed: number;

@@ -16,6 +16,7 @@ interface CreateSessionData {
   program_id: number;
   title: string;
   order?: number;
+  order_index?: number;
   day_number?: number;
   notes?: string;
 }
