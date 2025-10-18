@@ -16,19 +16,19 @@ const badgesModel = {
   async getAllBadges() {
     const [rows] = await pool.query(
       `SELECT 
-        badge_id,
+        id as badge_id,
         name,
         description,
         icon,
-        color,
-        gradient,
-        requirement,
-        category,
-        points,
-        is_secret
+        COALESCE(color, '') as color,
+        COALESCE(gradient, '') as gradient,
+        COALESCE(criteria, '') as requirement,
+        COALESCE(category, 'achievement') as category,
+        COALESCE(points, 10) as points,
+        FALSE as is_secret
       FROM badges
       ORDER BY 
-        FIELD(category, 'routine', 'performance', 'sante', 'accomplissement'),
+        FIELD(category, 'routine', 'performance', 'health', 'achievement'),
         points ASC`
     );
     return rows;
@@ -40,18 +40,18 @@ const badgesModel = {
   async getBadgeById(badgeId) {
     const [rows] = await pool.query(
       `SELECT 
-        badge_id,
+        id as badge_id,
         name,
         description,
         icon,
-        color,
-        gradient,
-        requirement,
-        category,
-        points,
-        is_secret
+        COALESCE(color, '') as color,
+        COALESCE(gradient, '') as gradient,
+        COALESCE(criteria, '') as requirement,
+        COALESCE(category, 'achievement') as category,
+        COALESCE(points, 10) as points,
+        FALSE as is_secret
       FROM badges
-      WHERE badge_id = ?`,
+      WHERE id = ?`,
       [badgeId]
     );
     return rows[0];
@@ -63,16 +63,16 @@ const badgesModel = {
   async getBadgesByCategory(category) {
     const [rows] = await pool.query(
       `SELECT 
-        badge_id,
+        id as badge_id,
         name,
         description,
         icon,
-        color,
-        gradient,
-        requirement,
+        COALESCE(color, '') as color,
+        COALESCE(gradient, '') as gradient,
+        COALESCE(criteria, '') as requirement,
         category,
-        points,
-        is_secret
+        COALESCE(points, 10) as points,
+        FALSE as is_secret
       FROM badges
       WHERE category = ?
       ORDER BY points ASC`,
@@ -92,29 +92,28 @@ const badgesModel = {
   async getUserBadgesWithProgress(userId) {
     const [rows] = await pool.query(
       `SELECT 
-        COALESCE(b.badge_id, b.id) as badge_id,
+        b.id as badge_id,
         b.name,
         b.description,
         b.icon,
-        b.color,
+        COALESCE(b.color, '') as color,
         COALESCE(b.gradient, '') as gradient,
-        COALESCE(b.category, 'accomplissement') as category,
-        COALESCE(b.requirement, '') as requirement,
+        COALESCE(b.category, 'achievement') as category,
+        COALESCE(b.criteria, '') as requirement,
         COALESCE(b.points, 10) as points,
-        COALESCE(b.is_secret, FALSE) as is_secret,
+        FALSE as is_secret,
         CASE 
           WHEN ub.id IS NOT NULL THEN TRUE 
           ELSE FALSE 
         END as earned,
         ub.earned_at,
-        COALESCE(bp.progress_percent, 0) as progress_percent
+        0 as progress_percent
       FROM badges b
       LEFT JOIN user_badges ub ON b.id = ub.badge_id AND ub.user_id = ?
-      LEFT JOIN badge_progress bp ON b.id = bp.badge_id AND bp.user_id = ?
       ORDER BY 
-        COALESCE(b.category, 'accomplissement'),
+        COALESCE(b.category, 'achievement'),
         COALESCE(b.points, 10) ASC`,
-      [userId, userId]
+      [userId]
     );
     return rows;
   },
@@ -125,16 +124,16 @@ const badgesModel = {
   async getUserEarnedBadges(userId) {
     const [rows] = await pool.query(
       `SELECT 
-        COALESCE(b.badge_id, b.id) as badge_id,
+        b.id as badge_id,
         b.name,
         b.description,
         b.icon,
-        b.color,
+        COALESCE(b.color, '') as color,
         COALESCE(b.gradient, '') as gradient,
-        COALESCE(b.category, 'accomplissement') as category,
+        COALESCE(b.category, 'achievement') as category,
         COALESCE(b.points, 10) as points,
         ub.earned_at,
-        COALESCE(ub.progress, 100) as progress
+        100 as progress
       FROM user_badges ub
       INNER JOIN badges b ON ub.badge_id = b.id
       WHERE ub.user_id = ?
