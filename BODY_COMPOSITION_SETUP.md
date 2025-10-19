@@ -214,8 +214,14 @@ La page **`Profile.tsx`** a été mise à jour avec un système d'onglets :
 ### 1. Exécuter la migration SQL
 
 ```bash
-mysql -u votre_user -p votre_database < MIGRATION_BODY_COMPOSITION.sql
+# Production OVH
+mysql -u votre_user -p lyfti < MIGRATION_BODY_COMPOSITION.sql
+
+# Local
+mysql -u root -p lyfti < MIGRATION_BODY_COMPOSITION.sql
 ```
+
+**⚠️ IMPORTANT : La base de données s'appelle `lyfti` et non `followSport_app` !**
 
 Ou via votre interface MySQL préférée (phpMyAdmin, MySQL Workbench, etc.)
 

@@ -11,7 +11,11 @@ Cette version a été créée spécifiquement pour fonctionner sur votre héberg
 ### Exécuter la migration
 
 ```bash
-mysql -u ton_user -p ta_database < MIGRATION_BODY_COMPOSITION_NO_FUNCTION.sql
+# Production OVH
+mysql -u ton_user -p lyfti < MIGRATION_BODY_COMPOSITION_NO_FUNCTION.sql
+
+# Local
+mysql -u root -p lyfti < MIGRATION_BODY_COMPOSITION_NO_FUNCTION.sql
 ```
 
 Ou via phpMyAdmin :
