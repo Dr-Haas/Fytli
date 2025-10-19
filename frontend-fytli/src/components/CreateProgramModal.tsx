@@ -1,6 +1,6 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, Plus, Trash2, ArrowUp, ArrowDown, Search } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Label } from './ui/Label';
@@ -50,6 +50,7 @@ export const CreateProgramModal = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [exerciseSearchQuery, setExerciseSearchQuery] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -131,6 +132,19 @@ export const CreateProgramModal = ({
       exercises: newExercises,
     });
   };
+
+  // Filtrer les exercices selon la recherche
+  const filteredExercises = useMemo(() => {
+    if (!exerciseSearchQuery.trim()) {
+      return availableExercises;
+    }
+    
+    const query = exerciseSearchQuery.toLowerCase();
+    return availableExercises.filter(exercise => 
+      exercise.name.toLowerCase().includes(query) ||
+      exercise.type?.toLowerCase().includes(query)
+    );
+  }, [availableExercises, exerciseSearchQuery]);
 
   const moveExerciseDown = (index: number) => {
     if (index === formData.exercises.length - 1) return; // Déjà en bas
@@ -256,22 +270,70 @@ export const CreateProgramModal = ({
               <h3 className="text-lg font-semibold">Exercices ({formData.exercises.length})</h3>
               
               {/* Liste des exercices disponibles */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label>Ajouter un exercice</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border rounded-lg">
-                  {availableExercises.map((exercise) => (
+                
+                {/* Barre de recherche */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un exercice..."
+                    value={exerciseSearchQuery}
+                    onChange={(e) => setExerciseSearchQuery(e.target.value)}
+                    className="pl-10"
+                    disabled={isLoading}
+                  />
+                  {exerciseSearchQuery && (
                     <button
-                      key={exercise.id}
                       type="button"
-                      onClick={() => addExercise(exercise)}
-                      disabled={isLoading}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors text-left"
+                      onClick={() => setExerciseSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
-                      <span className="text-sm font-medium">{exercise.name}</span>
-                      <Plus className="h-4 w-4 text-fytli-red" />
+                      <X className="h-4 w-4" />
                     </button>
-                  ))}
+                  )}
                 </div>
+
+                {/* Liste d'exercices filtrés */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border rounded-lg">
+                  {filteredExercises.length > 0 ? (
+                    filteredExercises.map((exercise) => (
+                      <button
+                        key={exercise.id}
+                        type="button"
+                        onClick={() => addExercise(exercise)}
+                        disabled={isLoading}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors text-left"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium block truncate">{exercise.name}</span>
+                          {exercise.type && (
+                            <span className="text-xs text-muted-foreground">{exercise.type}</span>
+                          )}
+                        </div>
+                        <Plus className="h-4 w-4 text-fytli-red flex-shrink-0 ml-2" />
+                      </button>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-8 text-muted-foreground text-sm">
+                      {exerciseSearchQuery ? (
+                        <>
+                          <Search className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                          <p>Aucun exercice trouvé pour "{exerciseSearchQuery}"</p>
+                        </>
+                      ) : (
+                        <p>Aucun exercice disponible</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Info */}
+                {exerciseSearchQuery && filteredExercises.length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {filteredExercises.length} exercice{filteredExercises.length > 1 ? 's' : ''} trouvé{filteredExercises.length > 1 ? 's' : ''}
+                  </p>
+                )}
               </div>
 
               {/* Exercices sélectionnés */}

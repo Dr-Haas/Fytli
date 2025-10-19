@@ -12,7 +12,7 @@ import { Label } from './ui/Label';
 import { Spinner } from './ui/Spinner';
 import bodyCompositionService, { BodyGoal, GoalProgress } from '../services/bodyComposition';
 import { showToast } from '../utils/toast';
-import { Target, Plus, CheckCircle, X, Calendar, TrendingDown } from 'lucide-react';
+import { Target, Plus, CheckCircle, X, Calendar } from 'lucide-react';
 
 export const BodyGoalManager = () => {
   const [loading, setLoading] = useState(true);

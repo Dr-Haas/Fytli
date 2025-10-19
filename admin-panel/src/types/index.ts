@@ -28,6 +28,9 @@ export interface Program {
   category_name?: string;
   enrollment_count?: number;
   session_count?: number;
+  time_slot_start?: string;
+  time_slot_end?: string;
+  is_time_specific?: boolean;
 }
 
 export interface Session {

@@ -102,6 +102,9 @@ export default function Programs() {
       category_id: undefined,
       is_public: true,
       image_url: '',
+      time_slot_start: '',
+      time_slot_end: '',
+      is_time_specific: false,
     });
     setShowEditModal(true);
   };
@@ -117,6 +120,9 @@ export default function Programs() {
       category_id: program.category_id,
       is_public: program.is_public,
       image_url: program.image_url || '',
+      time_slot_start: program.time_slot_start || '',
+      time_slot_end: program.time_slot_end || '',
+      is_time_specific: program.is_time_specific || false,
     });
     setShowEditModal(true);
   };
@@ -378,6 +384,53 @@ export default function Programs() {
               onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
               placeholder="https://..."
             />
+
+            {/* Section Créneaux Horaires */}
+            <div className="border-t pt-4 space-y-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_time_specific"
+                  checked={formData.is_time_specific || false}
+                  onChange={(e) => setFormData({ ...formData, is_time_specific: e.target.checked })}
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <label htmlFor="is_time_specific" className="text-sm font-medium text-gray-700">
+                  Créneau horaire spécifique (ex: WakeUp 7h-9h30)
+                </label>
+              </div>
+
+              {formData.is_time_specific && (
+                <div className="grid grid-cols-2 gap-4 pl-6">
+                  <Input
+                    label="Heure de début *"
+                    type="time"
+                    value={formData.time_slot_start || ''}
+                    onChange={(e) => setFormData({ ...formData, time_slot_start: e.target.value })}
+                    required={formData.is_time_specific}
+                  />
+
+                  <Input
+                    label="Heure de fin *"
+                    type="time"
+                    value={formData.time_slot_end || ''}
+                    onChange={(e) => setFormData({ ...formData, time_slot_end: e.target.value })}
+                    required={formData.is_time_specific}
+                  />
+                </div>
+              )}
+
+              {formData.is_time_specific && formData.time_slot_start && formData.time_slot_end && (
+                <div className="pl-6 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                  <p className="font-medium mb-1">Aperçu:</p>
+                  <p>
+                    Les utilisateurs recevront des rappels pour faire ce programme entre{' '}
+                    <span className="font-semibold">{formData.time_slot_start}</span> et{' '}
+                    <span className="font-semibold">{formData.time_slot_end}</span>
+                  </p>
+                </div>
+              )}
+            </div>
 
             <div className="flex items-center gap-2">
               <input

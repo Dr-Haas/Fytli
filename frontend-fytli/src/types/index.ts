@@ -45,6 +45,9 @@ export interface Program {
   is_public?: boolean;        // ⚠️ programme visible publiquement
   image_url?: string;
   goal?: string;              // ⚠️ objectif du programme
+  time_slot_start?: string;   // ⚠️ heure de début (format HH:MM:SS)
+  time_slot_end?: string;     // ⚠️ heure de fin (format HH:MM:SS)
+  is_time_specific?: boolean; // ⚠️ si le programme a un créneau horaire fixe
   created_at?: string;
   updated_at?: string;
 }

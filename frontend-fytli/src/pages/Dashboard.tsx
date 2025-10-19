@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import enrollmentsService from '../services/enrollments';
 import completionsService from '../services/completions';
 import { badgesService } from '../services/badges';
+import { DailySchedule } from '../components/DailySchedule';
 import { 
   Dumbbell, 
   Trophy, 
@@ -373,6 +374,9 @@ export const Dashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Agenda du jour */}
+                <DailySchedule />
 
                 {/* Active Programs */}
                 <Card className="card-fytli">

@@ -13,6 +13,7 @@ import { sessionsService } from '../services/sessions';
 import { Program, Exercise } from '../types';
 import { Search, Loader2, Plus } from 'lucide-react';
 import { showToast, getErrorMessage } from '../utils/toast';
+import { ProgramSchedule } from '../components/ProgramSchedule';
 
 export const Programs = () => {
   const navigate = useNavigate();
@@ -141,6 +142,9 @@ export const Programs = () => {
                   className="pl-10 w-full"
                 />
               </div>
+
+              {/* Agenda hebdomadaire */}
+              <ProgramSchedule />
 
               {/* Programs Grid */}
               {loading ? (

@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Spinner } from './ui/Spinner';
 import bodyCompositionService, { BodyStats, TrendData } from '../services/bodyComposition';
 import { 

@@ -14,7 +14,7 @@ import { BodyGoalManager } from '../components/BodyGoalManager';
 import { useAuth } from '../hooks/useAuth';
 import { badgesService } from '../services/badges';
 import enrollmentsService from '../services/enrollments';
-import { Calendar, Shield, Edit2, Save, X, Trophy, Dumbbell, Scale, Target, BarChart3, Award } from 'lucide-react';
+import { Calendar, Shield, Edit2, Save, X, Trophy, Dumbbell, Scale, Award } from 'lucide-react';
 import { showToast, getErrorMessage } from '../utils/toast';
 import api from '../services/api';
 
