@@ -27,7 +27,7 @@ const bodyCompositionModel = {
       arms_cm = null,
       thighs_cm = null,
       notes = null,
-      measurement_date = new Date()
+      measurement_date = null // Laisse MySQL utiliser CURRENT_TIMESTAMP par défaut
     } = data;
 
     const [result] = await pool.query(
