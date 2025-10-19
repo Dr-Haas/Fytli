@@ -7,10 +7,14 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Label } from '../components/ui/Label';
 import { BadgeCard } from '../components/BadgeCard';
+import { BodyMeasurementForm } from '../components/BodyMeasurementForm';
+import { BodyCompositionStats } from '../components/BodyCompositionStats';
+import { BodyCompositionBadges } from '../components/BodyCompositionBadges';
+import { BodyGoalManager } from '../components/BodyGoalManager';
 import { useAuth } from '../hooks/useAuth';
 import { badgesService } from '../services/badges';
 import enrollmentsService from '../services/enrollments';
-import { Calendar, Shield, Edit2, Save, X, Trophy, Dumbbell } from 'lucide-react';
+import { Calendar, Shield, Edit2, Save, X, Trophy, Dumbbell, Scale, Target, BarChart3, Award } from 'lucide-react';
 import { showToast, getErrorMessage } from '../utils/toast';
 import api from '../services/api';
 
@@ -46,6 +50,8 @@ export const Profile = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'body-composition' | 'badges'>('overview');
+  const [showBodyMeasurementForm, setShowBodyMeasurementForm] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -300,113 +306,238 @@ export const Profile = () => {
               </Card>
             </div>
 
-            {/* Programs Section */}
-            {programs.length > 0 && (
-              <Card className="card-fytli">
-                <CardHeader className="p-4 lg:p-6">
-                  <CardTitle className="text-lg lg:text-xl">Mes Programmes</CardTitle>
-                  <CardDescription className="text-sm">Programmes auxquels vous êtes inscrit</CardDescription>
-                </CardHeader>
-                <CardContent className="p-4 lg:p-6">
-                  <div className="space-y-3 lg:space-y-4">
-                    {programs.map((program) => (
-                      <div
-                        key={program.id}
-                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 lg:p-4 rounded-lg border bg-card hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-base lg:text-lg">{program.program_title}</h3>
-                          <div className="flex items-center gap-3 lg:gap-4 mt-1 lg:mt-2 text-xs lg:text-sm text-muted-foreground">
-                            <span className="capitalize">{program.program_level}</span>
-                            <span>•</span>
-                            <span>
-                              {program.sessions_completed} / {program.total_sessions} séances
-                            </span>
+            {/* Tabs Navigation */}
+            <div className="flex gap-2 border-b border-border overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                  activeTab === 'overview'
+                    ? 'text-fytli-orange border-b-2 border-fytli-orange'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Trophy className="h-4 w-4 inline mr-2" />
+                Vue d'ensemble
+              </button>
+              <button
+                onClick={() => setActiveTab('body-composition')}
+                className={`px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                  activeTab === 'body-composition'
+                    ? 'text-fytli-orange border-b-2 border-fytli-orange'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Scale className="h-4 w-4 inline mr-2" />
+                Composition Corporelle
+              </button>
+              <button
+                onClick={() => setActiveTab('badges')}
+                className={`px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                  activeTab === 'badges'
+                    ? 'text-fytli-orange border-b-2 border-fytli-orange'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Award className="h-4 w-4 inline mr-2" />
+                Tous les Badges
+              </button>
+            </div>
+
+            {/* Tab Content: Overview */}
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Programs Section */}
+                {programs.length > 0 && (
+                  <Card className="card-fytli">
+                    <CardHeader className="p-4 lg:p-6">
+                      <CardTitle className="text-lg lg:text-xl">Mes Programmes</CardTitle>
+                      <CardDescription className="text-sm">Programmes auxquels vous êtes inscrit</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-4 lg:p-6">
+                      <div className="space-y-3 lg:space-y-4">
+                        {programs.map((program) => (
+                          <div
+                            key={program.id}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 lg:p-4 rounded-lg border bg-card hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-base lg:text-lg">{program.program_title}</h3>
+                              <div className="flex items-center gap-3 lg:gap-4 mt-1 lg:mt-2 text-xs lg:text-sm text-muted-foreground">
+                                <span className="capitalize">{program.program_level}</span>
+                                <span>•</span>
+                                <span>
+                                  {program.sessions_completed} / {program.total_sessions} séances
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-left sm:text-right">
+                              <div className="text-xl lg:text-2xl font-bold text-fytli-red">
+                                {program.total_sessions > 0 
+                                  ? Math.round((program.sessions_completed / program.total_sessions) * 100)
+                                  : 0}%
+                              </div>
+                              <div className="text-xs text-muted-foreground">Progression</div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="text-left sm:text-right">
-                          <div className="text-xl lg:text-2xl font-bold text-fytli-red">
-                            {program.total_sessions > 0 
-                              ? Math.round((program.sessions_completed / program.total_sessions) * 100)
-                              : 0}%
-                          </div>
-                          <div className="text-xs text-muted-foreground">Progression</div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Recent Badges Preview */}
+                {earnedBadges.length > 0 && (
+                  <Card className="card-fytli">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2">
+                          <Trophy className="h-5 w-5 text-fytli-red" />
+                          Derniers Badges Débloqués
+                        </CardTitle>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setActiveTab('badges')}
+                        >
+                          Voir tout
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {earnedBadges.slice(0, 4).map((badge) => (
+                          <BadgeCard
+                            key={badge.badge_id}
+                            badge={{
+                              id: badge.badge_id,
+                              name: badge.name,
+                              description: badge.description,
+                              icon: badge.icon,
+                              color: badge.color,
+                              gradient: badge.gradient,
+                              category: badge.category,
+                              requirement: badge.requirement,
+                            } as any}
+                            earned={true}
+                            progress={badge.progress_percent || 0}
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
             )}
 
-            {/* Badges Section */}
-            <div className="space-y-6">
-              {/* Earned Badges */}
-              {earnedBadges.length > 0 && (
-                <Card className="card-fytli">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-fytli-red" />
-                      Badges Débloqués ({earnedBadges.length})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {earnedBadges.map((badge) => (
-                        <BadgeCard
-                          key={badge.badge_id}
-                          badge={{
-                            id: badge.badge_id,
-                            name: badge.name,
-                            description: badge.description,
-                            icon: badge.icon,
-                            color: badge.color,
-                            gradient: badge.gradient,
-                            category: badge.category,
-                            requirement: badge.requirement,
-                          } as any}
-                          earned={true}
-                          progress={badge.progress_percent || 0}
-                        />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+            {/* Tab Content: Body Composition */}
+            {activeTab === 'body-composition' && (
+              <div className="space-y-6">
+                {/* Quick Action Button */}
+                {!showBodyMeasurementForm && (
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => setShowBodyMeasurementForm(true)}
+                      className="bg-gradient-to-r from-fytli-red to-fytli-orange"
+                    >
+                      <Scale className="h-4 w-4 mr-2" />
+                      Nouvelle Mesure
+                    </Button>
+                  </div>
+                )}
 
-              {/* Unearned Badges */}
-              {unearnedBadges.length > 0 && (
-                <Card className="card-fytli">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-muted-foreground">
-                      <Trophy className="h-5 w-5" />
-                      Badges à Débloquer ({unearnedBadges.length})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {unearnedBadges.map((badge) => (
-                        <BadgeCard
-                          key={badge.badge_id}
-                          badge={{
-                            id: badge.badge_id,
-                            name: badge.name,
-                            description: badge.description,
-                            icon: badge.icon,
-                            color: badge.color,
-                            gradient: badge.gradient,
-                            category: badge.category,
-                            requirement: badge.requirement,
-                          } as any}
-                          earned={false}
-                          progress={badge.progress_percent || 0}
-                        />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                {/* Body Measurement Form */}
+                {showBodyMeasurementForm && (
+                  <BodyMeasurementForm
+                    onSuccess={() => {
+                      setShowBodyMeasurementForm(false);
+                      // Trigger refresh of stats
+                      window.location.reload();
+                    }}
+                    onCancel={() => setShowBodyMeasurementForm(false)}
+                  />
+                )}
+
+                {/* Goal Manager */}
+                <BodyGoalManager />
+
+                {/* Statistics */}
+                <BodyCompositionStats />
+
+                {/* Body Composition Badges */}
+                <BodyCompositionBadges />
+              </div>
+            )}
+
+            {/* Tab Content: All Badges */}
+            {activeTab === 'badges' && (
+              <div className="space-y-6">
+                {/* Earned Badges */}
+                {earnedBadges.length > 0 && (
+                  <Card className="card-fytli">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Trophy className="h-5 w-5 text-fytli-red" />
+                        Badges Débloqués ({earnedBadges.length})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {earnedBadges.map((badge) => (
+                          <BadgeCard
+                            key={badge.badge_id}
+                            badge={{
+                              id: badge.badge_id,
+                              name: badge.name,
+                              description: badge.description,
+                              icon: badge.icon,
+                              color: badge.color,
+                              gradient: badge.gradient,
+                              category: badge.category,
+                              requirement: badge.requirement,
+                            } as any}
+                            earned={true}
+                            progress={badge.progress_percent || 0}
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Unearned Badges */}
+                {unearnedBadges.length > 0 && (
+                  <Card className="card-fytli">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-muted-foreground">
+                        <Trophy className="h-5 w-5" />
+                        Badges à Débloquer ({unearnedBadges.length})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {unearnedBadges.map((badge) => (
+                          <BadgeCard
+                            key={badge.badge_id}
+                            badge={{
+                              id: badge.badge_id,
+                              name: badge.name,
+                              description: badge.description,
+                              icon: badge.icon,
+                              color: badge.color,
+                              gradient: badge.gradient,
+                              category: badge.category,
+                              requirement: badge.requirement,
+                            } as any}
+                            earned={false}
+                            progress={badge.progress_percent || 0}
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
 
             {/* Account Info */}
             <Card className="card-fytli">

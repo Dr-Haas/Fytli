@@ -220,6 +220,75 @@ const pushNotificationsController = {
       logger.error('Erreur lors de la récupération des abonnements:', error);
       res.status(500).json({ error: 'Erreur serveur' });
     }
+  },
+
+  /**
+   * GET /api/push/notifications
+   * Récupérer les notifications de l'utilisateur
+   */
+  async getNotifications(req, res) {
+    try {
+      const userId = req.user.userId;
+      const limit = parseInt(req.query.limit) || 20;
+      
+      const notifications = await pushNotificationsModel.getUserNotifications(userId, limit);
+
+      res.json(notifications);
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des notifications:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  /**
+   * POST /api/push/notifications/:id/read
+   * Marquer une notification comme lue
+   */
+  async markNotificationAsRead(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { id } = req.params;
+
+      await pushNotificationsModel.markAsRead(userId, id);
+
+      res.json({ message: 'Notification marquée comme lue' });
+    } catch (error) {
+      logger.error('Erreur lors du marquage de la notification:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  /**
+   * POST /api/push/notifications/read-all
+   * Marquer toutes les notifications comme lues
+   */
+  async markAllNotificationsAsRead(req, res) {
+    try {
+      const userId = req.user.userId;
+
+      await pushNotificationsModel.markAllAsRead(userId);
+
+      res.json({ message: 'Toutes les notifications marquées comme lues' });
+    } catch (error) {
+      logger.error('Erreur lors du marquage de toutes les notifications:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  /**
+   * GET /api/push/notifications/unread-count
+   * Obtenir le nombre de notifications non lues
+   */
+  async getUnreadCount(req, res) {
+    try {
+      const userId = req.user.userId;
+      const count = await pushNotificationsModel.getUnreadCount(userId);
+
+      res.json({ unreadCount: count });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération du nombre de notifications non lues:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
   }
 };
 

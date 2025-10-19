@@ -62,5 +62,33 @@ router.get('/stats', pushNotificationsController.getStats);
  */
 router.get('/subscriptions', pushNotificationsController.getSubscriptions);
 
+/**
+ * @route   GET /api/push/notifications
+ * @desc    Récupérer les notifications de l'utilisateur
+ * @access  Private
+ */
+router.get('/notifications', pushNotificationsController.getNotifications);
+
+/**
+ * @route   POST /api/push/notifications/:id/read
+ * @desc    Marquer une notification comme lue
+ * @access  Private
+ */
+router.post('/notifications/:id/read', pushNotificationsController.markNotificationAsRead);
+
+/**
+ * @route   POST /api/push/notifications/read-all
+ * @desc    Marquer toutes les notifications comme lues
+ * @access  Private
+ */
+router.post('/notifications/read-all', pushNotificationsController.markAllNotificationsAsRead);
+
+/**
+ * @route   GET /api/push/notifications/unread-count
+ * @desc    Obtenir le nombre de notifications non lues
+ * @access  Private
+ */
+router.get('/notifications/unread-count', pushNotificationsController.getUnreadCount);
+
 module.exports = router;
 

@@ -27,6 +27,7 @@ const enrollmentsRoutes = require('./routes/enrollments');
 const completionsRoutes = require('./routes/completions');
 const publicRoutes = require('./routes/public');
 const pushNotificationsRoutes = require('./routes/pushNotifications');
+const bodyCompositionRoutes = require('./routes/bodyComposition');
 
 // Initialisation de l'application Express
 const app = express();
@@ -123,6 +124,7 @@ app.use('/enrollments', enrollmentsRoutes);
 app.use('/completions', completionsRoutes);
 app.use('/public', publicRoutes);
 app.use('/push', pushNotificationsRoutes);
+app.use('/body-composition', bodyCompositionRoutes);
 
 // Route 404 - Non trouvé
 app.use((req, res) => {

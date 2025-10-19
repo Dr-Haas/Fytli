@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Dumbbell, User, Menu, X, LogOut } from 'lucide-react';
+import { Home, Dumbbell, User, Menu, X, LogOut, Download, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 import { cn } from '../lib/utils';
+import toast from 'react-hot-toast';
 
 const navItems = [
   { to: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -14,10 +16,29 @@ const navItems = [
 export const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { logout, user } = useAuth();
+  const { isInstallable, isInstalled, installApp } = usePWAInstall();
+  const [isInstalling, setIsInstalling] = useState(false);
 
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+  };
+
+  const handleInstallApp = async () => {
+    setIsInstalling(true);
+    try {
+      const success = await installApp();
+      if (success) {
+        toast.success('🎉 Application installée avec succès !');
+        setIsOpen(false);
+      } else {
+        toast.error('Installation annulée');
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'installation');
+    } finally {
+      setIsInstalling(false);
+    }
   };
 
   return (
@@ -91,7 +112,28 @@ export const MobileNav = () => {
                 </nav>
 
                 {/* Footer */}
-                <div className="p-4 border-t">
+                <div className="p-4 border-t space-y-2">
+                  {/* Bouton Add App - Uniquement sur mobile si installable */}
+                  {isInstallable && !isInstalled && (
+                    <button
+                      onClick={handleInstallApp}
+                      disabled={isInstalling}
+                      className="flex items-center gap-3 rounded-lg px-4 py-3 w-full text-base font-medium bg-gradient-to-r from-fytli-red to-fytli-orange text-white hover:shadow-lg transition-all disabled:opacity-50"
+                    >
+                      <Download className="h-5 w-5" />
+                      {isInstalling ? 'Installation...' : 'Installer l\'application'}
+                    </button>
+                  )}
+
+                  {/* Message si déjà installé */}
+                  {isInstalled && (
+                    <div className="flex items-center gap-3 rounded-lg px-4 py-3 w-full text-base font-medium bg-green-50 text-green-700">
+                      <Check className="h-5 w-5" />
+                      Application installée
+                    </div>
+                  )}
+
+                  {/* Bouton Déconnexion */}
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-3 rounded-lg px-4 py-3 w-full text-base font-medium text-red-600 hover:bg-red-50 transition-all"
@@ -99,6 +141,7 @@ export const MobileNav = () => {
                     <LogOut className="h-5 w-5" />
                     Déconnexion
                   </button>
+
                   <div className="mt-4 text-center text-xs text-muted-foreground">
                     Fytli v1.0.0
                   </div>

@@ -190,6 +190,84 @@ const pushNotificationsModel = {
       sent_last_month: 0,
       failed_deliveries: 0
     };
+  },
+
+  // Récupérer les notifications d'un utilisateur
+  async getUserNotifications(userId, limit = 20) {
+    const [notifications] = await db.query(
+      `SELECT 
+         notification_id as id,
+         notification_type as type,
+         title,
+         message,
+         data,
+         sent_at as timestamp,
+         was_delivered,
+         is_read as read
+       FROM v_user_notifications
+       WHERE user_id = ?
+       ORDER BY sent_at DESC
+       LIMIT ?`,
+      [userId, limit]
+    );
+
+    return notifications.map(notif => ({
+      id: notif.id.toString(),
+      type: notif.type,
+      title: notif.title,
+      message: notif.message,
+      timestamp: notif.timestamp,
+      read: Boolean(notif.read),
+      data: notif.data ? (typeof notif.data === 'string' ? JSON.parse(notif.data) : notif.data) : null,
+    }));
+  },
+
+  // Marquer une notification comme lue
+  async markAsRead(userId, notificationId) {
+    try {
+      await db.query(
+        'CALL sp_mark_notification_read(?, ?)',
+        [userId, notificationId]
+      );
+      return true;
+    } catch (error) {
+      console.error('Erreur lors du marquage de la notification:', error);
+      return false;
+    }
+  },
+
+  // Marquer toutes les notifications comme lues
+  async markAllAsRead(userId) {
+    try {
+      await db.query(
+        'CALL sp_mark_all_notifications_read(?)',
+        [userId]
+      );
+      return true;
+    } catch (error) {
+      console.error('Erreur lors du marquage de toutes les notifications:', error);
+      return false;
+    }
+  },
+
+  // Obtenir le nombre de notifications non lues
+  async getUnreadCount(userId) {
+    try {
+      const [result] = await db.query(
+        `SELECT COUNT(*) as unread_count
+         FROM notification_logs nl
+         LEFT JOIN user_notification_reads unr 
+           ON nl.log_id = unr.notification_log_id 
+           AND nl.user_id = unr.user_id
+         WHERE nl.user_id = ?
+         AND unr.read_id IS NULL`,
+        [userId]
+      );
+      return result[0]?.unread_count || 0;
+    } catch (error) {
+      console.error('Erreur lors du comptage des notifications non lues:', error);
+      return 0;
+    }
   }
 };
 

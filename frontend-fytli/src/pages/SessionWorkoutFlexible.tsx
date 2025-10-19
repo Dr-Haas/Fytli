@@ -12,6 +12,7 @@ import {
 import { Spinner } from '../components/ui/Spinner';
 import { showToast, getErrorMessage } from '../utils/toast';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 interface ExerciseWithDetails extends SessionExercise {
   exercise: Exercise;
@@ -40,6 +41,8 @@ export const SessionWorkoutFlexible = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [startTime] = useState(Date.now());
   const [isReordering, setIsReordering] = useState(false);
+  const [circuitExercises, setCircuitExercises] = useState<Set<number>>(new Set());
+  const [isSelectingCircuit, setIsSelectingCircuit] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,28 +145,49 @@ export const SessionWorkoutFlexible = () => {
     }
 
     // Trouver le prochain exercice selon le mode
-    if (mode === 'circuit') {
-      // En mode circuit, passer au suivant dans la liste
-      let nextIndex = currentIndex + 1;
+    if (mode === 'circuit' && circuitExercises.size > 0) {
+      // Mode circuit avec sélection
+      const circuitList = workoutOrder.filter(ex => circuitExercises.has(ex.exercise_id));
+      const currentCircuitIndex = circuitList.findIndex(ex => ex.id === currentExercise.id);
       
-      // Si on arrive à la fin, recommencer au début
-      if (nextIndex >= workoutOrder.length) {
-        nextIndex = 0;
+      // Vérifier si c'est le dernier du circuit
+      if (currentCircuitIndex === circuitList.length - 1) {
+        // Circuit terminé ! Vérifier si tous les exercices du circuit ont toutes leurs séries
+        const allCircuitComplete = circuitList.every(ex => {
+          const prog = getCurrentProgress(ex.exercise_id);
+          return prog.completedSets >= prog.totalSets;
+        });
+        
+        if (allCircuitComplete) {
+          // Circuit totalement terminé, repasser en mode linéaire
+          setMode('linear');
+          setCircuitExercises(new Set());
+          toast.success('🎉 Circuit terminé ! Passage en mode linéaire');
+          
+          // Trouver le prochain exercice incomplet
+          const nextIncompleteIndex = workoutOrder.findIndex(
+            (ex, idx) => idx > currentIndex && !isExerciseComplete(ex.exercise_id)
+          );
+          
+          if (nextIncompleteIndex !== -1) {
+            setCurrentIndex(nextIncompleteIndex);
+            setIsResting(false);
+          }
+        } else {
+          // Recommencer le circuit au début
+          const firstCircuitIndex = workoutOrder.findIndex(ex => circuitExercises.has(ex.exercise_id));
+          setCurrentIndex(firstCircuitIndex);
+          setRestTimeLeft(currentExercise.rest_time_sec);
+          setIsResting(true);
+        }
+      } else {
+        // Passer au prochain exercice du circuit
+        const nextCircuitEx = circuitList[currentCircuitIndex + 1];
+        const nextIndex = workoutOrder.findIndex(ex => ex.id === nextCircuitEx.id);
+        setCurrentIndex(nextIndex);
+        setRestTimeLeft(currentExercise.rest_time_sec);
+        setIsResting(true);
       }
-      
-      // Trouver le prochain exercice incomplet
-      let attempts = 0;
-      while (
-        attempts < workoutOrder.length && 
-        isExerciseComplete(workoutOrder[nextIndex].exercise_id)
-      ) {
-        nextIndex = (nextIndex + 1) % workoutOrder.length;
-        attempts++;
-      }
-      
-      setCurrentIndex(nextIndex);
-      setRestTimeLeft(currentExercise.rest_time_sec);
-      setIsResting(true);
     } else {
       // Mode linéaire : continuer sur le même exercice si des séries restent
       if (currentProg.completedSets + 1 < currentProg.totalSets) {
@@ -214,12 +238,44 @@ export const SessionWorkoutFlexible = () => {
   };
 
   const toggleMode = () => {
-    setMode(mode === 'linear' ? 'circuit' : 'linear');
-    showToast.success(
-      mode === 'linear' 
-        ? '🔄 Mode Circuit activé - Alternez les exercices !' 
-        : '📋 Mode Linéaire activé'
-    );
+    if (mode === 'linear') {
+      // Passer en mode circuit : ouvrir la sélection
+      setIsSelectingCircuit(true);
+    } else {
+      // Repasser en mode linéaire
+      setMode('linear');
+      setCircuitExercises(new Set());
+      toast.success('📋 Mode Linéaire activé');
+    }
+  };
+
+  const toggleCircuitExercise = (exerciseId: number) => {
+    const newCircuit = new Set(circuitExercises);
+    if (newCircuit.has(exerciseId)) {
+      newCircuit.delete(exerciseId);
+    } else {
+      newCircuit.add(exerciseId);
+    }
+    setCircuitExercises(newCircuit);
+  };
+
+  const startCircuit = () => {
+    if (circuitExercises.size < 2) {
+      toast.error('Sélectionnez au moins 2 exercices pour un circuit');
+      return;
+    }
+
+    setMode('circuit');
+    setIsSelectingCircuit(false);
+    
+    // Commencer par le premier exercice du circuit
+    const firstCircuitEx = workoutOrder.find(ex => circuitExercises.has(ex.exercise_id));
+    if (firstCircuitEx) {
+      const firstIndex = workoutOrder.findIndex(ex => ex.id === firstCircuitEx.id);
+      setCurrentIndex(firstIndex);
+    }
+    
+    toast.success(`🔄 Circuit démarré avec ${circuitExercises.size} exercices !`);
   };
 
   const resetWorkoutOrder = () => {
@@ -564,6 +620,101 @@ export const SessionWorkoutFlexible = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Modal de sélection du circuit */}
+      {isSelectingCircuit && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col"
+          >
+            <div className="p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                🔄 Créer un Circuit
+              </h2>
+              <p className="text-sm text-gray-600">
+                Sélectionnez les exercices à inclure dans votre circuit
+              </p>
+            </div>
+
+            <div className="p-4 overflow-y-auto flex-1">
+              <div className="space-y-2">
+                {workoutOrder.map((ex) => {
+                  const isSelected = circuitExercises.has(ex.exercise_id);
+                  const prog = getCurrentProgress(ex.exercise_id);
+                  const isComplete = prog.completedSets >= prog.totalSets;
+
+                  if (isComplete) return null; // Ne pas montrer les exercices déjà terminés
+
+                  return (
+                    <button
+                      key={ex.id}
+                      onClick={() => toggleCircuitExercise(ex.exercise_id)}
+                      className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
+                        isSelected
+                          ? 'border-fytli-orange bg-fytli-orange/10'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                            isSelected
+                              ? 'border-fytli-orange bg-fytli-orange'
+                              : 'border-gray-300'
+                          }`}
+                        >
+                          {isSelected && <Check className="h-4 w-4 text-white" />}
+                        </div>
+                        <div className="text-left">
+                          <p className="font-medium text-gray-900">{ex.exercise.name}</p>
+                          <p className="text-sm text-gray-500">
+                            {prog.completedSets}/{ex.sets} séries • {ex.reps} reps
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {circuitExercises.size > 0 && (
+                <div className="mt-4 p-4 bg-fytli-orange/10 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 mb-2">
+                    ✅ {circuitExercises.size} exercice(s) sélectionné(s)
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Vous ferez 1 série de chaque, puis recommencerez jusqu'à épuisement.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t bg-gray-50 space-y-3">
+              <Button
+                onClick={startCircuit}
+                disabled={circuitExercises.size < 2}
+                className="btn-brand w-full"
+                size="lg"
+              >
+                <Zap className="h-5 w-5 mr-2" />
+                Démarrer le Circuit
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsSelectingCircuit(false);
+                  setCircuitExercises(new Set());
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                Annuler
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
