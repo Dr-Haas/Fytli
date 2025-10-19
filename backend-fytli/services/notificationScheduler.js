@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const db = require('../db');
 const pushNotificationService = require('./pushNotificationService');
 const pushNotificationsModel = require('../models/pushNotificationsModel');
-const logger = require('../config/logger');
+const { logger } = require('../config/logger');
 
 /**
  * Service pour planifier et envoyer les notifications automatiques

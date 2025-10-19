@@ -1,6 +1,6 @@
 const webpush = require('web-push');
 const pushNotificationsModel = require('../models/pushNotificationsModel');
-const logger = require('../config/logger');
+const { logger } = require('../config/logger');
 
 // Configuration de web-push avec les clés VAPID
 // Ces clés doivent être générées et stockées dans les variables d'environnement

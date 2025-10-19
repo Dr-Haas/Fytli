@@ -1,6 +1,6 @@
 const pushNotificationsModel = require('../models/pushNotificationsModel');
 const pushNotificationService = require('../services/pushNotificationService');
-const logger = require('../config/logger');
+const { logger } = require('../config/logger');
 
 const pushNotificationsController = {
   /**
