@@ -3,6 +3,7 @@
  */
 
 const sessionCompletionsModel = require('../models/sessionCompletionsModel');
+const badgesModel = require('../models/badgesModel');
 const pushNotificationService = require('../services/pushNotificationService');
 const db = require('../db');
 const { logger } = require('../config/logger');
@@ -40,6 +41,36 @@ const create = async (req, res) => {
       notes,
       feeling
     });
+    
+    // =====================================================
+    // VÉRIFICATION AUTOMATIQUE DES BADGES
+    // =====================================================
+    try {
+      // 1. Créer une entrée dans workout_history
+      const now = new Date();
+      const workoutTime = now.toTimeString().split(' ')[0]; // Format HH:MM:SS
+      
+      await badgesModel.createWorkoutHistory({
+        user_id: userId,
+        session_id,
+        program_id,
+        duration_minutes: duration_minutes || 30,
+        exercises_completed: 0, // Peut être amélioré plus tard
+        total_sets: 0,
+        workout_time: workoutTime
+      });
+      
+      // 2. Mettre à jour les statistiques utilisateur (streak, total workouts, etc.)
+      await badgesModel.updateUserStats(userId);
+      
+      // 3. Vérifier tous les badges automatiquement
+      await badgesModel.checkAllBadges(userId);
+      
+      logger.info(`Badges vérifiés pour l'utilisateur ${userId} après completion de session ${session_id}`);
+    } catch (badgeError) {
+      // Logger l'erreur mais ne pas faire échouer la requête
+      logger.error('Erreur lors de la vérification des badges:', badgeError);
+    }
     
     // Envoyer des notifications aux autres membres du programme
     try {

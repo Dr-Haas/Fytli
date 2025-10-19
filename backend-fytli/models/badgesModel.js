@@ -382,6 +382,19 @@ const badgesModel = {
     }
   },
 
+  /**
+   * Mettre à jour les statistiques utilisateur
+   */
+  async updateUserStats(userId) {
+    try {
+      await pool.query('CALL update_user_stats(?)', [userId]);
+      return true;
+    } catch (error) {
+      console.error('Erreur update_user_stats:', error);
+      return false;
+    }
+  },
+
   // =====================================================
   // WEEKLY GOALS - Objectifs hebdomadaires
   // =====================================================
