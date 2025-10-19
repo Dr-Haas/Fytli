@@ -90,9 +90,9 @@ export const Badges = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <Sidebar />
-
-      <main className="lg:ml-64 p-4 lg:p-8">
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -289,6 +289,7 @@ export const Badges = () => {
             </Card>
           </motion.div>
         </main>
+      </div>
     </div>
   );
 };

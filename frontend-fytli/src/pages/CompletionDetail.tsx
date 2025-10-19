@@ -50,7 +50,7 @@ export const CompletionDetail = () => {
         <Header />
         <div className="flex">
           <Sidebar />
-          <main className="flex-1 p-4 pt-20 lg:pt-4 lg:ml-64 lg:p-8">
+          <main className="flex-1 p-4 pt-20 lg:pt-4 lg:p-8">
             <div className="max-w-4xl mx-auto text-center py-24">
               <p className="text-muted-foreground text-lg mb-4">Session non trouvée</p>
               <Button onClick={() => navigate(-1)} variant="outline">
@@ -78,7 +78,7 @@ export const CompletionDetail = () => {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:ml-64 lg:p-8">
+        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

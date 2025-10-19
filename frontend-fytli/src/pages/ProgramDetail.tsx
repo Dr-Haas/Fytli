@@ -157,7 +157,7 @@ export const ProgramDetail = () => {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:ml-64 lg:p-8">
+        <main className="flex-1 p-4 pt-20 lg:pt-4 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
