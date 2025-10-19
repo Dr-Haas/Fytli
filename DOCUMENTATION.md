@@ -31,8 +31,8 @@ Cette documentation consolide toutes les informations nécessaires pour comprend
 ### Structure du Projet
 
 ```
-followSport_app/
-├── backend-followsport/          # Backend Node.js + Express + MySQL
+fytli_db/
+├── backend-fytli/          # Backend Node.js + Express + MySQL
 │   ├── config/                   # Configuration (email, logger, multer)
 │   ├── controllers/              # Logique métier
 │   ├── middleware/               # Middlewares (auth, validation, upload)
@@ -43,7 +43,7 @@ followSport_app/
 │   ├── docs/                     # Documentation API
 │   └── index.js                  # Point d'entrée
 │
-├── frontend-followsport/         # Frontend React + TypeScript
+├── frontend-fytli/         # Frontend React + TypeScript
 │   ├── src/
 │   │   ├── pages/               # Pages de l'application
 │   │   ├── components/          # Composants réutilisables
@@ -103,7 +103,7 @@ followSport_app/
 
 ```bash
 git clone https://github.com/yourusername/fytli.git
-cd followSport_app
+cd fytli_db
 ```
 
 #### 2. Configuration de la Base de Données
@@ -113,18 +113,18 @@ cd followSport_app
 mysql -u root -p
 
 # Créer la base de données
-CREATE DATABASE IF NOT EXISTS followsport_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS fytli_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 # Importer les tables
-USE followsport_app;
-source backend-followsport/database/enrollment_system.sql;
-source backend-followsport/database/addUserBadges.sql;
+USE fytli_app;
+source backend-fytli/database/enrollment_system.sql;
+source backend-fytli/database/addUserBadges.sql;
 ```
 
 #### 3. Configuration du Backend
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 
 # Installer les dépendances
 npm install
@@ -134,7 +134,7 @@ cat > .env << EOL
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe
-DB_NAME=followsport_app
+DB_NAME=fytli_app
 DB_PORT=3306
 PORT=9001
 JWT_SECRET=votre_secret_jwt_tres_securise
@@ -153,7 +153,7 @@ Le backend démarre sur **http://localhost:9001**
 #### 4. Configuration du Frontend
 
 ```bash
-cd ../frontend-followsport
+cd ../frontend-fytli
 
 # Installer les dépendances
 npm install
@@ -398,7 +398,7 @@ CREATE TABLE enrollments (
 
 ### Migrations et Données Initiales
 
-Les scripts SQL sont disponibles dans `backend-followsport/database/`:
+Les scripts SQL sont disponibles dans `backend-fytli/database/`:
 - `enrollment_system.sql` - Schéma complet
 - `addUserBadges.sql` - Système de badges
 - `GUIDE_INSTALLATION_RAPIDE.md` - Guide d'installation détaillé
@@ -856,7 +856,7 @@ Le panel d'administration permet de gérer :
 
 #### Créer un compte admin
 ```bash
-cd backend-followsport
+cd backend-fytli
 node createAdmin.js
 ```
 
@@ -904,7 +904,7 @@ const checkAdmin = (req, res, next) => {
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe
-DB_NAME=followsport_app
+DB_NAME=fytli_app
 DB_PORT=3306
 
 # Serveur
@@ -945,7 +945,7 @@ VITE_API_URL=http://localhost:9001/api
 ### Backend Tests
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 
 # Tests avec cURL
 # Test authentication
@@ -975,7 +975,7 @@ curl -X POST http://localhost:9001/uploads/session-photo \
 ### Frontend Tests
 
 ```bash
-cd frontend-followsport
+cd frontend-fytli
 
 # Lancer les tests (à implémenter)
 npm run test
@@ -1024,7 +1024,7 @@ npm run test:e2e
 
 #### Frontend
 ```bash
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 
 # Le dossier dist/ contient :
@@ -1051,7 +1051,7 @@ sudo apt install nodejs npm mysql-server
 
 # Cloner le repository
 git clone https://github.com/yourusername/fytli.git
-cd followSport_app/backend-followsport
+cd fytli_db/backend-fytli
 
 # Installer les dépendances
 npm install --production
@@ -1108,7 +1108,7 @@ railway up
 npm install -g vercel
 
 # Déployer
-cd frontend-followsport
+cd frontend-fytli
 vercel
 
 # Configurer les variables d'environnement dans le dashboard
@@ -1122,7 +1122,7 @@ vercel
 npm install -g netlify-cli
 
 # Build et déploiement
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 netlify deploy --prod --dir=dist
 
@@ -1207,7 +1207,7 @@ mysql -u root -p -h localhost
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=...
-DB_NAME=followsport_app
+DB_NAME=fytli_app
 ```
 
 #### Erreur JWT
@@ -1272,9 +1272,9 @@ npm run preview
 
 ```sql
 -- ATTENTION: Supprime toutes les données !
-DROP DATABASE IF EXISTS followsport_app;
-CREATE DATABASE followsport_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE followsport_app;
+DROP DATABASE IF EXISTS fytli_app;
+CREATE DATABASE fytli_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE fytli_app;
 SOURCE enrollment_system.sql;
 SOURCE addUserBadges.sql;
 ```

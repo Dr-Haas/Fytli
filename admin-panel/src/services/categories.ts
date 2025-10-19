@@ -21,25 +21,25 @@ export const categoriesService = {
   // Récupérer toutes les catégories
   async getAll(): Promise<Category[]> {
     const response = await api.get('/categories');
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Récupérer une catégorie par ID
   async getById(id: number): Promise<Category> {
     const response = await api.get(`/categories/${id}`);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Créer une nouvelle catégorie
   async create(data: CreateCategoryData): Promise<Category> {
     const response = await api.post('/categories', data);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Mettre à jour une catégorie
   async update(id: number, data: UpdateCategoryData): Promise<Category> {
     const response = await api.put(`/categories/${id}`, data);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Supprimer une catégorie

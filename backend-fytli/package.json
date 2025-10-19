@@ -1,5 +1,5 @@
 {
-  "name": "backend-followsport",
+  "name": "backend-fytli",
   "version": "1.0.0",
   "description": "Fytli - Backend API REST pour l'application de suivi sportif",
   "main": "index.js",

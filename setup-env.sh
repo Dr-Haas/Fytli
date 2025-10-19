@@ -69,7 +69,7 @@ PORT=9001
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe_mysql
-DB_NAME=followsport_local
+DB_NAME=fytli_local
 DB_PORT=3306
 
 # JWT Secret (généré automatiquement)
@@ -128,20 +128,20 @@ case $choice in
         echo ""
         
         # Backend
-        if [ -f "backend-followsport/.env" ]; then
-            read -p "⚠️  backend-followsport/.env existe déjà. Écraser? [y/N]: " overwrite
+        if [ -f "backend-fytli/.env" ]; then
+            read -p "⚠️  backend-fytli/.env existe déjà. Écraser? [y/N]: " overwrite
             if [ "$overwrite" = "y" ] || [ "$overwrite" = "Y" ]; then
-                create_backend_env "backend-followsport/.env" "local"
+                create_backend_env "backend-fytli/.env" "local"
             else
                 echo -e "${YELLOW}⏭️  Backend .env ignoré${NC}"
             fi
         else
-            create_backend_env "backend-followsport/.env" "local"
+            create_backend_env "backend-fytli/.env" "local"
         fi
         
         # Frontend
-        if [ ! -f "frontend-followsport/.env" ]; then
-            create_frontend_env "frontend-followsport/.env" "local"
+        if [ ! -f "frontend-fytli/.env" ]; then
+            create_frontend_env "frontend-fytli/.env" "local"
         else
             echo -e "${YELLOW}⏭️  Frontend .env existe déjà${NC}"
         fi
@@ -158,7 +158,7 @@ case $choice in
         echo ""
         echo -e "${YELLOW}🚀 Configuration PRODUCTION (OVH)${NC}"
         echo ""
-        create_backend_env "backend-followsport/.env.production" "production"
+        create_backend_env "backend-fytli/.env.production" "production"
         echo ""
         echo -e "${BLUE}📌 IMPORTANT:${NC}"
         echo -e "   Sur Render, copiez ces valeurs dans:"
@@ -170,9 +170,9 @@ case $choice in
         echo ""
         echo -e "${YELLOW}📦 Configuration COMPLÈTE${NC}"
         echo ""
-        create_backend_env "backend-followsport/.env" "local"
-        create_backend_env "backend-followsport/.env.production" "production"
-        create_frontend_env "frontend-followsport/.env" "local"
+        create_backend_env "backend-fytli/.env" "local"
+        create_backend_env "backend-fytli/.env.production" "production"
+        create_frontend_env "frontend-fytli/.env" "local"
         create_frontend_env "admin-panel/.env" "local"
         ;;
         
@@ -195,8 +195,8 @@ echo "📝 Prochaines étapes:"
 echo ""
 echo "1. Vérifier les fichiers .env créés"
 echo "2. Modifier les mots de passe si nécessaire"
-echo "3. Backend: cd backend-followsport && npm run dev"
-echo "4. Frontend: cd frontend-followsport && npm run dev"
+echo "3. Backend: cd backend-fytli && npm run dev"
+echo "4. Frontend: cd frontend-fytli && npm run dev"
 echo ""
 echo "📚 Documentation: ENV_CONFIG.md"
 echo "===================================================="

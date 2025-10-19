@@ -1,7 +1,7 @@
 mysqldump: [Warning] Using a password on the command line interface can be insecure.
 -- MySQL dump 10.13  Distrib 8.3.0, for macos14.2 (arm64)
 --
--- Host: localhost    Database: followSport_app
+-- Host: localhost    Database: fytli_db
 -- ------------------------------------------------------
 -- Server version	8.3.0
 

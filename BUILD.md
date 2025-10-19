@@ -32,7 +32,7 @@ git clone https://github.com/yourusername/fytli.git
 cd fytli
 
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm install
 
 # Admin Panel
@@ -40,7 +40,7 @@ cd ../admin-panel
 npm install
 
 # Backend
-cd ../backend-followsport
+cd ../backend-fytli
 npm install
 ```
 
@@ -52,7 +52,7 @@ Chaque application se lance depuis son propre dossier :
 
 ```bash
 # Frontend (port 5173)
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Admin Panel (port 5174)
@@ -60,7 +60,7 @@ cd admin-panel
 npm run dev
 
 # Backend (port 9001)
-cd backend-followsport
+cd backend-fytli
 npm run dev
 ```
 
@@ -73,11 +73,11 @@ Chaque projet se build indépendamment :
 ### Frontend
 
 ```bash
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 ```
 
-**Output** : `frontend-followsport/dist/`
+**Output** : `frontend-fytli/dist/`
 - ✅ Application React compilée
 - ✅ Service Worker (sw.js)
 - ✅ PWA Manifest (manifest.webmanifest)
@@ -102,7 +102,7 @@ Tester les builds en local avant de déployer :
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run preview   # Port 4173
 
 # Admin Panel
@@ -116,7 +116,7 @@ npm run preview   # Port 4173
 
 ### 🌐 Frontend (Application PWA)
 
-Le dossier `frontend-followsport/dist/` peut être déployé sur :
+Le dossier `frontend-fytli/dist/` peut être déployé sur :
 
 #### Vercel (recommandé)
 
@@ -125,7 +125,7 @@ Le dossier `frontend-followsport/dist/` peut être déployé sur :
 npm install -g vercel
 
 # Déployer
-cd frontend-followsport
+cd frontend-fytli
 vercel --prod
 ```
 
@@ -142,7 +142,7 @@ vercel --prod
 npm install -g netlify-cli
 
 # Déployer
-cd frontend-followsport
+cd frontend-fytli
 netlify deploy --prod --dir=dist
 ```
 
@@ -156,7 +156,7 @@ netlify deploy --prod --dir=dist
 server {
     listen 80;
     server_name fytli.app;
-    root /var/www/fytli/frontend-followsport/dist;
+    root /var/www/fytli/frontend-fytli/dist;
     index index.html;
 
     location / {
@@ -182,9 +182,9 @@ server {
 ```apache
 <VirtualHost *:80>
     ServerName fytli.app
-    DocumentRoot /var/www/fytli/frontend-followsport/dist
+    DocumentRoot /var/www/fytli/frontend-fytli/dist
 
-    <Directory /var/www/fytli/frontend-followsport/dist>
+    <Directory /var/www/fytli/frontend-fytli/dist>
         Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
@@ -237,7 +237,7 @@ Le backend Node.js peut être déployé sur :
 npm install -g pm2
 
 # Démarrer le backend
-cd backend-followsport
+cd backend-fytli
 pm2 start index.js --name fytli-backend
 
 # Sauvegarder
@@ -248,7 +248,7 @@ pm2 startup
 #### Docker
 
 ```dockerfile
-# backend-followsport/Dockerfile
+# backend-fytli/Dockerfile
 FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
@@ -267,7 +267,7 @@ docker run -p 9001:9001 --env-file .env fytli-backend
 #### Heroku
 
 ```bash
-# Depuis backend-followsport/
+# Depuis backend-fytli/
 heroku login
 heroku create fytli-backend
 git push heroku main
@@ -296,7 +296,7 @@ PORT=9001
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=your_super_secret_key_here
 NODE_ENV=production
 ```
@@ -312,7 +312,7 @@ NODE_ENV=production
 **Solution** :
 ```bash
 # Pour le frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 
 # Pour l'admin panel
@@ -320,7 +320,7 @@ cd admin-panel
 npm run build
 
 # Pour le backend
-cd backend-followsport
+cd backend-fytli
 npm run build
 ```
 
@@ -331,7 +331,7 @@ npm run build
 **Solution** :
 ```bash
 # Installer les dépendances du projet concerné
-cd frontend-followsport   # ou admin-panel ou backend-followsport
+cd frontend-fytli   # ou admin-panel ou backend-fytli
 npm install
 ```
 

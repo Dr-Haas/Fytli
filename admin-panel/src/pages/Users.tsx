@@ -34,10 +34,11 @@ export default function Users() {
   const loadUsers = async () => {
     try {
       const data = await adminService.getAllUsers();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erreur lors du chargement des utilisateurs:', error);
       toast.error('Erreur lors du chargement des utilisateurs');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -167,7 +168,7 @@ export default function Users() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredUsers.map((user) => (
+              {(filteredUsers || []).map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>#{user.id}</TableCell>
                   <TableCell className="font-medium">

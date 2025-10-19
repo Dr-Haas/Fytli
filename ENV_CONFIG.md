@@ -6,7 +6,7 @@ Guide pour configurer les variables d'environnement en local et en production.
 
 ## 📋 Variables nécessaires
 
-### Backend (`backend-followsport`)
+### Backend (`backend-fytli`)
 
 ```env
 NODE_ENV=development|production
@@ -26,7 +26,7 @@ JWT_SECRET=
 ### Créer le fichier `.env` local
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 touch .env
 ```
 
@@ -41,7 +41,7 @@ PORT=9001
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe_mysql_local
-DB_NAME=followsport_local
+DB_NAME=fytli_local
 DB_PORT=3306
 
 # JWT Secret (générer avec la commande ci-dessous)
@@ -96,7 +96,7 @@ JWT_SECRET=01af8cee94dfbbb8f55d3391090ebb4a5be1c182620cc84b1eeba3ed3aa522a9
 ### En local :
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 npm run dev
 ```
 
@@ -105,7 +105,7 @@ npm run dev
 🔄 Tentative de connexion à MySQL...
    Host: localhost
    User: root
-   Database: followsport_local
+   Database: fytli_local
    Port: 3306
 ✅ Connexion MySQL établie avec succès
 Server running on port 9001
@@ -133,7 +133,7 @@ Server running on port 10000
 **Cause** : Les variables ne sont pas définies
 
 **Solution** :
-- **Local** : Créer le fichier `.env` dans `backend-followsport/`
+- **Local** : Créer le fichier `.env` dans `backend-fytli/`
 - **Render** : Définir les variables dans Dashboard → Environment
 
 ### Erreur : "[dotenv] injecting env (0) from .env"
@@ -172,7 +172,7 @@ Les variables doivent être dans le Dashboard.
 
 ## 📊 Configuration Frontend
 
-### Frontend (`frontend-followsport/.env`)
+### Frontend (`frontend-fytli/.env`)
 
 ```env
 VITE_API_URL=http://localhost:9001
@@ -223,7 +223,7 @@ Le `.gitignore` doit contenir :
 
 ### Local
 
-- [ ] Fichier `.env` créé dans `backend-followsport/`
+- [ ] Fichier `.env` créé dans `backend-fytli/`
 - [ ] Toutes les variables définies
 - [ ] MySQL local installé et démarré
 - [ ] Base de données créée

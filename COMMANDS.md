@@ -8,13 +8,13 @@ Aide-mémoire pour gérer les trois projets (Frontend, Admin Panel, Backend).
 
 ```bash
 # Frontend
-cd frontend-followsport && npm install
+cd frontend-fytli && npm install
 
 # Admin Panel
 cd admin-panel && npm install
 
 # Backend
-cd backend-followsport && npm install
+cd backend-fytli && npm install
 ```
 
 ---
@@ -23,7 +23,7 @@ cd backend-followsport && npm install
 
 ```bash
 # Frontend (port 5173)
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Admin Panel (port 5174)
@@ -31,7 +31,7 @@ cd admin-panel
 npm run dev
 
 # Backend (port 9001)
-cd backend-followsport
+cd backend-fytli
 npm run dev
 ```
 
@@ -41,7 +41,7 @@ npm run dev
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 
 # Admin Panel
@@ -49,7 +49,7 @@ cd admin-panel
 npm run build
 
 # Backend
-cd backend-followsport
+cd backend-fytli
 npm run build
 ```
 
@@ -59,7 +59,7 @@ npm run build
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run preview
 
 # Admin Panel
@@ -73,7 +73,7 @@ npm run preview
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run clean
 
 # Admin Panel
@@ -87,7 +87,7 @@ npm run clean
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run lint
 
 # Admin Panel
@@ -101,11 +101,11 @@ npm run lint
 
 ```bash
 # Créer la base de données
-mysql -u root -p < backend-followsport/database/enrollment_system.sql
+mysql -u root -p < backend-fytli/database/enrollment_system.sql
 
 # Vérifier la connexion
 mysql -u root -p
-USE followsport;
+USE fytli;
 SHOW TABLES;
 ```
 
@@ -121,7 +121,7 @@ SHOW TABLES;
 
 ## 📝 Scripts disponibles par projet
 
-### Frontend (`frontend-followsport`)
+### Frontend (`frontend-fytli`)
 - `npm run dev` - Lance le serveur de développement
 - `npm run build` - Build pour production
 - `npm run preview` - Preview du build
@@ -135,7 +135,7 @@ SHOW TABLES;
 - `npm run lint` - Vérifie le code
 - `npm run clean` - Supprime le dossier dist
 
-### Backend (`backend-followsport`)
+### Backend (`backend-fytli`)
 - `npm start` - Lance le backend en production
 - `npm run dev` - Lance le backend en mode développement (nodemon)
 - `npm run build` - Vérifie que tout est prêt
@@ -161,7 +161,7 @@ PORT=9001
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votreMotDePasse
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=votre_secret_jwt_super_securise
 NODE_ENV=development
 ```
@@ -173,7 +173,7 @@ NODE_ENV=development
 ### Tout réinstaller
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 rm -rf node_modules package-lock.json
 npm install
 
@@ -183,7 +183,7 @@ rm -rf node_modules package-lock.json
 npm install
 
 # Backend
-cd ../backend-followsport
+cd ../backend-fytli
 rm -rf node_modules package-lock.json
 npm install
 ```
@@ -212,13 +212,13 @@ mysql --version     # v8.0+
 
 1. **Lancer le backend** (terminal 1) :
    ```bash
-   cd backend-followsport
+   cd backend-fytli
    npm run dev
    ```
 
 2. **Lancer le frontend** (terminal 2) :
    ```bash
-   cd frontend-followsport
+   cd frontend-fytli
    npm run dev
    ```
 

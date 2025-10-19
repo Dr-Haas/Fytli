@@ -191,11 +191,11 @@ Les services frontend extraient maintenant systématiquement `response.data.data
 ### Démarrer les 3 projets
 ```bash
 # Backend
-cd backend-followsport
+cd backend-fytli
 node index.js
 
 # Frontend utilisateur
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Admin panel

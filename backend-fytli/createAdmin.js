@@ -22,10 +22,10 @@ const createAdmin = async () => {
     
     // Données de l'admin
     const adminData = {
-      email: 'admin@followsport.com',
+      email: 'admin@fytli.com',
       password: 'admin123',  // ⚠️ À CHANGER IMMÉDIATEMENT après connexion !
       first_name: 'Admin',
-      last_name: 'FollowSport',
+      last_name: 'Fytli',
       role: 'admin'
     };
     

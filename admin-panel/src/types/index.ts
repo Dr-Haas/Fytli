@@ -40,6 +40,23 @@ export interface Session {
   estimated_duration: number;
   exercises_count?: number;
   completion_count?: number;
+  program_title?: string;
+  created_at: string;
+}
+
+export interface SessionExercise {
+  id: number;
+  session_id: number;
+  exercise_id: number;
+  order_index: number;
+  sets?: number;
+  reps?: number;
+  duration_seconds?: number;
+  rest_seconds?: number;
+  notes?: string;
+  exercise_name?: string;
+  created_at: string;
+  updated_at?: string;
 }
 
 export interface SessionCompletion {

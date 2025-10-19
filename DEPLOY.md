@@ -47,7 +47,7 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
      - `DB_HOST` - Hôte de votre base de données
      - `DB_USER` - Utilisateur MySQL
      - `DB_PASSWORD` - Mot de passe MySQL
-     - `DB_NAME` - `followsport`
+     - `DB_NAME` - `fytli`
      - `JWT_SECRET` - Généré automatiquement
      - `PORT` - Laissé vide (Render le définit automatiquement)
 
@@ -62,7 +62,7 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
 1. **Créer un nouveau Web Service** :
    - New → Web Service
    - Connecter votre repository
-   - Root Directory : `backend-followsport`
+   - Root Directory : `backend-fytli`
 
 2. **Configuration** :
    ```
@@ -70,7 +70,7 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
    Runtime: Node
    Region: Oregon (ou le plus proche)
    Branch: main
-   Root Directory: backend-followsport
+   Root Directory: backend-fytli
    Build Command: npm install --production=false
    Start Command: npm start
    ```
@@ -82,7 +82,7 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
    DB_HOST=votre_host_mysql
    DB_USER=votre_user
    DB_PASSWORD=votre_password
-   DB_NAME=followsport
+   DB_NAME=fytli
    JWT_SECRET=votre_secret_super_securise_au_moins_32_caracteres
    ```
 
@@ -93,13 +93,13 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
 1. **Créer un nouveau Static Site** :
    - New → Static Site
    - Connecter votre repository
-   - Root Directory : `frontend-followsport`
+   - Root Directory : `frontend-fytli`
 
 2. **Configuration** :
    ```
    Name: fytli-frontend
    Branch: main
-   Root Directory: frontend-followsport
+   Root Directory: frontend-fytli
    Build Command: npm install && npm run build
    Publish Directory: dist
    ```
@@ -150,7 +150,7 @@ Même procédure que le Frontend :
 1. Créer une base de données MySQL 8.0+
 2. Importer le schéma :
    ```bash
-   mysql -h HOST -u USER -p DB_NAME < backend-followsport/database/enrollment_system.sql
+   mysql -h HOST -u USER -p DB_NAME < backend-fytli/database/enrollment_system.sql
    ```
 3. Utiliser les credentials dans les variables d'environnement
 
@@ -178,7 +178,7 @@ Une fois configuré, chaque `git push` déclenchera automatiquement un redéploi
 1. **Importer le projet** :
    - Aller sur [vercel.com](https://vercel.com)
    - New Project → Import votre repository
-   - Root Directory : `frontend-followsport`
+   - Root Directory : `frontend-fytli`
 
 2. **Configuration** :
    ```
@@ -186,7 +186,7 @@ Une fois configuré, chaque `git push` déclenchera automatiquement un redéploi
    Build Command: npm run build
    Output Directory: dist
    Install Command: npm install
-   Root Directory: frontend-followsport
+   Root Directory: frontend-fytli
    ```
 
 3. **Variables d'environnement** :
@@ -206,7 +206,7 @@ Une fois configuré, chaque `git push` déclenchera automatiquement un redéploi
    - Sélectionner votre repository
 
 2. **Configuration** :
-   - Root Directory : `backend-followsport`
+   - Root Directory : `backend-fytli`
    - Build Command : `npm install`
    - Start Command : `npm start`
 
@@ -217,7 +217,7 @@ Une fois configuré, chaque `git push` déclenchera automatiquement un redéploi
    DB_HOST=
    DB_USER=
    DB_PASSWORD=
-   DB_NAME=followsport
+   DB_NAME=fytli
    JWT_SECRET=
    ```
 
@@ -255,7 +255,7 @@ sudo npm install -g pm2
 ```bash
 # Cloner le projet
 git clone https://github.com/yourusername/fytli.git
-cd fytli/backend-followsport
+cd fytli/backend-fytli
 
 # Installer les dépendances
 npm install
@@ -277,7 +277,7 @@ pm2 startup
 
 ```bash
 # Build Frontend
-cd ../frontend-followsport
+cd ../frontend-fytli
 npm install
 npm run build
 
@@ -315,7 +315,7 @@ server {
 server {
     listen 80;
     server_name fytli.app www.fytli.app;
-    root /var/www/fytli/frontend-followsport/dist;
+    root /var/www/fytli/frontend-fytli/dist;
     index index.html;
 
     location / {
@@ -373,7 +373,7 @@ PORT=9001
 DB_HOST=votre_host
 DB_USER=votre_user
 DB_PASSWORD=votre_password
-DB_NAME=followsport
+DB_NAME=fytli
 
 # JWT
 JWT_SECRET=votre_secret_jwt_super_securise_au_moins_32_caracteres_random
@@ -417,7 +417,7 @@ VITE_API_URL=https://fytli-backend.onrender.com
 
 ### Configuration CORS (Backend)
 
-Vérifier dans `backend-followsport/index.js` :
+Vérifier dans `backend-fytli/index.js` :
 
 ```javascript
 const cors = require('cors');
@@ -470,13 +470,13 @@ Automatique à chaque `git push` sur la branche configurée.
 cd /var/www/fytli
 
 # Backend
-cd backend-followsport
+cd backend-fytli
 git pull
 npm install
 pm2 restart fytli-backend
 
 # Frontend
-cd ../frontend-followsport
+cd ../frontend-fytli
 git pull
 npm install
 npm run build
@@ -507,7 +507,7 @@ npm run build
 
 **Solution** :
 ```javascript
-// backend-followsport/index.js
+// backend-fytli/index.js
 app.use(cors({
   origin: ['https://votre-frontend.com'],
   credentials: true

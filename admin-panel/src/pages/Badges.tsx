@@ -29,11 +29,13 @@ export default function Badges() {
         badgesService.getAll(),
         badgesService.getAllUserBadges(),
       ]);
-      setBadges(badgesData);
-      setUserBadges(userBadgesData);
+      setBadges(Array.isArray(badgesData) ? badgesData : []);
+      setUserBadges(Array.isArray(userBadgesData) ? userBadgesData : []);
     } catch (error) {
       console.error('Erreur lors du chargement des badges:', error);
       toast.error('Erreur lors du chargement des badges');
+      setBadges([]);
+      setUserBadges([]);
     } finally {
       setLoading(false);
     }
@@ -151,7 +153,7 @@ export default function Badges() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {badges.map((badge) => (
+                {(badges || []).map((badge) => (
                   <TableRow key={badge.id}>
                     <TableCell>#{badge.id}</TableCell>
                     <TableCell>
@@ -202,7 +204,7 @@ export default function Badges() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userBadges.map((userBadge) => (
+                {(userBadges || []).map((userBadge) => (
                   <TableRow key={userBadge.id}>
                     <TableCell>#{userBadge.id}</TableCell>
                     <TableCell className="font-medium">

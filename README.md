@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Fytli Logo](frontend-followsport/public/favicon-Fytli.png)
+![Fytli Logo](frontend-fytli/public/favicon-Fytli.png)
 
 **Ton compagnon sport & bien-être**
 
@@ -118,7 +118,7 @@ Chaque projet a son propre `package.json` et doit être installé séparément :
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm install
 
 # Admin Panel
@@ -130,14 +130,14 @@ cd ../website
 npm install
 
 # Backend
-cd ../backend-followsport
+cd ../backend-fytli
 npm install
 ```
 
 ### 3. Backend Setup
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 npm install
 
 # Créer le fichier .env
@@ -156,7 +156,7 @@ Le backend démarre sur **http://localhost:9001**
 ### 4. Frontend Setup
 
 ```bash
-cd frontend-followsport
+cd frontend-fytli
 npm install
 
 # Créer le fichier .env
@@ -175,7 +175,7 @@ Chaque application se lance depuis son propre dossier :
 
 ```bash
 # Frontend (port 5173)
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Admin Panel (port 5174)
@@ -183,7 +183,7 @@ cd admin-panel
 npm run dev
 
 # Backend (port 9001)
-cd backend-followsport
+cd backend-fytli
 npm run dev
 
 # Landing Page (port 3000) 🆕
@@ -203,15 +203,15 @@ npm run dev
 ## 🏗️ Architecture
 
 ```
-followSport_app/
-├── backend-followsport/          # Backend Node.js + Express
+fytli_db/
+├── backend-fytli/          # Backend Node.js + Express
 │   ├── controllers/              # Logique métier
 │   ├── models/                   # Modèles base de données
 │   ├── routes/                   # Routes API
 │   ├── middleware/               # Middlewares (auth, etc.)
 │   └── server.js                 # Point d'entrée
 │
-├── frontend-followsport/         # Frontend React + TypeScript
+├── frontend-fytli/         # Frontend React + TypeScript
 │   ├── src/
 │   │   ├── pages/               # Pages de l'application
 │   │   ├── components/          # Composants réutilisables
@@ -393,7 +393,7 @@ GET /exercises/category/:id
 ### Frontend
 
 ```bash
-cd frontend-followsport
+cd frontend-fytli
 npm run test          # Run tests
 npm run test:watch    # Watch mode
 npm run test:coverage # Coverage report
@@ -402,7 +402,7 @@ npm run test:coverage # Coverage report
 ### Backend
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 npm run test          # Run tests
 npm run test:watch    # Watch mode
 ```
@@ -417,7 +417,7 @@ Chaque projet se build indépendamment :
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run build         # Build pour production
 npm run preview       # Preview du build
 
@@ -427,12 +427,12 @@ npm run build         # Build pour production
 npm run preview       # Preview du build
 
 # Backend
-cd backend-followsport
+cd backend-fytli
 npm run build         # Vérifie que tout est prêt
 ```
 
 Les builds génèrent :
-- `frontend-followsport/dist/` - Application frontend
+- `frontend-fytli/dist/` - Application frontend
   - index.html
   - assets/
   - sw.js (Service Worker)

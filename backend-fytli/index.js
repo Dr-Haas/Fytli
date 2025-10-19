@@ -1,5 +1,5 @@
 /**
- * Point d'entrée du serveur Backend FollowSport
+ * Point d'entrée du serveur Backend Fytli
  * Serveur Express avec MySQL pour gérer les programmes sportifs personnalisés
  */
 
@@ -99,7 +99,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Backend FollowSport API - Serveur fonctionnel',
+    message: 'Backend Fytli API - Serveur fonctionnel',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });

@@ -19,7 +19,7 @@ Render utilise la commande **`npm run build`** du `package.json` pour builder le
 
 ### Solution appliquée
 
-Le script `build` dans `backend-followsport/package.json` a été modifié de :
+Le script `build` dans `backend-fytli/package.json` a été modifié de :
 
 ```json
 "build": "echo \"Backend build completed\""
@@ -49,7 +49,7 @@ services:
   - type: web
     name: fytli-backend
     runtime: node
-    rootDir: backend-followsport
+    rootDir: backend-fytli
     buildCommand: npm install --production=false
     startCommand: npm start
 ```
@@ -75,7 +75,7 @@ Runtime: Node
 Branch: main
 
 ⚠️ ESSENTIEL :
-Root Directory: backend-followsport
+Root Directory: backend-fytli
 
 Build Command: npm install --production=false
 Start Command: npm start
@@ -87,7 +87,7 @@ NODE_ENV=production
 DB_HOST=votre_host
 DB_USER=votre_user
 DB_PASSWORD=votre_password
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=votre_secret_32_caracteres
 ```
 
@@ -100,7 +100,7 @@ JWT_SECRET=votre_secret_32_caracteres
 ✅ **Build Phase** :
 ```
 ==> Running 'npm run build'
-> backend-followsport@1.0.0 build
+> backend-fytli@1.0.0 build
 > npm install --production=false
 
 added 150 packages, audited 151 packages
@@ -110,7 +110,7 @@ added 150 packages, audited 151 packages
 ✅ **Deploy Phase** :
 ```
 ==> Running 'npm start'
-> backend-followsport@1.0.0 start
+> backend-fytli@1.0.0 start
 > node index.js
 
 Server running on port 10000
@@ -120,7 +120,7 @@ Server running on port 10000
 ### Si vous voyez encore l'erreur :
 
 ❌ **Mauvaise configuration** :
-- Vérifier que `Root Directory` = `backend-followsport`
+- Vérifier que `Root Directory` = `backend-fytli`
 - Vérifier que `Build Command` = `npm install --production=false`
 - Re-déployer manuellement
 
@@ -130,7 +130,7 @@ Server running on port 10000
 
 Avant de déployer :
 
-- [ ] Le fichier `backend-followsport/package.json` contient :
+- [ ] Le fichier `backend-fytli/package.json` contient :
   ```json
   "build": "npm install --production=false"
   ```
@@ -140,7 +140,7 @@ Avant de déployer :
 Sur Render :
 
 - [ ] Service créé (Web Service)
-- [ ] **Root Directory** : `backend-followsport` ⚠️
+- [ ] **Root Directory** : `backend-fytli` ⚠️
 - [ ] **Build Command** : `npm install --production=false` ⚠️
 - [ ] **Start Command** : `npm start`
 - [ ] Variables d'environnement configurées
@@ -164,7 +164,7 @@ Render utilisera cette commande au lieu de `npm run build`. Cette méthode fonct
 
 ```
 1. Render clone le repo
-2. Render va dans backend-followsport/
+2. Render va dans backend-fytli/
 3. Render exécute : npm run build
 4. Script build : echo "Build completed" ❌ Aucune installation
 5. Render exécute : npm start
@@ -175,7 +175,7 @@ Render utilisera cette commande au lieu de `npm run build`. Cette méthode fonct
 
 ```
 1. Render clone le repo
-2. Render va dans backend-followsport/
+2. Render va dans backend-fytli/
 3. Render exécute : npm run build
 4. Script build : npm install --production=false ✅ Installation des dépendances
 5. node_modules/ créé avec toutes les dépendances
@@ -202,13 +202,13 @@ Mettre à jour `VITE_API_URL` dans le frontend et l'admin avec cette URL !
 1. **Vérifier les logs Render** : Dashboard → Service → Logs
 2. **Tester en local** :
    ```bash
-   cd backend-followsport
+   cd backend-fytli
    npm run build
    npm start
    ```
 3. **Vérifier package.json** :
    ```bash
-   cat backend-followsport/package.json | grep build
+   cat backend-fytli/package.json | grep build
    ```
 
 4. **Consulter** :

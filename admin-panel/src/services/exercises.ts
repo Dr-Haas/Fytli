@@ -34,31 +34,31 @@ export const exercisesService = {
   // Récupérer tous les exercices
   async getAll(): Promise<Exercise[]> {
     const response = await api.get('/exercises');
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Récupérer un exercice par ID
   async getById(id: number): Promise<Exercise> {
     const response = await api.get(`/exercises/${id}`);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Récupérer les exercices par catégorie
   async getByCategory(categoryId: number): Promise<Exercise[]> {
     const response = await api.get(`/exercises/category/${categoryId}`);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Créer un nouvel exercice
   async create(data: CreateExerciseData): Promise<Exercise> {
     const response = await api.post('/exercises', data);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Mettre à jour un exercice
   async update(id: number, data: UpdateExerciseData): Promise<Exercise> {
     const response = await api.put(`/exercises/${id}`, data);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   // Supprimer un exercice

@@ -9,10 +9,10 @@ Documentation de l'architecture et de l'organisation du projet.
 Le projet Fytli est composé de **3 applications indépendantes** :
 
 ```
-followSport_app/
-├── frontend-followsport/    # Application PWA (React + TypeScript)
+fytli_db/
+├── frontend-fytli/    # Application PWA (React + TypeScript)
 ├── admin-panel/              # Panel d'administration (React + TypeScript)
-├── backend-followsport/      # API REST (Node.js + Express)
+├── backend-fytli/      # API REST (Node.js + Express)
 └── [fichiers de configuration]
 ```
 
@@ -60,18 +60,18 @@ Chaque application a son propre `package.json` et se build/déploie **indépenda
            │   Base de données       │
            │   MySQL 8.0+            │
            │                         │
-           │   followsport DB        │
+           │   fytli DB        │
            └─────────────────────────┘
 ```
 
 ---
 
-## 📦 Frontend (`frontend-followsport/`)
+## 📦 Frontend (`frontend-fytli/`)
 
 ### Structure
 
 ```
-frontend-followsport/
+frontend-fytli/
 ├── src/
 │   ├── pages/              # Pages principales
 │   │   ├── Dashboard.tsx
@@ -211,12 +211,12 @@ npm run clean    # Clean dist/
 
 ---
 
-## 🔙 Backend (`backend-followsport/`)
+## 🔙 Backend (`backend-fytli/`)
 
 ### Structure
 
 ```
-backend-followsport/
+backend-fytli/
 ├── controllers/            # Logique métier
 │   ├── authController.js
 │   ├── usersController.js
@@ -297,7 +297,7 @@ npm test         # Tests
 ## 📄 Fichiers de configuration racine
 
 ```
-followSport_app/
+fytli_db/
 ├── .gitignore              # Fichiers à ignorer par Git
 ├── .renderignore           # Fichiers à ignorer par Render
 ├── render.yaml             # Configuration Render (Blueprint)
@@ -404,7 +404,7 @@ Voir [DATABASE.md](DATABASE.md) pour le schéma complet.
 ### Fichiers PWA
 
 ```
-frontend-followsport/
+frontend-fytli/
 ├── public/
 │   └── manifest.json          # PWA manifest
 ├── dist/ (après build)
@@ -454,20 +454,20 @@ Voir [DEPLOY.md](DEPLOY.md)
 bash install.sh
 
 # OU manuellement
-cd frontend-followsport && npm install
+cd frontend-fytli && npm install
 cd ../admin-panel && npm install
-cd ../backend-followsport && npm install
+cd ../backend-fytli && npm install
 ```
 
 ### Lancer en développement
 
 ```bash
 # Terminal 1 - Backend
-cd backend-followsport
+cd backend-fytli
 npm run dev
 
 # Terminal 2 - Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Terminal 3 - Admin (optionnel)

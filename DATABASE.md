@@ -32,29 +32,29 @@
 mysql -u root -p
 
 # 2. Créer la base de données
-CREATE DATABASE IF NOT EXISTS followsport_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE followsport_app;
+CREATE DATABASE IF NOT EXISTS fytli_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE fytli_app;
 
 # 3. Importer le schéma principal
-source backend-followsport/database/enrollment_system.sql;
+source backend-fytli/database/enrollment_system.sql;
 
 # 4. Importer le système de badges
-source backend-followsport/database/addUserBadges.sql;
+source backend-fytli/database/addUserBadges.sql;
 
 # 5. Vérifier l'installation
 SHOW TABLES;
 SELECT COUNT(*) as total_tables FROM information_schema.tables 
-WHERE table_schema = 'followsport_app';
+WHERE table_schema = 'fytli_app';
 ```
 
 ### Configuration Backend
 
 ```bash
-# Fichier backend-followsport/.env
+# Fichier backend-fytli/.env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe
-DB_NAME=followsport_app
+DB_NAME=fytli_app
 DB_PORT=3306
 ```
 
@@ -65,7 +65,7 @@ DB_PORT=3306
 ### Vue d'Ensemble
 
 ```
-followsport_app
+fytli_app
 ├── users                    (Utilisateurs)
 ├── categories               (Catégories d'exercices)
 ├── exercises                (Bibliothèque d'exercices)
@@ -519,7 +519,7 @@ CREATE TABLE user_badges (
 
 ```sql
 -- Template de migration
-USE followsport_app;
+USE fytli_app;
 
 START TRANSACTION;
 
@@ -743,7 +743,7 @@ SELECT
     table_name,
     ROUND(((data_length + index_length) / 1024 / 1024), 2) as size_mb
 FROM information_schema.tables
-WHERE table_schema = 'followsport_app'
+WHERE table_schema = 'fytli_app'
 ORDER BY size_mb DESC;
 
 -- Nombre de lignes par table
@@ -751,7 +751,7 @@ SELECT
     table_name,
     table_rows
 FROM information_schema.tables
-WHERE table_schema = 'followsport_app'
+WHERE table_schema = 'fytli_app'
 ORDER BY table_rows DESC;
 
 -- Performance des index
@@ -761,7 +761,7 @@ SELECT
     cardinality,
     seq_in_index
 FROM information_schema.statistics
-WHERE table_schema = 'followsport_app'
+WHERE table_schema = 'fytli_app'
 ORDER BY table_name, seq_in_index;
 ```
 
@@ -773,26 +773,26 @@ ORDER BY table_name, seq_in_index;
 
 ```bash
 # Backup de la base complète
-mysqldump -u root -p followsport_app > backup_$(date +%Y%m%d).sql
+mysqldump -u root -p fytli_app > backup_$(date +%Y%m%d).sql
 
 # Backup compressé
-mysqldump -u root -p followsport_app | gzip > backup_$(date +%Y%m%d).sql.gz
+mysqldump -u root -p fytli_app | gzip > backup_$(date +%Y%m%d).sql.gz
 
 # Backup d'une table spécifique
-mysqldump -u root -p followsport_app users > backup_users_$(date +%Y%m%d).sql
+mysqldump -u root -p fytli_app users > backup_users_$(date +%Y%m%d).sql
 
 # Backup sans les données (structure seulement)
-mysqldump -u root -p --no-data followsport_app > schema_only.sql
+mysqldump -u root -p --no-data fytli_app > schema_only.sql
 ```
 
 ### Restore
 
 ```bash
 # Restore complet
-mysql -u root -p followsport_app < backup_20251018.sql
+mysql -u root -p fytli_app < backup_20251018.sql
 
 # Restore depuis un fichier compressé
-gunzip < backup_20251018.sql.gz | mysql -u root -p followsport_app
+gunzip < backup_20251018.sql.gz | mysql -u root -p fytli_app
 
 # Restore avec création de la base
 mysql -u root -p < backup_20251018.sql
@@ -807,7 +807,7 @@ cat > /usr/local/bin/backup-fytli.sh << 'EOL'
 BACKUP_DIR="/var/backups/fytli"
 DATE=$(date +%Y%m%d_%H%M%S)
 mkdir -p $BACKUP_DIR
-mysqldump -u backup_user -p'backup_password' followsport_app | gzip > $BACKUP_DIR/fytli_$DATE.sql.gz
+mysqldump -u backup_user -p'backup_password' fytli_app | gzip > $BACKUP_DIR/fytli_$DATE.sql.gz
 # Garder seulement les 30 derniers jours
 find $BACKUP_DIR -name "fytli_*.sql.gz" -mtime +30 -delete
 EOL
@@ -865,7 +865,7 @@ SET GLOBAL long_query_time = 2;
 
 -- Vérifier les tables non indexées
 SELECT * FROM information_schema.tables 
-WHERE table_schema = 'followsport_app' 
+WHERE table_schema = 'fytli_app' 
 AND engine = 'InnoDB' 
 AND table_rows > 1000;
 ```

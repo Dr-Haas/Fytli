@@ -35,7 +35,7 @@ Le fichier `render.yaml` à la racine configure automatiquement tout.
      - `DB_HOST`
      - `DB_USER`
      - `DB_PASSWORD`
-     - `DB_NAME=followsport`
+     - `DB_NAME=fytli`
      - `JWT_SECRET` (généré auto)
 
 3. **Déployer** :
@@ -56,7 +56,7 @@ Region: Oregon
 Branch: main
 
 ⚠️ IMPORTANT:
-Root Directory: backend-followsport
+Root Directory: backend-fytli
 
 Build Command: npm install --production=false
 Start Command: npm start
@@ -68,7 +68,7 @@ NODE_ENV=production
 DB_HOST=votre_host
 DB_USER=votre_user
 DB_PASSWORD=votre_password
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=votre_secret_32_caracteres_minimum
 ```
 
@@ -82,7 +82,7 @@ Name: fytli-frontend
 Branch: main
 
 ⚠️ IMPORTANT:
-Root Directory: frontend-followsport
+Root Directory: frontend-fytli
 
 Build Command: npm install && npm run build
 Publish Directory: dist
@@ -137,7 +137,7 @@ Utiliser PlanetScale (gratuit), Railway ou AWS RDS :
 1. Créer une base MySQL 8.0+
 2. Importer le schéma :
    ```bash
-   mysql -h HOST -u USER -pPASSWORD DB_NAME < backend-followsport/database/enrollment_system.sql
+   mysql -h HOST -u USER -pPASSWORD DB_NAME < backend-fytli/database/enrollment_system.sql
    ```
 3. Utiliser les credentials dans Render
 
@@ -164,13 +164,13 @@ Avant de déployer :
 Pour chaque service sur Render :
 
 **Backend** :
-- [ ] Root Directory : `backend-followsport` ⚠️
+- [ ] Root Directory : `backend-fytli` ⚠️
 - [ ] Build Command : `npm install --production=false` ⚠️
 - [ ] Start Command : `npm start`
 - [ ] Variables d'environnement configurées
 
 **Frontend** :
-- [ ] Root Directory : `frontend-followsport` ⚠️
+- [ ] Root Directory : `frontend-fytli` ⚠️
 - [ ] Build Command : `npm install && npm run build`
 - [ ] Publish Directory : `dist`
 - [ ] `VITE_API_URL` configuré avec l'URL du backend
@@ -203,7 +203,7 @@ Copier le résultat dans la variable d'environnement `JWT_SECRET` sur Render.
 **Problème** : Root Directory mal configuré
 
 **Solution** :
-- Vérifier que Root Directory = `backend-followsport` (ou `frontend-followsport`, `admin-panel`)
+- Vérifier que Root Directory = `backend-fytli` (ou `frontend-fytli`, `admin-panel`)
 - Vérifier que `package.json` existe dans ce dossier
 - Re-déployer
 
@@ -213,7 +213,7 @@ Copier le résultat dans la variable d'environnement `JWT_SECRET` sur Render.
 
 **Solution** :
 - Vérifier les logs de build sur Render
-- Tester le build localement : `cd backend-followsport && npm install && npm run build`
+- Tester le build localement : `cd backend-fytli && npm install && npm run build`
 - Vérifier que toutes les dépendances sont dans `package.json`
 
 ### Erreur de connexion à la DB
@@ -231,7 +231,7 @@ Copier le résultat dans la variable d'environnement `JWT_SECRET` sur Render.
 
 **Solution** :
 - Vérifier que `VITE_API_URL` pointe vers l'URL du backend Render
-- Vérifier la configuration CORS dans `backend-followsport/index.js`
+- Vérifier la configuration CORS dans `backend-fytli/index.js`
 - Ajouter l'URL frontend dans la liste CORS du backend
 
 ---

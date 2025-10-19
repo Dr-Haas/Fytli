@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { programsService } from '@/services/programs';
-import { Program } from '@/types';
+import { categoriesService } from '@/services/categories';
+import { Program, Category } from '@/types';
 import { Card, CardContent } from '@/components/Card';
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from '@/components/Table';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -16,6 +17,7 @@ import toast from 'react-hot-toast';
 export default function Programs() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [filteredPrograms, setFilteredPrograms] = useState<Program[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -23,7 +25,7 @@ export default function Programs() {
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   
-  // Formulaire
+  // Formulaire programme
   const [formData, setFormData] = useState<Partial<Program>>({
     title: '',
     description: '',
@@ -32,10 +34,12 @@ export default function Programs() {
     sessions_per_week: 3,
     category_id: undefined,
     is_public: true,
+    image_url: '',
   });
 
   useEffect(() => {
     loadPrograms();
+    loadCategories();
   }, []);
 
   useEffect(() => {
@@ -45,14 +49,26 @@ export default function Programs() {
   const loadPrograms = async () => {
     try {
       const data = await programsService.getAll();
-      setPrograms(data);
+      setPrograms(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erreur lors du chargement des programmes:', error);
       toast.error('Erreur lors du chargement des programmes');
+      setPrograms([]);
     } finally {
       setLoading(false);
     }
   };
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoriesService.getAll();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Erreur lors du chargement des catégories:', error);
+      setCategories([]);
+    }
+  };
+
 
   const filterPrograms = () => {
     let filtered = programs;
@@ -85,6 +101,7 @@ export default function Programs() {
       sessions_per_week: 3,
       category_id: undefined,
       is_public: true,
+      image_url: '',
     });
     setShowEditModal(true);
   };
@@ -99,6 +116,7 @@ export default function Programs() {
       sessions_per_week: program.sessions_per_week,
       category_id: program.category_id,
       is_public: program.is_public,
+      image_url: program.image_url || '',
     });
     setShowEditModal(true);
   };
@@ -141,6 +159,7 @@ export default function Programs() {
       toast.error('Erreur lors de la suppression du programme');
     }
   };
+
 
   const getDifficultyBadgeVariant = (level: string) => {
     switch (level) {
@@ -226,7 +245,7 @@ export default function Programs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredPrograms.map((program) => (
+              {(filteredPrograms || []).map((program) => (
                 <TableRow key={program.id}>
                   <TableCell>#{program.id}</TableCell>
                   <TableCell className="font-medium max-w-xs truncate">
@@ -286,80 +305,102 @@ export default function Programs() {
         size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Titre *"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            required
-          />
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Description du programme..."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Difficulté *"
-              value={formData.difficulty_level}
-              onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value })}
+            <Input
+              label="Titre *"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
-            >
-              <option value="débutant">Débutant</option>
-              <option value="intermédiaire">Intermédiaire</option>
-              <option value="avancé">Avancé</option>
-            </Select>
+            />
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Description du programme..."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                label="Difficulté *"
+                value={formData.difficulty_level}
+                onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value as any })}
+                required
+              >
+                <option value="débutant">Débutant</option>
+                <option value="intermédiaire">Intermédiaire</option>
+                <option value="avancé">Avancé</option>
+              </Select>
+
+              <Select
+                label="Catégorie"
+                value={formData.category_id || ''}
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value ? parseInt(e.target.value) : undefined })}
+              >
+                <option value="">Aucune catégorie</option>
+                {(categories || []).map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Durée (semaines) *"
+                type="number"
+                min="1"
+                value={formData.duration_weeks || ''}
+                onChange={(e) => setFormData({ ...formData, duration_weeks: parseInt(e.target.value) || 0 })}
+                required
+              />
+
+              <Input
+                label="Sessions par semaine *"
+                type="number"
+                min="1"
+                max="7"
+                value={formData.sessions_per_week || ''}
+                onChange={(e) => setFormData({ ...formData, sessions_per_week: parseInt(e.target.value) || 0 })}
+                required
+              />
+            </div>
 
             <Input
-              label="Durée (semaines) *"
-              type="number"
-              min="1"
-              value={formData.duration_weeks || ''}
-              onChange={(e) => setFormData({ ...formData, duration_weeks: parseInt(e.target.value) || 0 })}
-              required
+              label="URL de l'image"
+              value={formData.image_url || ''}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              placeholder="https://..."
             />
-          </div>
 
-          <Input
-            label="Sessions par semaine *"
-            type="number"
-            min="1"
-            max="7"
-            value={formData.sessions_per_week || ''}
-            onChange={(e) => setFormData({ ...formData, sessions_per_week: parseInt(e.target.value) || 0 })}
-            required
-          />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_public"
+                checked={formData.is_public}
+                onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
+                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              />
+              <label htmlFor="is_public" className="text-sm font-medium text-gray-700">
+                Programme public (visible par tous les utilisateurs)
+              </label>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="is_public"
-              checked={formData.is_public}
-              onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
-              className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-            />
-            <label htmlFor="is_public" className="text-sm font-medium text-gray-700">
-              Programme public (visible par tous les utilisateurs)
-            </label>
-          </div>
-
-          <div className="flex justify-end gap-3 mt-6">
-            <Button type="button" variant="secondary" onClick={() => setShowEditModal(false)}>
-              Annuler
-            </Button>
-            <Button type="submit">
-              {selectedProgram ? 'Mettre à jour' : 'Créer'}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button type="button" variant="secondary" onClick={() => setShowEditModal(false)}>
+                Annuler
+              </Button>
+              <Button type="submit">
+                {selectedProgram ? 'Mettre à jour' : 'Créer'}
+              </Button>
+            </div>
+          </form>
       </Modal>
 
       {/* Modal de suppression */}

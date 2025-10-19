@@ -41,13 +41,13 @@ const transporter = createTransporter();
  */
 const sendWelcomeEmail = async (userEmail, userName) => {
   const mailOptions = {
-    from: `"FollowSport" <${process.env.EMAIL_FROM || 'noreply@followsport.com'}>`,
+    from: `"Fytli" <${process.env.EMAIL_FROM || 'noreply@fytli.com'}>`,
     to: userEmail,
-    subject: 'Bienvenue sur FollowSport ! 🎉',
+    subject: 'Bienvenue sur Fytli ! 🎉',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #4CAF50;">Bienvenue ${userName} !</h1>
-        <p>Nous sommes ravis de vous accueillir sur <strong>FollowSport</strong>.</p>
+        <p>Nous sommes ravis de vous accueillir sur <strong>Fytli</strong>.</p>
         <p>Vous pouvez maintenant :</p>
         <ul>
           <li>📋 Créer vos programmes d'entraînement personnalisés</li>
@@ -80,13 +80,13 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
   const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
   
   const mailOptions = {
-    from: `"FollowSport" <${process.env.EMAIL_FROM || 'noreply@followsport.com'}>`,
+    from: `"Fytli" <${process.env.EMAIL_FROM || 'noreply@fytli.com'}>`,
     to: userEmail,
     subject: 'Réinitialisation de votre mot de passe 🔐',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #FF9800;">Réinitialisation de mot de passe</h1>
-        <p>Vous avez demandé à réinitialiser votre mot de passe FollowSport.</p>
+        <p>Vous avez demandé à réinitialiser votre mot de passe Fytli.</p>
         <p>Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
         <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0;">
           Réinitialiser mon mot de passe
@@ -121,7 +121,7 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
  */
 const sendProgressNotification = async (userEmail, userName, achievements) => {
   const mailOptions = {
-    from: `"FollowSport" <${process.env.EMAIL_FROM || 'noreply@followsport.com'}>`,
+    from: `"Fytli" <${process.env.EMAIL_FROM || 'noreply@fytli.com'}>`,
     to: userEmail,
     subject: 'Bravo pour votre progression ! 🏆',
     html: `
@@ -155,7 +155,7 @@ const sendProgressNotification = async (userEmail, userName, achievements) => {
  */
 const sendEmail = async (to, subject, html) => {
   const mailOptions = {
-    from: `"FollowSport" <${process.env.EMAIL_FROM || 'noreply@followsport.com'}>`,
+    from: `"Fytli" <${process.env.EMAIL_FROM || 'noreply@fytli.com'}>`,
     to,
     subject,
     html

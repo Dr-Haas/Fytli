@@ -12,7 +12,7 @@ Backend Node.js + Express + MySQL pour une application de suivi de programmes sp
 
 1. **Cloner le projet** (si applicable)
    ```bash
-   cd backend-followsport
+   cd backend-fytli
    ```
 
 2. **Installer les dépendances**
@@ -32,7 +32,7 @@ Backend Node.js + Express + MySQL pour une application de suivi de programmes sp
    DB_HOST=localhost
    DB_USER=root
    DB_PASSWORD=votre_mot_de_passe
-   DB_NAME=followSport_app
+   DB_NAME=fytli_db
    DB_PORT=3306
    PORT=9001
    NODE_ENV=development
@@ -42,7 +42,7 @@ Backend Node.js + Express + MySQL pour une application de suivi de programmes sp
    
    Connectez-vous à MySQL et créez la base si nécessaire :
    ```sql
-   CREATE DATABASE IF NOT EXISTS followSport_app;
+   CREATE DATABASE IF NOT EXISTS fytli_db;
    ```
 
 ## ▶️ Démarrage
@@ -62,7 +62,7 @@ Le serveur démarre sur `http://localhost:9001`
 ## 📁 Structure du projet
 
 ```
-backend-followsport/
+backend-fytli/
 ├── index.js              # Point d'entrée du serveur
 ├── db.js                 # Configuration MySQL
 ├── .env                  # Variables d'environnement (non versionné)

@@ -37,10 +37,11 @@ export default function Categories() {
   const loadCategories = async () => {
     try {
       const data = await categoriesService.getAll();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
       toast.error('Erreur lors du chargement des catégories');
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -176,7 +177,7 @@ export default function Categories() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredCategories.map((category) => (
+              {(filteredCategories || []).map((category) => (
                 <TableRow key={category.id}>
                   <TableCell>#{category.id}</TableCell>
                   <TableCell className="font-medium">{category.name}</TableCell>

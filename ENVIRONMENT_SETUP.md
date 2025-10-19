@@ -50,7 +50,7 @@ Votre application sera accessible sur `http://localhost:5173` et communiquera av
 
 **Prérequis** :
 - MySQL installé localement
-- Base de données `followSport_app` créée
+- Base de données `fytli_db` créée
 
 **Configuration** :
 
@@ -62,7 +62,7 @@ Créer/modifier `backend-fytli/.env` :
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe_mysql
-DB_NAME=followSport_app
+DB_NAME=fytli_db
 DB_PORT=3306
 
 # JWT Secret (utilisez le même qu'en prod ou générez-en un nouveau)

@@ -11,7 +11,7 @@ Guide de démarrage rapide en 5 minutes.
 **Solution rapide** : 
 
 Sur Render, configurez :
-- **Root Directory** : `backend-followsport` ⚠️ (C'EST ESSENTIEL)
+- **Root Directory** : `backend-fytli` ⚠️ (C'EST ESSENTIEL)
 - **Build Command** : `npm install`
 - **Start Command** : `npm start`
 
@@ -28,30 +28,30 @@ Sur Render, configurez :
 bash install.sh
 
 # OU méthode manuelle
-cd frontend-followsport && npm install && cd ..
+cd frontend-fytli && npm install && cd ..
 cd admin-panel && npm install && cd ..
-cd backend-followsport && npm install && cd ..
+cd backend-fytli && npm install && cd ..
 ```
 
 ### 2. Configurer la base de données
 
 ```bash
 # Créer la base
-mysql -u root -p < backend-followsport/database/enrollment_system.sql
+mysql -u root -p < backend-fytli/database/enrollment_system.sql
 
-# Créer un .env dans backend-followsport/
-cat > backend-followsport/.env << EOF
+# Créer un .env dans backend-fytli/
+cat > backend-fytli/.env << EOF
 NODE_ENV=development
 PORT=9001
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=votre_mot_de_passe
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
 EOF
 
 # Créer .env pour frontend et admin
-echo "VITE_API_URL=http://localhost:9001" > frontend-followsport/.env
+echo "VITE_API_URL=http://localhost:9001" > frontend-fytli/.env
 echo "VITE_API_URL=http://localhost:9001" > admin-panel/.env
 ```
 
@@ -59,11 +59,11 @@ echo "VITE_API_URL=http://localhost:9001" > admin-panel/.env
 
 ```bash
 # Terminal 1 - Backend (obligatoire)
-cd backend-followsport
+cd backend-fytli
 npm run dev
 
 # Terminal 2 - Frontend (obligatoire)
-cd frontend-followsport
+cd frontend-fytli
 npm run dev
 
 # Terminal 3 - Admin (optionnel)
@@ -79,7 +79,7 @@ npm run dev
 
 ```bash
 # Frontend
-cd frontend-followsport
+cd frontend-fytli
 npm run build
 
 # Admin
@@ -87,12 +87,12 @@ cd admin-panel
 npm run build
 
 # Backend
-cd backend-followsport
+cd backend-fytli
 npm run build
 ```
 
 Les fichiers de build sont dans :
-- `frontend-followsport/dist/`
+- `frontend-fytli/dist/`
 - `admin-panel/dist/`
 
 ---
@@ -117,20 +117,20 @@ Les fichiers de build sont dans :
    - `DB_HOST`
    - `DB_USER`
    - `DB_PASSWORD`
-   - `DB_NAME=followsport`
+   - `DB_NAME=fytli`
 
 ### Option 2 : Manuel
 
 Pour chaque service (Backend, Frontend, Admin) :
 
 **Backend - Web Service** :
-- Root Directory : `backend-followsport` ⚠️
+- Root Directory : `backend-fytli` ⚠️
 - Build Command : `npm install --production=false` ⚠️
 - Start Command : `npm start`
 - Variables d'environnement : voir ci-dessus
 
 **Frontend - Static Site** :
-- Root Directory : `frontend-followsport` ⚠️
+- Root Directory : `frontend-fytli` ⚠️
 - Build Command : `npm install && npm run build`
 - Publish Directory : `dist`
 - Variable : `VITE_API_URL=https://votre-backend.onrender.com`
@@ -150,10 +150,10 @@ Pour chaque service (Backend, Frontend, Admin) :
 ## 📁 Structure du projet
 
 ```
-followSport_app/
-├── frontend-followsport/    # App PWA utilisateur
+fytli_db/
+├── frontend-fytli/    # App PWA utilisateur
 ├── admin-panel/              # Panel d'administration
-├── backend-followsport/      # API REST
+├── backend-fytli/      # API REST
 └── [docs & config]
 ```
 
@@ -214,7 +214,7 @@ brew services restart mysql  # macOS
 
 1. Vérifier que le backend tourne (http://localhost:9001)
 2. Vérifier `VITE_API_URL` dans `.env`
-3. Vérifier la configuration CORS dans `backend-followsport/index.js`
+3. Vérifier la configuration CORS dans `backend-fytli/index.js`
 
 ---
 
@@ -259,8 +259,8 @@ brew services restart mysql  # macOS
 
 ```bash
 alias fytli-start="cd ~/fytli && bash -c '
-cd backend-followsport && npm run dev &
-cd ../frontend-followsport && npm run dev
+cd backend-fytli && npm run dev &
+cd ../frontend-fytli && npm run dev
 '"
 ```
 

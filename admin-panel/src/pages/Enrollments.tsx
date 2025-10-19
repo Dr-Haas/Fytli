@@ -31,10 +31,11 @@ export default function Enrollments() {
   const loadEnrollments = async () => {
     try {
       const data = await enrollmentsService.getAll();
-      setEnrollments(data);
+      setEnrollments(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erreur lors du chargement des inscriptions:', error);
       toast.error('Erreur lors du chargement des inscriptions');
+      setEnrollments([]);
     } finally {
       setLoading(false);
     }
@@ -112,9 +113,9 @@ export default function Enrollments() {
     );
   }
 
-  const activeCount = enrollments.filter((e) => e.status === 'active').length;
-  const completedCount = enrollments.filter((e) => e.status === 'completed').length;
-  const pausedCount = enrollments.filter((e) => e.status === 'paused').length;
+  const activeCount = (enrollments || []).filter((e) => e.status === 'active').length;
+  const completedCount = (enrollments || []).filter((e) => e.status === 'completed').length;
+  const pausedCount = (enrollments || []).filter((e) => e.status === 'paused').length;
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -211,7 +212,7 @@ export default function Enrollments() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredEnrollments.map((enrollment) => (
+              {(filteredEnrollments || []).map((enrollment) => (
                 <TableRow key={enrollment.id}>
                   <TableCell>#{enrollment.id}</TableCell>
                   <TableCell className="font-medium">

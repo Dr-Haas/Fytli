@@ -104,7 +104,7 @@ Seuls les utilisateurs avec le rôle **admin** peuvent accéder au panel d'admin
 Utilisez le script backend pour créer un administrateur :
 
 ```bash
-cd ../backend-followsport
+cd ../backend-fytli
 node createAdmin.js
 ```
 

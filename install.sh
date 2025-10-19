@@ -56,10 +56,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPT_DIR"
 
 # Installation du Frontend
-if [ -d "frontend-followsport" ]; then
-    install_project "Frontend" "$SCRIPT_DIR/frontend-followsport"
+if [ -d "frontend-fytli" ]; then
+    install_project "Frontend" "$SCRIPT_DIR/frontend-fytli"
 else
-    echo "⚠️  Dossier frontend-followsport introuvable"
+    echo "⚠️  Dossier frontend-fytli introuvable"
 fi
 
 # Installation de l'Admin Panel
@@ -70,10 +70,10 @@ else
 fi
 
 # Installation du Backend
-if [ -d "backend-followsport" ]; then
-    install_project "Backend" "$SCRIPT_DIR/backend-followsport"
+if [ -d "backend-fytli" ]; then
+    install_project "Backend" "$SCRIPT_DIR/backend-fytli"
 else
-    echo "⚠️  Dossier backend-followsport introuvable"
+    echo "⚠️  Dossier backend-fytli introuvable"
 fi
 
 echo "=================================================="
@@ -82,16 +82,16 @@ echo ""
 echo "📝 Prochaines étapes :"
 echo ""
 echo "1. Configurer la base de données MySQL :"
-echo "   mysql -u root -p < backend-followsport/database/enrollment_system.sql"
+echo "   mysql -u root -p < backend-fytli/database/enrollment_system.sql"
 echo ""
 echo "2. Créer les fichiers .env :"
-echo "   - backend-followsport/.env"
-echo "   - frontend-followsport/.env"
+echo "   - backend-fytli/.env"
+echo "   - frontend-fytli/.env"
 echo "   - admin-panel/.env"
 echo ""
 echo "3. Lancer les applications :"
-echo "   Backend:   cd backend-followsport && npm run dev"
-echo "   Frontend:  cd frontend-followsport && npm run dev"
+echo "   Backend:   cd backend-fytli && npm run dev"
+echo "   Frontend:  cd frontend-fytli && npm run dev"
 echo "   Admin:     cd admin-panel && npm run dev"
 echo ""
 echo "📚 Consulter COMMANDS.md pour plus d'informations"

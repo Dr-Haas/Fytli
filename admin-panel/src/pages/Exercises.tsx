@@ -52,11 +52,13 @@ export default function Exercises() {
         exercisesService.getAll(),
         categoriesService.getAll(),
       ]);
-      setExercises(exercisesData);
-      setCategories(categoriesData);
+      setExercises(Array.isArray(exercisesData) ? exercisesData : []);
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
       toast.error('Erreur lors du chargement des données');
+      setExercises([]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -214,7 +216,7 @@ export default function Exercises() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">Toutes les catégories</option>
-              {categories.map((cat) => (
+              {(categories || []).map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
@@ -251,7 +253,7 @@ export default function Exercises() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredExercises.map((exercise) => (
+              {(filteredExercises || []).map((exercise) => (
                 <TableRow key={exercise.id}>
                   <TableCell>#{exercise.id}</TableCell>
                   <TableCell className="font-medium">{exercise.name}</TableCell>
@@ -345,7 +347,7 @@ export default function Exercises() {
               onChange={(e) => setFormData({ ...formData, category_id: e.target.value ? parseInt(e.target.value) : undefined })}
             >
               <option value="">Aucune</option>
-              {categories.map((cat) => (
+              {(categories || []).map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>

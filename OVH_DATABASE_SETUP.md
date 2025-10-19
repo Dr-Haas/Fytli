@@ -15,7 +15,7 @@ Host (Hôte) : recovvk.mysql.db
 Port : 3306
 Username (Utilisateur) : recovvk
 Password (Mot de passe) : [le mot de passe que vous avez créé]
-Database (Base de données) : [nom de votre base, ex: followsport]
+Database (Base de données) : [nom de votre base, ex: fytli]
 ```
 
 **Où trouver ces informations ?**
@@ -29,7 +29,7 @@ Database (Base de données) : [nom de votre base, ex: followsport]
 
 ### 1. Créer le fichier .env local
 
-Dans `backend-followsport/.env` :
+Dans `backend-fytli/.env` :
 
 ```env
 # Configuration Serveur
@@ -41,7 +41,7 @@ DB_HOST=recovvk.mysql.db
 DB_PORT=3306
 DB_USER=recovvk
 DB_PASSWORD=VotreMotDePasseOVH
-DB_NAME=followsport
+DB_NAME=fytli
 
 # JWT Secret (générer une clé aléatoire)
 JWT_SECRET=votre_secret_jwt_32_caracteres_minimum
@@ -79,14 +79,14 @@ Copier le résultat dans `JWT_SECRET`.
 3. **Importer le schéma** :
    - Sélectionner votre base de données (à gauche)
    - Onglet "Importer"
-   - Choisir le fichier : `backend-followsport/database/enrollment_system.sql`
+   - Choisir le fichier : `backend-fytli/database/enrollment_system.sql`
    - Cliquer "Exécuter"
 
 ### Option B : Via ligne de commande
 
 ```bash
 # Depuis votre machine locale
-mysql -h recovvk.mysql.db -P 3306 -u recovvk -p followsport < backend-followsport/database/enrollment_system.sql
+mysql -h recovvk.mysql.db -P 3306 -u recovvk -p fytli < backend-fytli/database/enrollment_system.sql
 ```
 
 Entrer le mot de passe quand demandé.
@@ -105,7 +105,7 @@ DB_HOST=recovvk.mysql.db
 DB_PORT=3306
 DB_USER=recovvk
 DB_PASSWORD=VotreMotDePasseOVH
-DB_NAME=followsport
+DB_NAME=fytli
 JWT_SECRET=votre_secret_genere_32_caracteres
 ```
 
@@ -135,7 +135,7 @@ OVH peut restreindre l'accès à la base de données par IP. Vous devez autorise
 
 ## 🔧 Modifier db.js pour OVH
 
-Vérifier que `backend-followsport/db.js` utilise les bonnes variables :
+Vérifier que `backend-fytli/db.js` utilise les bonnes variables :
 
 ```javascript
 const mysql = require('mysql2');
@@ -161,20 +161,20 @@ module.exports = pool.promise();
 ### Depuis votre machine locale
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 
 # Tester la connexion
 mysql -h recovvk.mysql.db -P 3306 -u recovvk -p
 
 # Vérifier les tables
-USE followsport;
+USE fytli;
 SHOW TABLES;
 ```
 
 ### Depuis le backend
 
 ```bash
-cd backend-followsport
+cd backend-fytli
 npm run dev
 ```
 
@@ -200,7 +200,7 @@ Server running on port 9001
 ┌──────────────────────┐
 │   OVH MySQL          │
 │   recovvk.mysql.db   │
-│   Base: followsport  │
+│   Base: fytli  │
 └──────────────────────┘
 ```
 

@@ -1,4 +1,4 @@
-# 📘 Documentation API - Backend FollowSport
+# 📘 Documentation API - Backend Fytli
 
 ## 🌐 URL de base
 ```
@@ -26,7 +26,7 @@ Retourne l'état du serveur et les informations de version.
 ```json
 {
   "success": true,
-  "message": "Backend FollowSport API - Serveur fonctionnel",
+  "message": "Backend Fytli API - Serveur fonctionnel",
   "version": "1.0.0",
   "timestamp": "2025-10-17T12:00:00.000Z"
 }
