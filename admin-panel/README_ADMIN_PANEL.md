@@ -3,7 +3,7 @@
 ## ✅ Configuration terminée
 
 ### 🔗 API Configuration
-- **Production** : `https://fytli-backend.onrender.com`
+- **Production** : `https://fytli.onrender.com`
 - **Développement** : `http://localhost:9001`
 - Détection automatique de l'environnement
 

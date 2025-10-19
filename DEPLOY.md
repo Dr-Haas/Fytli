@@ -106,7 +106,7 @@ Le fichier `render.yaml` à la racine du projet configure tout automatiquement.
 
 3. **Variables d'environnement** :
    ```
-   VITE_API_URL=https://fytli-backend.onrender.com
+   VITE_API_URL=https://fytli.onrender.com
    ```
    ⚠️ Remplacer par l'URL réelle de votre backend Render
 
@@ -133,7 +133,7 @@ Même procédure que le Frontend :
 
 2. **Variables d'environnement** :
    ```
-   VITE_API_URL=https://fytli-backend.onrender.com
+   VITE_API_URL=https://fytli.onrender.com
    ```
 
 3. **Redirects/Rewrites** :
@@ -390,7 +390,7 @@ EMAIL_PASSWORD=votre_app_password
 ```env
 VITE_API_URL=https://api.fytli.app
 # ou
-VITE_API_URL=https://fytli-backend.onrender.com
+VITE_API_URL=https://fytli.onrender.com
 ```
 
 ### Admin Panel (`.env`)
@@ -398,7 +398,7 @@ VITE_API_URL=https://fytli-backend.onrender.com
 ```env
 VITE_API_URL=https://api.fytli.app
 # ou
-VITE_API_URL=https://fytli-backend.onrender.com
+VITE_API_URL=https://fytli.onrender.com
 ```
 
 ---

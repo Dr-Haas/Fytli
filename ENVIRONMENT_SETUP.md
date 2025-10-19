@@ -28,7 +28,7 @@ Par défaut, le projet est configuré pour fonctionner avec l'API de production 
 
 ```bash
 # Dans frontend-fytli/.env
-echo "VITE_API_URL=https://fytli-backend.onrender.com" > frontend-fytli/.env
+echo "VITE_API_URL=https://fytli.onrender.com" > frontend-fytli/.env
 ```
 
 **Lancer le frontend** :

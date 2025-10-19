@@ -189,8 +189,8 @@ Render utilisera cette commande au lieu de `npm run build`. Cette méthode fonct
 
 Après le déploiement réussi :
 
-- ✅ Backend accessible : `https://fytli-backend.onrender.com`
-- ✅ API fonctionne : `https://fytli-backend.onrender.com/health`
+- ✅ Backend accessible : `https://fytli.onrender.com`
+- ✅ API fonctionne : `https://fytli.onrender.com/health`
 - ✅ Logs sans erreurs
 
 Mettre à jour `VITE_API_URL` dans le frontend et l'admin avec cette URL !

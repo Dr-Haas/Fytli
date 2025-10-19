@@ -11,7 +11,7 @@ export const API_CONFIG = {
 function getDefaultApiUrl(): string {
   // En production, utiliser l'API Render
   if (import.meta.env.PROD) {
-    return 'https://fytli-backend.onrender.com';
+    return 'https://fytli.onrender.com';
   }
   
   // En développement, utiliser localhost

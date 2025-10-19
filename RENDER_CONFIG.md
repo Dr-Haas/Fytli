@@ -249,7 +249,7 @@ Copier le résultat dans la variable d'environnement `JWT_SECRET` sur Render.
 
 Après déploiement, vous aurez :
 
-- **Backend** : `https://fytli-backend.onrender.com`
+- **Backend** : `https://fytli.onrender.com`
 - **Frontend** : `https://fytli-frontend.onrender.com`
 - **Admin** : `https://fytli-admin.onrender.com`
 
