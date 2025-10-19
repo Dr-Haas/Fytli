@@ -6,10 +6,10 @@
 const express = require('express');
 const router = express.Router();
 const bodyCompositionController = require('../controllers/bodyCompositionController');
-const { authenticateToken } = require('../middleware/auth');
+const authMiddleware = require('../middleware/auth');
 
 // Toutes les routes nécessitent une authentification
-router.use(authenticateToken);
+router.use(authMiddleware);
 
 // =====================================================
 // MEASUREMENTS - Mesures corporelles
