@@ -11,6 +11,7 @@ import { SessionSummary } from './pages/SessionSummary';
 import { CompletionDetail } from './pages/CompletionDetail';
 import { Profile } from './pages/Profile';
 import { UserProfile } from './pages/UserProfile';
+import NotificationSettings from './pages/NotificationSettings';
 
 function App() {
   return (
@@ -83,6 +84,14 @@ function App() {
             element={
               <PrivateRoute>
                 <UserProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifications/settings"
+            element={
+              <PrivateRoute>
+                <NotificationSettings />
               </PrivateRoute>
             }
           />

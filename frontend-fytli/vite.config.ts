@@ -53,6 +53,11 @@ export default defineConfig({
             }
           }
         ]
+      },
+      // Ajouter le support des notifications push
+      devOptions: {
+        enabled: true,
+        type: 'module'
       }
     })
   ],

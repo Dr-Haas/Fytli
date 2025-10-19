@@ -11,6 +11,7 @@ require('dotenv').config();
 
 const { testConnection } = require('./db');
 const { logger } = require('./config/logger');
+const notificationScheduler = require('./services/notificationScheduler');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const programsRoutes = require('./routes/programs');
@@ -25,6 +26,7 @@ const adminRoutes = require('./routes/admin');
 const enrollmentsRoutes = require('./routes/enrollments');
 const completionsRoutes = require('./routes/completions');
 const publicRoutes = require('./routes/public');
+const pushNotificationsRoutes = require('./routes/pushNotifications');
 
 // Initialisation de l'application Express
 const app = express();
@@ -120,6 +122,7 @@ app.use('/admin', adminRoutes);
 app.use('/enrollments', enrollmentsRoutes);
 app.use('/completions', completionsRoutes);
 app.use('/public', publicRoutes);
+app.use('/push', pushNotificationsRoutes);
 
 // Route 404 - Non trouvé
 app.use((req, res) => {
@@ -175,6 +178,9 @@ const startServer = async () => {
       console.log(`🚀 URL: http://localhost:${PORT}`);
       console.log(`🚀 Environnement: ${process.env.NODE_ENV || 'development'}`);
       console.log('🚀 =======================================\n');
+      
+      // Démarrer le planificateur de notifications
+      notificationScheduler.start();
     });
   } catch (error) {
     console.error('❌ Erreur lors du démarrage du serveur:', error);

@@ -3,6 +3,8 @@
  */
 
 const sessionCompletionsModel = require('../models/sessionCompletionsModel');
+const pushNotificationService = require('../services/pushNotificationService');
+const db = require('../db');
 const { logger } = require('../config/logger');
 
 /**
@@ -38,6 +40,31 @@ const create = async (req, res) => {
       notes,
       feeling
     });
+    
+    // Envoyer des notifications aux autres membres du programme
+    try {
+      // Récupérer les infos de l'utilisateur qui a complété
+      const [users] = await db.query(
+        'SELECT first_name, last_name FROM users WHERE user_id = ?',
+        [userId]
+      );
+      
+      if (users.length > 0) {
+        const completedByUser = users[0];
+        
+        // Envoyer les notifications de manière asynchrone (ne pas bloquer la réponse)
+        pushNotificationService.sendSessionCompletedByMember(
+          program_id,
+          completedByUser,
+          userId
+        ).catch(error => {
+          logger.error('Erreur lors de l\'envoi des notifications de session complétée:', error);
+        });
+      }
+    } catch (error) {
+      // Logger l'erreur mais ne pas faire échouer la requête
+      logger.error('Erreur lors de la préparation des notifications:', error);
+    }
     
     res.status(201).json({
       success: true,
