@@ -6,7 +6,7 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Création du pool de connexions
+// Création du pool de connexions avec configuration robuste pour connexions distantes
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -15,7 +15,24 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  // Gestion des timeouts et reconnexions
+  connectTimeout: 60000, // 60 secondes
+  acquireTimeout: 60000,
+  timeout: 60000,
+  // Reconnexion automatique en cas de perte de connexion
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+  // SSL pour OVH (si nécessaire)
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Gestionnaire d'erreurs du pool
+pool.on('error', (err) => {
+  console.error('❌ [MySQL Pool Error]:', err.code, err.message);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+    console.log('🔄 [MySQL] Reconnexion automatique en cours...');
+  }
 });
 
 /**

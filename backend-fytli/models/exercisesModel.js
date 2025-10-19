@@ -98,10 +98,11 @@ const update = async (id, data) => {
     fields.push('image_url = ?');
     values.push(data.image_url);
   }
-  if (data.instructions !== undefined) {
-    fields.push('instructions = ?');
-    values.push(data.instructions);
-  }
+  // Temporairement désactivé : colonne 'instructions' n'existe pas en production
+  // if (data.instructions !== undefined) {
+  //   fields.push('instructions = ?');
+  //   values.push(data.instructions);
+  // }
   
   if (fields.length === 0) {
     return false;
