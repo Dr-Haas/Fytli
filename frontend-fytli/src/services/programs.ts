@@ -20,6 +20,7 @@ interface CreateProgramData {
   sessions_per_week?: number;
   category_id?: number;
   is_public?: boolean;
+  goal?: string;
 }
 
 export const programsService = {
@@ -47,6 +48,7 @@ export const programsService = {
       description: data.description,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
+      goal: data.goal,
     };
     
     const response = await api.post<ProgramResponse>('/programs', backendPayload);
@@ -59,6 +61,7 @@ export const programsService = {
       description: data.description,
       difficulty_level: data.level,
       duration_weeks: data.duration_weeks,
+      goal: data.goal,
     };
     
     const response = await api.put<ProgramResponse>(`/programs/${id}`, backendPayload);

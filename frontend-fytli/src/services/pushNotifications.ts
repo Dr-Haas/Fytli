@@ -54,6 +54,9 @@ class PushNotificationService {
     try {
       const response = await api.get('/push/vapid-public-key');
       this.vapidPublicKey = response.data.publicKey;
+      if (!this.vapidPublicKey) {
+        throw new Error('Clé VAPID non disponible');
+      }
       return this.vapidPublicKey;
     } catch (error) {
       console.error('Erreur lors de la récupération de la clé VAPID:', error);
@@ -113,7 +116,7 @@ class PushNotificationService {
       // S'abonner aux notifications push
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: convertedVapidKey,
+        applicationServerKey: convertedVapidKey as BufferSource,
       });
 
       // Envoyer l'abonnement au serveur

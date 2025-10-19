@@ -44,6 +44,7 @@ export interface Program {
   category_id?: number;       // ⚠️ catégorie du programme
   is_public?: boolean;        // ⚠️ programme visible publiquement
   image_url?: string;
+  goal?: string;              // ⚠️ objectif du programme
   created_at?: string;
   updated_at?: string;
 }

@@ -30,6 +30,12 @@ export interface UserBadge {
   badge_id: BadgeId;
   earned_at: string;
   progress?: number; // 0-100 pour les badges en cours
+  // Données enrichies du badge
+  name?: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  gradient?: string;
 }
 
 export const BADGES: Record<BadgeId, Badge> = {

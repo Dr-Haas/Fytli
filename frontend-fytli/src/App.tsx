@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Programs } from './pages/Programs';
 import { ProgramDetail } from './pages/ProgramDetail';
 import { SessionWorkout } from './pages/SessionWorkout';
+import SessionWorkoutFlexible from './pages/SessionWorkoutFlexible';
 import { SessionSummary } from './pages/SessionSummary';
 import { CompletionDetail } from './pages/CompletionDetail';
 import { Profile } from './pages/Profile';
@@ -49,6 +50,14 @@ function App() {
           />
           <Route
             path="/session/:id"
+            element={
+              <PrivateRoute>
+                <SessionWorkoutFlexible />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/session-old/:id"
             element={
               <PrivateRoute>
                 <SessionWorkout />
