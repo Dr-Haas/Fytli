@@ -293,39 +293,56 @@ const bodyCompositionModel = {
    * Créer un nouvel objectif corporel
    */
   async createGoal(data) {
-    const {
-      user_id,
-      goal_type,
-      target_weight_kg = null,
-      target_body_fat_percent = null,
-      target_muscle_mass_kg = null,
-      start_date,
-      target_date,
-      description = null
-    } = data;
+    try {
+      console.log('🔵 [MODEL createGoal] Début - data:', JSON.stringify(data));
+      
+      const {
+        user_id,
+        goal_type,
+        target_weight_kg = null,
+        target_body_fat_percent = null,
+        target_muscle_mass_kg = null,
+        start_date,
+        target_date,
+        description = null
+      } = data;
 
-    const [result] = await pool.query(
-      `INSERT INTO body_goals (
-        user_id, goal_type, target_weight_kg, target_body_fat_percent,
-        target_muscle_mass_kg, start_date, target_date, description
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id, goal_type, target_weight_kg, target_body_fat_percent,
-        target_muscle_mass_kg, start_date, target_date, description
-      ]
-    );
+      console.log('🔵 [MODEL createGoal] Paramètres extraits:', {
+        user_id, goal_type, target_weight_kg, start_date, target_date
+      });
 
-    return {
-      id: result.insertId,
-      user_id,
-      goal_type,
-      target_weight_kg,
-      target_body_fat_percent,
-      target_muscle_mass_kg,
-      start_date,
-      target_date,
-      status: 'active'
-    };
+      console.log('🔵 [MODEL createGoal] Tentative d\'insertion SQL...');
+      
+      const [result] = await pool.query(
+        `INSERT INTO body_goals (
+          user_id, goal_type, target_weight_kg, target_body_fat_percent,
+          target_muscle_mass_kg, start_date, target_date, description
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          user_id, goal_type, target_weight_kg, target_body_fat_percent,
+          target_muscle_mass_kg, start_date, target_date, description
+        ]
+      );
+
+      console.log('✅ [MODEL createGoal] Insertion réussie, insertId:', result.insertId);
+
+      return {
+        id: result.insertId,
+        user_id,
+        goal_type,
+        target_weight_kg,
+        target_body_fat_percent,
+        target_muscle_mass_kg,
+        start_date,
+        target_date,
+        status: 'active'
+      };
+    } catch (error) {
+      console.error('❌ [MODEL createGoal] Erreur SQL:', error.message);
+      console.error('❌ [MODEL createGoal] Code:', error.code);
+      console.error('❌ [MODEL createGoal] SQL State:', error.sqlState);
+      throw error;
+    }
   },
 
   /**

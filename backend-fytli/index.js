@@ -126,6 +126,9 @@ app.use('/public', publicRoutes);
 app.use('/push', pushNotificationsRoutes);
 app.use('/body-composition', bodyCompositionRoutes);
 
+logger.info('✅ Routes enregistrées avec succès');
+logger.info('📍 Route body-composition disponible sur /body-composition');
+
 // Route 404 - Non trouvé
 app.use((req, res) => {
   res.status(404).json({

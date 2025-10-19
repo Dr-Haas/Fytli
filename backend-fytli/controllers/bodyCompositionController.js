@@ -344,7 +344,10 @@ const bodyCompositionController = {
    */
   async createGoal(req, res) {
     try {
+      logger.info('🎯 [createGoal] Début création objectif');
       const userId = req.user.id;
+      logger.info(`🎯 [createGoal] User ID: ${userId}`);
+      
       const {
         goal_type,
         target_weight_kg,
@@ -355,8 +358,11 @@ const bodyCompositionController = {
         description
       } = req.body;
 
+      logger.info(`🎯 [createGoal] Body reçu:`, { goal_type, target_weight_kg, start_date, target_date });
+
       // Validation
       if (!goal_type || !start_date || !target_date) {
+        logger.warn('⚠️ [createGoal] Validation échouée: champs manquants');
         return res.status(400).json({
           success: false,
           message: 'Type d\'objectif, date de début et date cible sont requis'
@@ -371,6 +377,7 @@ const bodyCompositionController = {
         });
       }
 
+      logger.info('🎯 [createGoal] Appel au model createGoal...');
       const goal = await bodyCompositionModel.createGoal({
         user_id: userId,
         goal_type,
@@ -382,7 +389,7 @@ const bodyCompositionController = {
         description
       });
 
-      logger.info(`🎯 Nouvel objectif créé pour l'utilisateur ${userId}: ${goal_type}`);
+      logger.info(`✅ [createGoal] Nouvel objectif créé pour l'utilisateur ${userId}: ${goal_type}`);
 
       res.status(201).json({
         success: true,
@@ -390,7 +397,8 @@ const bodyCompositionController = {
         data: goal
       });
     } catch (error) {
-      logger.error('Erreur lors de la création de l\'objectif:', error);
+      logger.error('❌ [createGoal] Erreur lors de la création de l\'objectif:', error);
+      logger.error('❌ [createGoal] Stack:', error.stack);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la création de l\'objectif',
