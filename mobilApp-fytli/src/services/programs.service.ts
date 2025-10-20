@@ -43,7 +43,7 @@ export const programsService = {
     const backendPayload = {
       title: data.title,
       description: data.description,
-      difficulty_level: data.level,
+      level: data.level,  // ✅ Corrigé - utilise 'level' maintenant
       duration_weeks: data.duration_weeks,
       sessions_per_week: data.sessions_per_week,
       category_id: data.category_id,
@@ -59,7 +59,7 @@ export const programsService = {
     const backendPayload = {
       title: data.title,
       description: data.description,
-      difficulty_level: data.level,
+      level: data.level,  // ✅ Corrigé - utilise 'level' maintenant
       duration_weeks: data.duration_weeks,
       sessions_per_week: data.sessions_per_week,
       category_id: data.category_id,

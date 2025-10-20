@@ -160,7 +160,8 @@ const getProgramActivityFeed = async (programId, limit = 20) => {
       u.first_name,
       u.last_name,
       s.title as session_title,
-      s.order_index as session_order
+      s.order_index as session_order,
+      s.description as session_description
     FROM session_completions sc
     JOIN users u ON sc.user_id = u.id
     JOIN sessions s ON sc.session_id = s.id

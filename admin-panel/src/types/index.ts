@@ -16,7 +16,8 @@ export interface Program {
   id: number;
   title: string;
   description: string;
-  difficulty_level: 'débutant' | 'intermédiaire' | 'avancé';
+  level?: 'beginner' | 'intermediate' | 'advanced';  // ✅ Harmonisé avec backend
+  difficulty_level?: 'débutant' | 'intermédiaire' | 'avancé';  // @deprecated - à supprimer progressivement
   duration_weeks: number;
   sessions_per_week: number;
   created_by: number;
@@ -80,7 +81,8 @@ export interface Exercise {
   name: string;
   description: string;
   category: string;
-  difficulty_level: 'débutant' | 'intermédiaire' | 'avancé';
+  level?: 'beginner' | 'intermediate' | 'advanced';  // ✅ Harmonisé avec backend
+  difficulty_level?: 'débutant' | 'intermédiaire' | 'avancé';  // @deprecated
   equipment_needed?: string;
   video_url?: string;
   image_url?: string;
