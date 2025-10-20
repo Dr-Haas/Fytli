@@ -41,9 +41,9 @@ const ProgramDetailScreen: React.FC<ProgramDetailScreenProps> = ({ navigation, r
       ] = await Promise.all([
         programsService.getById(programId),
         sessionsService.getByProgramId(programId),
-        enrollmentsService.getUsersByProgram(programId),
-        completionsService.getProgramActivityFeed(programId, 10),
-        enrollmentsService.getProgramStats(programId),
+        enrollmentsService.getUsersByProgram(programId).catch(() => []),  // ✅ Optionnel
+        completionsService.getProgramActivityFeed(programId, 10).catch(() => []),  // ✅ Optionnel
+        enrollmentsService.getProgramStats(programId).catch(() => null),  // ✅ Optionnel
         enrollmentsService.checkEnrollment(programId).catch(() => false)
       ]);
       

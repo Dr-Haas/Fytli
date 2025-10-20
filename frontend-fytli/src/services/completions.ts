@@ -69,6 +69,13 @@ const completionsService = {
   },
 
   /**
+   * Mettre à jour une completion (notes, feeling, photo)
+   */
+  async update(id: number, data: Partial<CreateCompletionData>): Promise<void> {
+    await api.put(`/completions/${id}`, data);
+  },
+
+  /**
    * Supprimer une completion
    */
   async delete(id: number): Promise<void> {

@@ -134,7 +134,7 @@ app.use('/social', socialRoutes);
 logger.info('✅ Routes enregistrées avec succès');
 logger.info('📍 Route body-composition disponible sur /body-composition');
 logger.info('📅 Route schedule disponible sur /schedule');
-logger.info('🤝 Route social disponible sur /social (Cercle Fytli)');
+logger.info('👥 Route social disponible sur /social');
 
 // Route 404 - Non trouvé
 app.use((req, res) => {

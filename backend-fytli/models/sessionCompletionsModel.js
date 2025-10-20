@@ -1,28 +1,33 @@
 /**
- * Model pour gérer les sessions complétées (session_completions)
+ * Modèle pour gérer les sessions complétées
+ * (Historique des sessions terminées par les utilisateurs)
  */
 
 const { pool } = require('../db');
+const { logger } = require('../config/logger');
 
 /**
- * Enregistre une session complétée
+ * Créer une nouvelle completion de session
  */
-const create = async (data) => {
+const create = async (completionData) => {
   const {
     user_id,
     program_id,
     session_id,
     duration_minutes,
-    photo_url,
     notes,
-    feeling
-  } = data;
+    feeling,
+    photo_url,
+    average_heart_rate,
+    calories_burned,
+    exercises_data
+  } = completionData;
 
   const [result] = await pool.query(
     `INSERT INTO session_completions 
-     (user_id, program_id, session_id, duration_minutes, photo_url, notes, feeling) 
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [user_id, program_id, session_id, duration_minutes, photo_url, notes, feeling]
+    (user_id, program_id, session_id, duration_minutes, notes, feeling, photo_url, average_heart_rate, calories_burned, exercises_data) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [user_id, program_id, session_id, duration_minutes, notes, feeling, photo_url, average_heart_rate, calories_burned, exercises_data ? JSON.stringify(exercises_data) : null]
   );
 
   return {
@@ -31,17 +36,17 @@ const create = async (data) => {
     program_id,
     session_id,
     duration_minutes,
-    photo_url,
     notes,
     feeling,
+    photo_url,
     completed_at: new Date()
   };
 };
 
 /**
- * Récupère toutes les sessions complétées pour un utilisateur
+ * Récupérer les completions d'un utilisateur
  */
-const getByUser = async (userId) => {
+const getByUser = async (userId, limit = 50) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
@@ -52,99 +57,118 @@ const getByUser = async (userId) => {
     JOIN programs p ON sc.program_id = p.id
     JOIN sessions s ON sc.session_id = s.id
     WHERE sc.user_id = ?
-    ORDER BY sc.completed_at DESC`,
-    [userId]
+    ORDER BY sc.completed_at DESC
+    LIMIT ?`,
+    [userId, limit]
   );
   return rows;
 };
 
 /**
- * Récupère toutes les sessions complétées pour un programme
+ * Récupérer les completions d'un programme
  */
-const getByProgram = async (programId) => {
+const getByProgram = async (programId, limit = 50) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
       u.first_name,
       u.last_name,
       s.title as session_title,
-      s.\`order\` as session_order
+      s.order_index as session_order
     FROM session_completions sc
-    JOIN users u ON sc.user_id = u.id
+    JOIN users u ON sc.user_id = u.user_id
     JOIN sessions s ON sc.session_id = s.id
     WHERE sc.program_id = ?
     ORDER BY sc.completed_at DESC
-    LIMIT 50`,
-    [programId]
+    LIMIT ?`,
+    [programId, limit]
   );
   return rows;
 };
 
 /**
- * Récupère toutes les sessions complétées pour une session spécifique
+ * Récupérer les completions d'une session spécifique
  */
-const getBySession = async (sessionId) => {
+const getBySession = async (sessionId, limit = 50) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
       u.first_name,
-      u.last_name
+      u.last_name,
+      p.title as program_title
     FROM session_completions sc
-    JOIN users u ON sc.user_id = u.id
+    JOIN users u ON sc.user_id = u.user_id
+    JOIN programs p ON sc.program_id = p.id
     WHERE sc.session_id = ?
-    ORDER BY sc.completed_at DESC`,
-    [sessionId]
+    ORDER BY sc.completed_at DESC
+    LIMIT ?`,
+    [sessionId, limit]
   );
   return rows;
 };
 
 /**
- * Récupère une completion spécifique avec toutes les infos
+ * Récupérer une completion spécifique par ID
  */
-const getById = async (id) => {
+const getById = async (completionId) => {
   const [rows] = await pool.query(
     `SELECT 
       sc.*,
-      u.first_name as user_first_name,
-      u.last_name as user_last_name,
-      u.email as user_email,
+      u.first_name,
+      u.last_name,
+      u.email,
       p.title as program_title,
-      p.description as program_description,
       s.title as session_title,
       s.order_index as session_order
     FROM session_completions sc
-    JOIN users u ON sc.user_id = u.id
+    JOIN users u ON sc.user_id = u.user_id
     JOIN programs p ON sc.program_id = p.id
     JOIN sessions s ON sc.session_id = s.id
     WHERE sc.id = ?`,
-    [id]
+    [completionId]
   );
   return rows[0];
 };
 
 /**
- * Supprime une completion
+ * Mettre à jour une completion existante (notes, feeling, photo)
  */
-const deleteById = async (id) => {
+const update = async (completionId, updateData) => {
+  const { notes, feeling, photo_url } = updateData;
+  
+  const [result] = await pool.query(
+    `UPDATE session_completions 
+    SET notes = ?, feeling = ?, photo_url = ?
+    WHERE id = ?`,
+    [notes, feeling, photo_url, completionId]
+  );
+  
+  return result.affectedRows > 0;
+};
+
+/**
+ * Supprimer une completion
+ */
+const deleteById = async (completionId) => {
   const [result] = await pool.query(
     'DELETE FROM session_completions WHERE id = ?',
-    [id]
+    [completionId]
   );
   return result.affectedRows > 0;
 };
 
 /**
- * Récupère les statistiques de complétion pour un utilisateur sur un programme
+ * Obtenir les stats utilisateur/programme
  */
 const getUserProgramStats = async (userId, programId) => {
   const [rows] = await pool.query(
     `SELECT 
-      COUNT(DISTINCT sc.id) as total_completions,
-      COUNT(DISTINCT sc.session_id) as unique_sessions_completed,
-      SUM(sc.duration_minutes) as total_minutes,
-      MAX(sc.completed_at) as last_completion
-    FROM session_completions sc
-    WHERE sc.user_id = ? AND sc.program_id = ?`,
+      COUNT(*) as total_completions,
+      AVG(duration_minutes) as avg_duration,
+      MAX(completed_at) as last_completion,
+      COUNT(DISTINCT session_id) as unique_sessions
+    FROM session_completions
+    WHERE user_id = ? AND program_id = ?`,
     [userId, programId]
   );
   return rows[0];
@@ -160,9 +184,10 @@ const getProgramActivityFeed = async (programId, limit = 20) => {
       u.first_name,
       u.last_name,
       s.title as session_title,
-      s.\`order\` as session_order
+      s.order_index as session_order,
+      s.description as session_description
     FROM session_completions sc
-    JOIN users u ON sc.user_id = u.id
+    JOIN users u ON sc.user_id = u.user_id
     JOIN sessions s ON sc.session_id = s.id
     WHERE sc.program_id = ?
     ORDER BY sc.completed_at DESC
@@ -174,6 +199,7 @@ const getProgramActivityFeed = async (programId, limit = 20) => {
 
 module.exports = {
   create,
+  update,
   getByUser,
   getByProgram,
   getBySession,
@@ -182,4 +208,3 @@ module.exports = {
   getUserProgramStats,
   getProgramActivityFeed
 };
-

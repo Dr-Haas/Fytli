@@ -34,7 +34,7 @@ export const enrollmentsService = {
 
   async checkEnrollment(programId: number): Promise<boolean> {
     const response = await api.get<any>(`/enrollments/check/${programId}`);
-    return response.data.data.isEnrolled;
+    return response.data.data.enrolled;  // ✅ Corrigé: "enrolled" au lieu de "isEnrolled"
   },
 
   async getProgramStats(programId: number): Promise<any> {

@@ -57,6 +57,10 @@ export const completionsService = {
     return response.data.data;
   },
 
+  async update(id: number, data: Partial<CreateCompletionData>): Promise<void> {
+    await api.put(`/completions/${id}`, data);
+  },
+
   async delete(id: number): Promise<void> {
     await api.delete(`/completions/${id}`);
   },

@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FytliSun from '../components/FytliSun';
 
 const HomeScreen: React.FC = () => {
+  // Animation dynamique du soleil (pulse entre 0.3 et 0.8)
+  const [activityLevel, setActivityLevel] = useState(0.5);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActivityLevel(prev => {
+        const next = prev + 0.05;
+        return next > 0.8 ? 0.3 : next;
+      });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Soleil Fytli en haut de la page */}
+        <View style={styles.sunHeader}>
+          <FytliSun activityLevel={activityLevel} userCount={3} />
+          <Text style={styles.sunTagline}>Plus on bouge ensemble, plus la lumière s'intensifie</Text>
+        </View>
+
         <View style={styles.header}>
           <Text style={styles.title}>Bienvenue sur Fytli</Text>
           <Text style={styles.subtitle}>Votre application de fitness</Text>
@@ -41,10 +61,25 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#0a0a0a',
   },
   scrollContent: {
     flexGrow: 1,
+  },
+  sunHeader: {
+    backgroundColor: '#000',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FFD75F20',
+  },
+  sunTagline: {
+    marginTop: 20,
+    fontSize: 14,
+    color: '#FFB347',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   header: {
     backgroundColor: '#6366f1',

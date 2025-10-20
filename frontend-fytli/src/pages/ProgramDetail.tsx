@@ -41,9 +41,9 @@ export const ProgramDetail = () => {
         ] = await Promise.all([
           programsService.getById(parseInt(id)),
           sessionsService.getByProgramId(parseInt(id)),
-          enrollmentsService.getUsersByProgram(parseInt(id)),
-          completionsService.getProgramActivityFeed(parseInt(id), 10),
-          enrollmentsService.getProgramStats(parseInt(id)),
+          enrollmentsService.getUsersByProgram(parseInt(id)).catch(() => []),  // ✅ Optionnel
+          completionsService.getProgramActivityFeed(parseInt(id), 10).catch(() => []),  // ✅ Optionnel
+          enrollmentsService.getProgramStats(parseInt(id)).catch(() => null),  // ✅ Optionnel
           enrollmentsService.checkEnrollment(parseInt(id)).catch(() => false)
         ]);
         

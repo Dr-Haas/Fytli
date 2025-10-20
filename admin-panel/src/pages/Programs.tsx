@@ -12,6 +12,7 @@ import Input from '@/components/Input';
 import Select from '@/components/Select';
 import { Trash2, Edit, Plus, Search } from 'lucide-react';
 import { formatDateShort } from '@/utils/format';
+import { getLevelLabel, getLevelBadgeClass } from '@/utils/levelUtils';
 import toast from 'react-hot-toast';
 
 export default function Programs() {
@@ -29,7 +30,7 @@ export default function Programs() {
   const [formData, setFormData] = useState<Partial<Program>>({
     title: '',
     description: '',
-    difficulty_level: 'débutant',
+    level: 'beginner',  // ✅ Utilise 'level' maintenant
     duration_weeks: 4,
     sessions_per_week: 3,
     category_id: undefined,
@@ -85,7 +86,7 @@ export default function Programs() {
 
     // Filtrer par difficulté
     if (difficultyFilter !== 'all') {
-      filtered = filtered.filter((program) => program.difficulty_level === difficultyFilter);
+      filtered = filtered.filter((program) => program.level === difficultyFilter);
     }
 
     setFilteredPrograms(filtered);
@@ -96,7 +97,7 @@ export default function Programs() {
     setFormData({
       title: '',
       description: '',
-      difficulty_level: 'débutant',
+      level: 'beginner',  // ✅ Corrigé
       duration_weeks: 4,
       sessions_per_week: 3,
       category_id: undefined,
@@ -114,7 +115,7 @@ export default function Programs() {
     setFormData({
       title: program.title,
       description: program.description || '',
-      difficulty_level: program.difficulty_level,
+      level: program.level || 'beginner',  // ✅ Utilise 'level' maintenant
       duration_weeks: program.duration_weeks,
       sessions_per_week: program.sessions_per_week,
       category_id: program.category_id,
@@ -167,12 +168,16 @@ export default function Programs() {
   };
 
 
-  const getDifficultyBadgeVariant = (level: string) => {
+  const getDifficultyBadgeVariant = (level: string | undefined) => {
+    // Gère maintenant les valeurs en anglais du backend
     switch (level) {
+      case 'beginner':
       case 'débutant':
         return 'success';
+      case 'intermediate':
       case 'intermédiaire':
         return 'warning';
+      case 'advanced':
       case 'avancé':
         return 'danger';
       default:
@@ -224,9 +229,9 @@ export default function Programs() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">Toutes les difficultés</option>
-              <option value="débutant">Débutant</option>
-              <option value="intermédiaire">Intermédiaire</option>
-              <option value="avancé">Avancé</option>
+              <option value="beginner">Débutant</option>
+              <option value="intermediate">Intermédiaire</option>
+              <option value="advanced">Avancé</option>
             </select>
           </div>
         </CardContent>
@@ -258,8 +263,8 @@ export default function Programs() {
                     {program.title}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getDifficultyBadgeVariant(program.difficulty_level)}>
-                      {program.difficulty_level}
+                    <Badge variant={getDifficultyBadgeVariant(program.level)}>
+                      {getLevelLabel(program.level)}
                     </Badge>
                   </TableCell>
                   <TableCell>{program.duration_weeks} sem</TableCell>
@@ -334,13 +339,13 @@ export default function Programs() {
             <div className="grid grid-cols-2 gap-4">
               <Select
                 label="Difficulté *"
-                value={formData.difficulty_level}
-                onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value as any })}
+                value={formData.level}
+                onChange={(e) => setFormData({ ...formData, level: e.target.value as any })}
                 required
               >
-                <option value="débutant">Débutant</option>
-                <option value="intermédiaire">Intermédiaire</option>
-                <option value="avancé">Avancé</option>
+                <option value="beginner">Débutant</option>
+                <option value="intermediate">Intermédiaire</option>
+                <option value="advanced">Avancé</option>
               </Select>
 
               <Select

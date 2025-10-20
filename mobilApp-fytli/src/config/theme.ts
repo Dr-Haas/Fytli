@@ -21,9 +21,9 @@ export const COLORS = {
 };
 
 export const GRADIENTS = {
-  primary: ['#FFD56B', '#FFA34A', '#FF7948'],
-  soft: ['#FBFAF7', '#FFA34A'],
-  warm: ['#FFA34A', '#FF7948'],
+  primary: ['#FFD700', '#FF8C00', '#FF4500'],
+  soft: ['#FFD700', '#FF8C00'],
+  warm: ['#FF8C00', '#FF6B35'],
   blue: ['#3B82F6', '#2563EB'],
   green: ['#10B981', '#059669'],
 };

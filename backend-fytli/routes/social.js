@@ -1,106 +1,104 @@
+/**
+ * Routes Social - Gestion des connexions et du feed
+ */
+
 const express = require('express');
 const router = express.Router();
 const socialController = require('../controllers/socialController');
-const authenticateToken = require('../middleware/auth');
+const authMiddleware = require('../middleware/auth');
 
-// ============ ROUTES DES CONNEXIONS ============
-
-/**
- * @route POST /api/social/connections/add
- * @desc Envoyer une demande d'ami
- * @access Private
- */
-router.post('/connections/add', authenticateToken, socialController.addFriend);
+// ============ GESTION DES CONNEXIONS ============
 
 /**
- * @route POST /api/social/connections/accept
- * @desc Accepter une demande d'ami
- * @access Private
+ * GET /social/connections
+ * Récupérer la liste des amis de l'utilisateur connecté
  */
-router.post('/connections/accept', authenticateToken, socialController.acceptFriend);
+router.get('/connections', authMiddleware, socialController.getFriends);
 
 /**
- * @route DELETE /api/social/connections/:friendId
- * @desc Supprimer une connexion
- * @access Private
+ * GET /social/connections/:userId
+ * Récupérer la liste des amis d'un utilisateur spécifique
  */
-router.delete('/connections/:friendId', authenticateToken, socialController.removeFriend);
+router.get('/connections/:userId', authMiddleware, socialController.getFriends);
 
 /**
- * @route GET /api/social/connections
- * @desc Récupérer la liste des amis de l'utilisateur connecté
- * @access Private
+ * POST /social/connections/add
+ * Envoyer une demande d'ami
+ * Body: { friendId: number }
  */
-router.get('/connections', authenticateToken, socialController.getFriends);
+router.post('/connections/add', authMiddleware, socialController.addFriend);
 
 /**
- * @route GET /api/social/connections/:userId
- * @desc Récupérer la liste des amis d'un utilisateur spécifique
- * @access Private
+ * POST /social/connections/accept
+ * Accepter une demande d'ami
+ * Body: { friendId: number }
  */
-router.get('/connections/:userId', authenticateToken, socialController.getFriends);
+router.post('/connections/accept', authMiddleware, socialController.acceptFriend);
 
 /**
- * @route GET /api/social/search
- * @desc Rechercher des utilisateurs
- * @access Private
+ * DELETE /social/connections/:friendId
+ * Supprimer une connexion (ami)
  */
-router.get('/search', authenticateToken, socialController.searchUsers);
-
-// ============ ROUTES DU FEED ============
+router.delete('/connections/:friendId', authMiddleware, socialController.removeFriend);
 
 /**
- * @route GET /api/social/feed
- * @desc Récupérer le feed social de l'utilisateur connecté
- * @access Private
+ * GET /social/search?q=query
+ * Rechercher des utilisateurs
+ * Query: q (minimum 2 caractères)
  */
-router.get('/feed', authenticateToken, socialController.getFeed);
+router.get('/search', authMiddleware, socialController.searchUsers);
+
+// ============ GESTION DU FEED ============
 
 /**
- * @route GET /api/social/feed/:userId
- * @desc Récupérer le feed social d'un utilisateur spécifique
- * @access Private
+ * GET /social/feed
+ * Récupérer le feed social (activités des amis)
+ * Query: limit (default: 50), offset (default: 0)
  */
-router.get('/feed/:userId', authenticateToken, socialController.getFeed);
+router.get('/feed', authMiddleware, socialController.getFeed);
 
 /**
- * @route POST /api/social/feed/unlock
- * @desc Déverrouiller le feed après une session
- * @access Private
+ * GET /social/feed/:userId
+ * Récupérer le feed d'un utilisateur spécifique
+ * Query: limit (default: 50), offset (default: 0)
  */
-router.post('/feed/unlock', authenticateToken, socialController.unlockFeed);
+router.get('/feed/:userId', authMiddleware, socialController.getFeed);
 
 /**
- * @route GET /api/social/feed/status
- * @desc Vérifier le statut du feed
- * @access Private
+ * POST /social/feed/unlock
+ * Déverrouiller le feed après avoir complété une session
+ * Body: { sessionCompletionId: number, message?: string, emoji?: string }
  */
-router.get('/feed/status', authenticateToken, socialController.checkFeedStatus);
+router.post('/feed/unlock', authMiddleware, socialController.unlockFeed);
 
 /**
- * @route GET /api/social/circle
- * @desc Récupérer les stats du cercle Fytli
- * @access Private
+ * GET /social/feed/status
+ * Vérifier si le feed est déverrouillé aujourd'hui
  */
-router.get('/circle', authenticateToken, socialController.getCircleStats);
-
-// ============ ROUTES DU PROFIL PUBLIC ============
+router.get('/feed/status', authMiddleware, socialController.checkFeedStatus);
 
 /**
- * @route GET /api/social/profile/:username
- * @desc Récupérer un profil public par username
- * @access Private (mais visible selon les paramètres de confidentialité)
+ * GET /social/circle
+ * Récupérer les statistiques du cercle (amis actifs, etc.)
  */
-router.get('/profile/:username', authenticateToken, socialController.getPublicProfile);
+router.get('/circle', authMiddleware, socialController.getCircleStats);
 
-// ============ ROUTES DE PARTAGE ============
+// ============ PROFIL PUBLIC ============
 
 /**
- * @route GET /api/social/share/card
- * @desc Obtenir les données pour générer une carte de partage
- * @access Private
+ * GET /social/profile/:username
+ * Récupérer le profil public d'un utilisateur
  */
-router.get('/share/card', authenticateToken, socialController.getShareCardData);
+router.get('/profile/:username', authMiddleware, socialController.getPublicProfile);
+
+// ============ PARTAGE ============
+
+/**
+ * GET /social/share/card
+ * Obtenir les données pour générer une carte de partage
+ * Query: sessionCompletionId? (optional)
+ */
+router.get('/share/card', authMiddleware, socialController.getShareCardData);
 
 module.exports = router;
 

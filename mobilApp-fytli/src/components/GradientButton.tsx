@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
-    shadowColor: COLORS.orange,
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: 12,
+    elevation: 8,
   },
   gradient: {
     alignItems: 'center',

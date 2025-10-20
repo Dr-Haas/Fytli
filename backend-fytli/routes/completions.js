@@ -25,6 +25,9 @@ router.get('/session/:sessionId', completionsController.getBySession);
 // GET /completions/:id - Une completion spécifique
 router.get('/:id', completionsController.getById);
 
+// PUT /completions/:id - Mettre à jour une completion (notes, feeling, photo)
+router.put('/:id', completionsController.update);
+
 // DELETE /completions/:id - Supprimer une completion
 router.delete('/:id', completionsController.deleteById);
 

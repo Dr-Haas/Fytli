@@ -22,6 +22,7 @@ const SessionSummaryScreen: React.FC<SessionSummaryScreenProps> = ({ navigation,
   const [feeling, setFeeling] = useState<FeelingType>('good');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [completionId, setCompletionId] = useState<number | null>(null);
   const [streakCount, setStreakCount] = useState(0);
 
   // Sauvegarder automatiquement la completion au chargement
@@ -44,6 +45,7 @@ const SessionSummaryScreen: React.FC<SessionSummaryScreenProps> = ({ navigation,
         feeling: feeling,
       });
 
+      setCompletionId(completion.id);
       setSaved(true);
       console.log('✅ Completion enregistrée:', completion);
       
@@ -57,6 +59,29 @@ const SessionSummaryScreen: React.FC<SessionSummaryScreenProps> = ({ navigation,
     } finally {
       setSaving(false);
     }
+  };
+
+  const updateCompletion = async () => {
+    if (!completionId) return;
+    
+    try {
+      await completionsService.update(completionId, {
+        notes: notes || undefined,
+        feeling: feeling,
+      });
+      console.log('✅ Completion mise à jour');
+    } catch (error) {
+      console.error('❌ Erreur mise à jour completion:', error);
+      // Ne pas bloquer la navigation si la mise à jour échoue
+    }
+  };
+
+  const handleReturnToDashboard = async () => {
+    // Mettre à jour les notes et feeling avant de quitter
+    if (completionId) {
+      await updateCompletion();
+    }
+    navigation.navigate('Main');
   };
 
   const getFeelingEmoji = (feelingValue: string) => {
@@ -247,7 +272,7 @@ const SessionSummaryScreen: React.FC<SessionSummaryScreenProps> = ({ navigation,
           <View style={styles.actions}>
             <GradientButton
               title="🏠 Retour au Dashboard"
-              onPress={() => navigation.navigate('Main')}
+              onPress={handleReturnToDashboard}
               size="large"
               style={styles.actionButton}
             />

@@ -206,6 +206,40 @@ const getById = async (req, res) => {
 };
 
 /**
+ * Mettre à jour une completion (notes, feeling, photo)
+ */
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { notes, feeling, photo_url } = req.body;
+    
+    const success = await sessionCompletionsModel.update(parseInt(id), {
+      notes,
+      feeling,
+      photo_url
+    });
+    
+    if (!success) {
+      return res.status(404).json({
+        success: false,
+        message: 'Completion non trouvée'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Session mise à jour avec succès'
+    });
+  } catch (error) {
+    logger.error('Erreur update completion:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour de la session'
+    });
+  }
+};
+
+/**
  * Supprimer une completion
  */
 const deleteById = async (req, res) => {
@@ -286,6 +320,7 @@ const getProgramActivityFeed = async (req, res) => {
 
 module.exports = {
   create,
+  update,
   getByUser,
   getByProgram,
   getBySession,

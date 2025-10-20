@@ -1,40 +1,155 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '@config/theme';
 import Avatar from '@components/Avatar';
 import Badge from '@components/Badge';
 import Card from '@components/Card';
+import { socialService } from '@/services';
 
 interface FriendProfileScreenProps {
   navigation: any;
-  route?: any;
+  route: {
+    params: {
+      userId: number;
+    };
+  };
 }
 
 const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, route }) => {
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { userId } = route.params;
+  
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'accepted'>('none');
+  const [actionLoading, setActionLoading] = useState(false);
 
-  const friend = {
-    name: 'Sophie Martin',
-    avatar: undefined,
+  useEffect(() => {
+    if (userId) {
+      fetchProfile();
+    }
+  }, [userId]);
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const data = await socialService.getPublicProfile(userId);
+      setProfile(data);
+      setIsConnected(data.isConnected);
+      setConnectionStatus(data.connectionStatus || 'none');
+    } catch (error) {
+      console.error('❌ Erreur chargement profil:', error);
+      Alert.alert('Erreur', 'Impossible de charger le profil');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const stats = [
-    { label: 'Streak', value: '18', icon: '🔥' },
-    { label: 'Séances totales', value: '124', icon: '💪' },
-    { label: 'Badges', value: '15', icon: '🏆' },
+  const handleAddFriend = async () => {
+    setActionLoading(true);
+    try {
+      await socialService.addFriend(userId);
+      setConnectionStatus('pending');
+      Alert.alert('Succès', 'Demande d\'ami envoyée !');
+    } catch (error: any) {
+      console.error('❌ Erreur ajout ami:', error);
+      Alert.alert('Erreur', error.response?.data?.message || 'Impossible d\'ajouter cet ami');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleAcceptFriend = async () => {
+    setActionLoading(true);
+    try {
+      await socialService.acceptFriend(userId);
+      setConnectionStatus('accepted');
+      setIsConnected(true);
+      Alert.alert('Succès', 'Demande acceptée !');
+    } catch (error) {
+      console.error('❌ Erreur acceptation:', error);
+      Alert.alert('Erreur', 'Impossible d\'accepter la demande');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRemoveFriend = async () => {
+    Alert.alert(
+      'Supprimer la connexion',
+      'Êtes-vous sûr de vouloir supprimer cette connexion ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: async () => {
+            setActionLoading(true);
+            try {
+              await socialService.removeFriend(userId);
+              setConnectionStatus('none');
+              setIsConnected(false);
+              Alert.alert('Succès', 'Connexion supprimée');
+            } catch (error) {
+              console.error('❌ Erreur suppression:', error);
+              Alert.alert('Erreur', 'Impossible de supprimer la connexion');
+            } finally {
+              setActionLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  if (loading) {
+    return (
+      <LinearGradient colors={[COLORS.cream, COLORS.white]} style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.orange} />
+            <Text style={styles.loadingText}>Chargement du profil...</Text>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <LinearGradient colors={[COLORS.cream, COLORS.white]} style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Profil non trouvé</Text>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Text style={styles.backButtonText}>Retour</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
+
+  const { user, stats, badges, recentActivity } = profile;
+
+  const displayStats = [
+    { label: 'Streak', value: stats.current_streak || 0, icon: '🔥' },
+    { label: 'Séances totales', value: stats.total_sessions || 0, icon: '💪' },
+    { label: 'Badges', value: stats.total_badges || 0, icon: '🏆' },
   ];
 
-  const publicBadges = [
-    { icon: '🔥', label: 'Fire Starter', color: COLORS.red },
-    { icon: '💎', label: 'Precious', color: COLORS.orange },
-    { icon: '⭐', label: 'Star', color: COLORS.yellow },
-  ];
+  const formatTimeAgo = (dateString: string): string => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  const recentProgram = {
-    name: 'Programme Force & Endurance',
-    lastSession: 'Il y a 2h',
+    if (diffInSeconds < 60) return 'À l\'instant';
+    if (diffInSeconds < 3600) return `Il y a ${Math.floor(diffInSeconds / 60)} min`;
+    if (diffInSeconds < 86400) return `Il y a ${Math.floor(diffInSeconds / 3600)}h`;
+    if (diffInSeconds < 604800) return `Il y a ${Math.floor(diffInSeconds / 86400)} jour${Math.floor(diffInSeconds / 86400) > 1 ? 's' : ''}`;
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
   };
 
   return (
@@ -43,7 +158,7 @@ const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, r
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {/* Header avec Avatar */}
           <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={styles.backButtonTop} onPress={() => navigation.goBack()}>
               <Text style={styles.backButtonText}>←</Text>
             </TouchableOpacity>
 
@@ -55,21 +170,66 @@ const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, r
                 end={{ x: 1, y: 1 }}
               >
                 <View style={styles.avatarInner}>
-                  <Avatar name={friend.name} imageUrl={friend.avatar} size="xlarge" />
+                  <Avatar 
+                    name={`${user.first_name || ''} ${user.last_name || ''}`} 
+                    imageUrl={user.avatar_url} 
+                    size="xlarge" 
+                  />
                 </View>
               </LinearGradient>
             </View>
 
-            <Text style={styles.name}>{friend.name}</Text>
+            <Text style={styles.name}>
+              {user.first_name} {user.last_name}
+            </Text>
+            {user.email && <Text style={styles.email}>{user.email}</Text>}
 
-            <TouchableOpacity
-              style={[styles.followButton, isFollowing && styles.followingButton]}
-              onPress={() => setIsFollowing(!isFollowing)}
-            >
-              <Text style={[styles.followButtonText, isFollowing && styles.followingButtonText]}>
-                {isFollowing ? '✓ Suivi' : '+ Suivre'}
-              </Text>
-            </TouchableOpacity>
+            {/* Boutons de connexion conditionnels */}
+            {connectionStatus === 'none' && (
+              <TouchableOpacity
+                style={styles.followButton}
+                onPress={handleAddFriend}
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <ActivityIndicator size="small" color={COLORS.white} />
+                ) : (
+                  <Text style={styles.followButtonText}>+ Ajouter comme ami</Text>
+                )}
+              </TouchableOpacity>
+            )}
+
+            {connectionStatus === 'pending' && (
+              <View style={styles.pendingContainer}>
+                <Text style={styles.pendingText}>⏳ En attente</Text>
+                <TouchableOpacity
+                  style={styles.acceptButton}
+                  onPress={handleAcceptFriend}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? (
+                    <ActivityIndicator size="small" color={COLORS.white} />
+                  ) : (
+                    <Text style={styles.acceptButtonText}>✓ Accepter</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {connectionStatus === 'accepted' && (
+              <View style={styles.connectedContainer}>
+                <View style={styles.connectedBadge}>
+                  <Text style={styles.connectedText}>✓ Connecté</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={handleRemoveFriend}
+                  disabled={actionLoading}
+                >
+                  <Text style={styles.removeButtonText}>Supprimer</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
 
           {/* Message motivant */}
@@ -83,7 +243,7 @@ const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, r
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Statistiques</Text>
             <View style={styles.statsGrid}>
-              {stats.map((stat, index) => (
+              {displayStats.map((stat, index) => (
                 <Card key={index} style={styles.statCard}>
                   <Text style={styles.statIcon}>{stat.icon}</Text>
                   <Text style={styles.statValue}>{stat.value}</Text>
@@ -93,52 +253,55 @@ const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, r
             </View>
           </View>
 
-          {/* Dernier programme */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Dernier programme</Text>
-            <Card style={styles.programCard}>
-              <Text style={styles.programName}>{recentProgram.name}</Text>
-              <Text style={styles.programTime}>{recentProgram.lastSession}</Text>
-            </Card>
-          </View>
-
           {/* Badges publics */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Badges publics</Text>
-            <View style={styles.badgesContainer}>
-              {publicBadges.map((badge, index) => (
-                <View key={index} style={styles.badgeItem}>
-                  <Badge
-                    icon={badge.icon}
-                    label={badge.label}
-                    color={badge.color}
-                    size="medium"
-                  />
-                </View>
-              ))}
+          {badges && badges.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Badges débloqués</Text>
+              <View style={styles.badgesContainer}>
+                {badges.slice(0, 3).map((badge, index) => (
+                  <View key={badge.id || index} style={styles.badgeItem}>
+                    <Badge
+                      icon={badge.icon || '🏆'}
+                      label={badge.name || 'Badge'}
+                      color={COLORS.orange}
+                      size="medium"
+                    />
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Activité récente */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Activité récente</Text>
-            <Card style={styles.activityCard}>
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>🌅</Text>
-                <Text style={styles.activityText}>
-                  A terminé sa routine matinale
+          {recentActivity && recentActivity.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Activité récente</Text>
+              <Card style={styles.activityCard}>
+                {recentActivity.slice(0, 3).map((activity, index) => (
+                  <View key={activity.id || index} style={styles.activityItem}>
+                    <Text style={styles.activityIcon}>{activity.emoji || '💪'}</Text>
+                    <Text style={styles.activityText}>{activity.message}</Text>
+                    <Text style={styles.activityTime}>
+                      {formatTimeAgo(activity.created_at)}
+                    </Text>
+                  </View>
+                ))}
+              </Card>
+            </View>
+          )}
+
+          {/* État verrouillé si pas d'activité */}
+          {(!recentActivity || recentActivity.length === 0) && (
+            <View style={styles.section}>
+              <Card style={styles.emptyCard}>
+                <Text style={styles.emptyIcon}>🔒</Text>
+                <Text style={styles.emptyText}>Activité privée</Text>
+                <Text style={styles.emptySubtext}>
+                  Les activités de cet utilisateur ne sont pas visibles pour le moment
                 </Text>
-                <Text style={styles.activityTime}>Il y a 2h</Text>
-              </View>
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>🔥</Text>
-                <Text style={styles.activityText}>
-                  18 jours de suite !
-                </Text>
-                <Text style={styles.activityTime}>Il y a 1 jour</Text>
-              </View>
-            </Card>
-          </View>
+              </Card>
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
