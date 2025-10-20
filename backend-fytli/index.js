@@ -29,6 +29,7 @@ const publicRoutes = require('./routes/public');
 const pushNotificationsRoutes = require('./routes/pushNotifications');
 const bodyCompositionRoutes = require('./routes/bodyComposition');
 const scheduleRoutes = require('./routes/schedule');
+const socialRoutes = require('./routes/social');
 
 // Initialisation de l'application Express
 const app = express();
@@ -127,10 +128,12 @@ app.use('/public', publicRoutes);
 app.use('/push', pushNotificationsRoutes);
 app.use('/body-composition', bodyCompositionRoutes);
 app.use('/schedule', scheduleRoutes);
+app.use('/social', socialRoutes);
 
 logger.info('✅ Routes enregistrées avec succès');
 logger.info('📍 Route body-composition disponible sur /body-composition');
 logger.info('📅 Route schedule disponible sur /schedule');
+logger.info('👥 Route social disponible sur /social');
 
 // Route 404 - Non trouvé
 app.use((req, res) => {
