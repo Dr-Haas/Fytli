@@ -95,7 +95,7 @@ const SunWrapper = styled.div<{ $activityLevel: number }>`
   width: 250px;
   height: 250px;
   position: relative;
-  filter: drop-shadow(0 0 ${props => 30 + props.$activityLevel * 20}px rgba(255, 160, 0, ${0.6 + props.$activityLevel * 0.3}));
+  filter: drop-shadow(0 0 ${(props: { $activityLevel: number }) => 30 + props.$activityLevel * 20}px rgba(255, 160, 0, ${(props: { $activityLevel: number }) => 0.6 + props.$activityLevel * 0.3}));
   transition: filter 0.5s ease-in-out;
 `;
 
@@ -105,7 +105,7 @@ const SunSvg = styled.svg`
 `;
 
 const Core = styled.circle<{ $intensity: number }>`
-  animation: ${props => pulse(props.$intensity)} 3s ease-in-out infinite;
+  animation: ${(props: { $intensity: number }) => pulse(props.$intensity)} 3s ease-in-out infinite;
   transform-origin: center;
   transition: all 0.5s ease-in-out;
 `;
@@ -114,7 +114,7 @@ const Halo = styled.circle<{ $intensity: number; $userJoined: boolean }>`
   transform-origin: center;
   transition: all 0.3s ease-in-out;
   
-  ${props => props.$userJoined 
+  ${(props: { $intensity: number; $userJoined: boolean }) => props.$userJoined 
     ? css`animation: ${userJoinPulse} 0.8s ease-out;`
     : css`animation: ${glow(props.$intensity)} 6s ease-in-out infinite;`
   }

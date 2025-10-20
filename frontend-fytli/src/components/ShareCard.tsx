@@ -19,8 +19,8 @@ const ShareCard: React.FC<ShareCardProps> = ({ data, onShare }) => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   // Générer l'image de la carte
-  const generateImage = async () => {
-    if (!cardRef.current) return;
+  const generateImage = async (): Promise<string | undefined> => {
+    if (!cardRef.current) return undefined;
 
     try {
       setIsGenerating(true);
@@ -40,6 +40,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ data, onShare }) => {
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
       alert('Erreur lors de la génération de l\'image');
+      return undefined;
     } finally {
       setIsGenerating(false);
     }
@@ -47,7 +48,7 @@ const ShareCard: React.FC<ShareCardProps> = ({ data, onShare }) => {
 
   // Partager l'image
   const handleShare = async () => {
-    let imageUrl = generatedImage;
+    let imageUrl: string | null | undefined = generatedImage;
 
     if (!imageUrl) {
       imageUrl = await generateImage();
