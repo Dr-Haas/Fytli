@@ -35,14 +35,20 @@ create_backend_env() {
 NODE_ENV=production
 
 # Base de données OVH MySQL
-DB_HOST=recovvkfytli.mysql.db
-DB_PORT=3306
-DB_USER=recovvkfytli
+DB_HOST=hg101756-001.eu.clouddb.ovh.net
+DB_PORT=35419
+DB_USER=admin
 DB_PASSWORD=FytliApp2025
-DB_NAME=recovvkfytli
+DB_NAME=lyfti
 
 # JWT Secret
-JWT_SECRET=01af8cee94dfbbb8f55d3391090ebb4a5be1c182620cc84b1eeba3ed3aa522a9
+JWT_SECRET=YAPjoHksbZK87QcIInTwO1bVjqcY4hjw9+EkRLk/hNxB/yulgYMP7OZ2TjORCH1f8vTJkcSMEeayREH0gCy0Tw==
+
+# CORS - Frontend URL
+FRONTEND_URL=https://fytli-frontend.onrender.com
+
+# Base URL pour les fichiers uploadés
+BASE_URL=https://fytli.onrender.com
 
 # Email (optionnel)
 EMAIL_HOST=smtp.gmail.com
@@ -99,7 +105,7 @@ create_frontend_env() {
     if [ "$ENV_TYPE" = "production" ]; then
         cat > "$ENV_FILE" << 'EOF'
 # Configuration Frontend Production
-VITE_API_URL=https://votre-backend.onrender.com
+VITE_API_URL=https://fytli.onrender.com
 EOF
     else
         cat > "$ENV_FILE" << 'EOF'
