@@ -13,6 +13,9 @@ import { CompletionDetail } from './pages/CompletionDetail';
 import { Profile } from './pages/Profile';
 import { UserProfile } from './pages/UserProfile';
 import NotificationSettings from './pages/NotificationSettings';
+import Feed from './pages/Feed';
+import Share from './pages/Share';
+import PublicProfile from './pages/PublicProfile';
 
 function App() {
   return (
@@ -101,6 +104,32 @@ function App() {
             element={
               <PrivateRoute>
                 <NotificationSettings />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Social Routes - Cercle Fytli */}
+          <Route
+            path="/feed"
+            element={
+              <PrivateRoute>
+                <Feed />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/share"
+            element={
+              <PrivateRoute>
+                <Share />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/u/:username"
+            element={
+              <PrivateRoute>
+                <PublicProfile />
               </PrivateRoute>
             }
           />

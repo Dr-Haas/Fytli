@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { Trophy, Clock, Zap, TrendingUp, Home, MessageSquare, Camera } from 'lucide-react';
 import completionsService from '../services/completions';
 import uploadsService from '../services/uploads';
+import { unlockFeed } from '../services/socialService';
 import { showToast, getErrorMessage } from '../utils/toast';
 import { Spinner } from '../components/ui/Spinner';
 
@@ -20,6 +21,9 @@ export const SessionSummary = () => {
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [feedUnlocked, setFeedUnlocked] = useState(false);
+  const [streakCount, setStreakCount] = useState(0);
+  const [completionId, setCompletionId] = useState<number | null>(null);
 
   // Sauvegarder automatiquement la completion au chargement
   useEffect(() => {
@@ -49,7 +53,7 @@ export const SessionSummary = () => {
         }
       }
 
-      await completionsService.create({
+      const completion = await completionsService.create({
         program_id: programId,
         session_id: session.id,
         duration_minutes: duration,
@@ -59,6 +63,20 @@ export const SessionSummary = () => {
       });
 
       setSaved(true);
+      setCompletionId(completion.id);
+
+      // Déverrouiller le feed social (Cercle Fytli)
+      try {
+        const feedMessage = `${session.title || 'Séance'} terminée ${getFeelingEmoji(feeling)}`;
+        const feedResult = await unlockFeed(completion.id, feedMessage, getFeelingEmoji(feeling));
+        setFeedUnlocked(true);
+        setStreakCount(feedResult.streak);
+        console.log('Feed déverrouillé:', feedResult);
+      } catch (feedError) {
+        console.error('Erreur déverrouillage feed:', feedError);
+        // Ne pas bloquer si l'unlock du feed échoue
+      }
+
       if (withPhoto) {
         showToast.success('Photo ajoutée ! 📸');
       }
@@ -86,6 +104,18 @@ export const SessionSummary = () => {
   const handleAddPhoto = () => {
     if (!photoFile) return;
     saveCompletion(true);
+  };
+
+  // Helper pour obtenir l'emoji selon le feeling
+  const getFeelingEmoji = (feeling: string) => {
+    const emojiMap: { [key: string]: string } = {
+      'terrible': '😖',
+      'bad': '😞',
+      'okay': '😐',
+      'good': '😊',
+      'excellent': '🤩',
+    };
+    return emojiMap[feeling] || '💪';
   };
 
   if (!session) {
@@ -372,6 +402,42 @@ export const SessionSummary = () => {
               ))}
             </CardContent>
           </Card>
+        )}
+
+        {/* Cercle Fytli - Feed Unlocked */}
+        {feedUnlocked && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Card className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white border-0">
+              <CardContent className="p-6 text-center">
+                <div className="text-4xl mb-3">✨</div>
+                <p className="text-xl font-bold mb-2">
+                  Cercle Fytli déverrouillé !
+                </p>
+                <p className="text-sm opacity-90 mb-4">
+                  {streakCount > 0 && (
+                    <>
+                      <span className="text-2xl font-bold">🔥 {streakCount}</span>
+                      <span className="ml-2">
+                        jour{streakCount > 1 ? 's' : ''} de suite !
+                      </span>
+                      <br />
+                    </>
+                  )}
+                  Découvre les activités de tes amis
+                </p>
+                <Button
+                  onClick={() => navigate('/feed')}
+                  className="bg-white text-indigo-600 hover:bg-gray-100 font-semibold"
+                >
+                  🤝 Voir mon cercle
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
 
         {/* Motivation Quote */}
