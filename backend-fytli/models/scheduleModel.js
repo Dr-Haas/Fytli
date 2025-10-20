@@ -1,4 +1,4 @@
-const db = require('../db');
+const { pool } = require('../db');
 
 const scheduleModel = {
   /**
@@ -7,7 +7,7 @@ const scheduleModel = {
    * @returns {Promise<Array>} Liste des sessions planifiées pour aujourd'hui
    */
   async getDailySchedule(userId) {
-    const [sessions] = await db.query(`
+    const [sessions] = await pool.execute(`
       SELECT 
         p.id as program_id,
         p.title as program_title,
@@ -46,7 +46,7 @@ const scheduleModel = {
           ELSE 1
         END,
         p.time_slot_start ASC,
-        s.order_index ASC
+        s.\`order\` ASC
     `, [userId]);
 
     return sessions;
@@ -58,7 +58,7 @@ const scheduleModel = {
    * @returns {Promise<Array>} Liste des programmes avec leurs créneaux
    */
   async getWeeklySchedule(userId) {
-    const [programs] = await db.query(`
+    const [programs] = await pool.execute(`
       SELECT 
         p.id as program_id,
         p.title,
@@ -99,7 +99,7 @@ const scheduleModel = {
    * @returns {Promise<Object|null>} Prochaine session à faire
    */
   async getNextSession(userId, programId) {
-    const [sessions] = await db.query(`
+    const [sessions] = await pool.execute(`
       SELECT 
         s.id as session_id,
         s.title,
@@ -124,13 +124,13 @@ const scheduleModel = {
     // Si toutes les sessions sont complétées, proposer la première
     if (sessions.length > 0 && sessions[0].is_completed) {
       // Trouver la première session non complétée
-      const [nextUncompleted] = await db.query(`
+      const [nextUncompleted] = await pool.execute(`
         SELECT 
           s.id as session_id,
           s.title,
           s.description,
           s.target_duration_minutes,
-          s.order_index
+          s.\`order\` as order_index
         FROM sessions s
         WHERE s.program_id = ?
         AND NOT EXISTS (
@@ -154,7 +154,7 @@ const scheduleModel = {
    * @returns {Promise<Object>} Stats de la semaine
    */
   async getWeeklyStats(userId) {
-    const [stats] = await db.query(`
+    const [stats] = await pool.execute(`
       SELECT 
         COUNT(DISTINCT DATE(sc.completed_at)) as sessions_this_week,
         SUM(sc.duration_minutes) as total_minutes_this_week,

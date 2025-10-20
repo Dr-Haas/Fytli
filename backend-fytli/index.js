@@ -7,9 +7,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+const fs = require('fs').promises;
 require('dotenv').config();
 
-const { testConnection } = require('./db');
+const { testConnection, pool } = require('./db');
 const { logger } = require('./config/logger');
 const notificationScheduler = require('./services/notificationScheduler');
 const authRoutes = require('./routes/auth');
@@ -29,6 +30,7 @@ const publicRoutes = require('./routes/public');
 const pushNotificationsRoutes = require('./routes/pushNotifications');
 const bodyCompositionRoutes = require('./routes/bodyComposition');
 const scheduleRoutes = require('./routes/schedule');
+const socialRoutes = require('./routes/social');
 
 // Initialisation de l'application Express
 const app = express();
@@ -127,10 +129,12 @@ app.use('/public', publicRoutes);
 app.use('/push', pushNotificationsRoutes);
 app.use('/body-composition', bodyCompositionRoutes);
 app.use('/schedule', scheduleRoutes);
+app.use('/social', socialRoutes);
 
 logger.info('✅ Routes enregistrées avec succès');
 logger.info('📍 Route body-composition disponible sur /body-composition');
 logger.info('📅 Route schedule disponible sur /schedule');
+logger.info('🤝 Route social disponible sur /social (Cercle Fytli)');
 
 // Route 404 - Non trouvé
 app.use((req, res) => {
@@ -167,6 +171,85 @@ app.use((err, req, res, next) => {
   });
 });
 
+/**
+ * Exécute les migrations de la base de données en local
+ */
+const runMigrations = async () => {
+  // Ne pas exécuter en production
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ℹ️  Mode production: migrations désactivées');
+    return;
+  }
+
+  try {
+    console.log('\n📦 Exécution des migrations de base de données...');
+    
+    // Sélectionner la base de données
+    await pool.query(`USE ${process.env.DB_NAME || 'followSport_app'}`);
+    console.log(`✅ Base de données sélectionnée: ${process.env.DB_NAME || 'followSport_app'}`);
+    
+    // Lire le fichier de migration
+    const migrationPath = path.join(__dirname, 'database', 'migration_social_features.sql');
+    const migrationSQL = await fs.readFile(migrationPath, 'utf8');
+    
+    // Diviser le fichier en commandes SQL individuelles
+    // On ignore les commentaires et on divise par DELIMITER
+    const commands = migrationSQL
+      .split(/DELIMITER\s+/i)
+      .map(block => block.trim())
+      .filter(block => block.length > 0);
+    
+    // Exécuter chaque bloc de commandes
+    for (const block of commands) {
+      if (block.startsWith('//')) {
+        // C'est un nouveau délimiteur, on traite les procédures/fonctions/triggers
+        const statements = block.replace(/^\/\/\s*/i, '').split('//');
+        for (const stmt of statements) {
+          const trimmed = stmt.trim();
+          if (trimmed && !trimmed.match(/^(--|\/\*|DELIMITER)/i)) {
+            try {
+              await pool.query(trimmed);
+            } catch (err) {
+              // Ignorer les erreurs si la procédure/fonction existe déjà
+              if (!err.message.includes('already exists') && !err.code === 'ER_SP_ALREADY_EXISTS') {
+                console.warn(`⚠️  Avertissement migration:`, err.message);
+              }
+            }
+          }
+        }
+      } else {
+        // Commandes SQL normales
+        const statements = block.split(';').filter(s => {
+          const trimmed = s.trim();
+          return trimmed.length > 0 && !trimmed.startsWith('--') && !trimmed.startsWith('/*');
+        });
+        
+        for (const stmt of statements) {
+          const trimmed = stmt.trim();
+          if (trimmed) {
+            try {
+              await pool.query(trimmed);
+            } catch (err) {
+              // Ignorer certaines erreurs si les tables/colonnes existent déjà
+              if (!err.message.includes('already exists') && 
+                  !err.message.includes('Duplicate key name') &&
+                  !err.code === 'ER_DUP_FIELDNAME' &&
+                  !err.code === 'ER_TABLE_EXISTS_ERROR') {
+                console.warn(`⚠️  Avertissement migration:`, err.message);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    console.log('✅ Migrations exécutées avec succès\n');
+  } catch (error) {
+    console.warn('⚠️  Erreur lors des migrations (non bloquante):', error.message);
+    // Ne pas bloquer le démarrage du serveur si les migrations échouent
+  }
+};
+
 // Démarrage du serveur
 const startServer = async () => {
   try {
@@ -178,6 +261,9 @@ const startServer = async () => {
       console.error('Vérifiez vos variables d\'environnement dans le fichier .env');
       process.exit(1);
     }
+    
+    // Exécuter les migrations en local uniquement
+    await runMigrations();
     
     // Démarrage du serveur HTTP
     app.listen(PORT, () => {

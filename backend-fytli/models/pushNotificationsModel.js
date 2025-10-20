@@ -1,4 +1,4 @@
-const db = require('../db');
+const { pool } = require('../db');
 
 const pushNotificationsModel = {
   // Créer ou mettre à jour un abonnement push
@@ -6,14 +6,14 @@ const pushNotificationsModel = {
     const { endpoint, keys } = subscription;
     
     // Vérifier si l'abonnement existe déjà
-    const [existing] = await db.query(
+    const [existing] = await pool.execute(
       'SELECT subscription_id FROM push_subscriptions WHERE user_id = ? AND endpoint = ?',
       [userId, endpoint]
     );
 
     if (existing.length > 0) {
       // Mettre à jour l'abonnement existant
-      await db.query(
+      await pool.execute(
         `UPDATE push_subscriptions 
          SET p256dh_key = ?, auth_key = ?, is_active = TRUE, last_used_at = CURRENT_TIMESTAMP 
          WHERE subscription_id = ?`,
@@ -22,7 +22,7 @@ const pushNotificationsModel = {
       return existing[0].subscription_id;
     } else {
       // Créer un nouvel abonnement
-      const [result] = await db.query(
+      const [result] = await pool.execute(
         `INSERT INTO push_subscriptions (user_id, endpoint, p256dh_key, auth_key, user_agent)
          VALUES (?, ?, ?, ?, ?)`,
         [userId, endpoint, keys.p256dh, keys.auth, userAgent]
@@ -33,7 +33,7 @@ const pushNotificationsModel = {
 
   // Récupérer tous les abonnements actifs d'un utilisateur
   async getUserSubscriptions(userId) {
-    const [subscriptions] = await db.query(
+    const [subscriptions] = await pool.execute(
       `SELECT subscription_id, endpoint, p256dh_key, auth_key, created_at, last_used_at
        FROM push_subscriptions
        WHERE user_id = ? AND is_active = TRUE`,
@@ -56,7 +56,7 @@ const pushNotificationsModel = {
 
   // Désactiver un abonnement
   async unsubscribe(userId, endpoint) {
-    await db.query(
+    await pool.execute(
       'UPDATE push_subscriptions SET is_active = FALSE WHERE user_id = ? AND endpoint = ?',
       [userId, endpoint]
     );
@@ -64,7 +64,7 @@ const pushNotificationsModel = {
 
   // Supprimer un abonnement invalide
   async removeInvalidSubscription(endpoint) {
-    await db.query(
+    await pool.execute(
       'DELETE FROM push_subscriptions WHERE endpoint = ?',
       [endpoint]
     );
@@ -72,14 +72,14 @@ const pushNotificationsModel = {
 
   // Récupérer les préférences de notification d'un utilisateur
   async getPreferences(userId) {
-    const [preferences] = await db.query(
+    const [preferences] = await pool.execute(
       'SELECT * FROM notification_preferences WHERE user_id = ?',
       [userId]
     );
     
     if (preferences.length === 0) {
       // Créer des préférences par défaut
-      await db.query(
+      await pool.execute(
         'INSERT INTO notification_preferences (user_id) VALUES (?)',
         [userId]
       );
@@ -97,7 +97,7 @@ const pushNotificationsModel = {
     const values = Object.values(preferences);
     values.push(userId);
 
-    await db.query(
+    await pool.execute(
       `UPDATE notification_preferences SET ${fields} WHERE user_id = ?`,
       values
     );
@@ -105,7 +105,7 @@ const pushNotificationsModel = {
 
   // Logger une notification envoyée
   async logNotification(userId, type, title, body, data = null, wasDelivered = true, errorMessage = null) {
-    await db.query(
+    await pool.execute(
       `INSERT INTO notification_logs (user_id, notification_type, title, body, data, was_delivered, error_message)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [userId, type, title, body, JSON.stringify(data), wasDelivered, errorMessage]
@@ -114,7 +114,7 @@ const pushNotificationsModel = {
 
   // Récupérer les utilisateurs inscrits à un programme avec leurs préférences
   async getUsersForProgramReminder(programId) {
-    const [users] = await db.query(
+    const [users] = await pool.execute(
       `SELECT DISTINCT
          u.user_id,
          u.first_name,
@@ -162,13 +162,13 @@ const pushNotificationsModel = {
       params.push(excludeUserId);
     }
 
-    const [members] = await db.query(query, params);
+    const [members] = await pool.execute(query, params);
     return members;
   },
 
   // Récupérer les statistiques des notifications d'un utilisateur
   async getNotificationStats(userId) {
-    const [stats] = await db.query(
+    const [stats] = await pool.execute(
       `SELECT 
          COUNT(DISTINCT ps.subscription_id) as active_devices,
          COUNT(nl.log_id) as total_sent,
@@ -194,7 +194,11 @@ const pushNotificationsModel = {
 
   // Récupérer les notifications d'un utilisateur
   async getUserNotifications(userId, limit = 20) {
-    const [notifications] = await db.query(
+    // S'assurer que userId et limit sont des nombres
+    const userIdNum = parseInt(userId);
+    const limitNum = parseInt(limit);
+    
+    const [notifications] = await pool.execute(
       `SELECT 
          notification_id as id,
          notification_type as type,
@@ -203,12 +207,12 @@ const pushNotificationsModel = {
          data,
          sent_at as timestamp,
          was_delivered,
-         is_read as read
+         is_read as is_read
        FROM v_user_notifications
        WHERE user_id = ?
        ORDER BY sent_at DESC
        LIMIT ?`,
-      [userId, limit]
+      [userIdNum, limitNum]
     );
 
     return notifications.map(notif => ({
@@ -225,7 +229,7 @@ const pushNotificationsModel = {
   // Marquer une notification comme lue
   async markAsRead(userId, notificationId) {
     try {
-      await db.query(
+      await pool.execute(
         'CALL sp_mark_notification_read(?, ?)',
         [userId, notificationId]
       );
@@ -239,7 +243,7 @@ const pushNotificationsModel = {
   // Marquer toutes les notifications comme lues
   async markAllAsRead(userId) {
     try {
-      await db.query(
+      await pool.execute(
         'CALL sp_mark_all_notifications_read(?)',
         [userId]
       );
@@ -253,7 +257,7 @@ const pushNotificationsModel = {
   // Obtenir le nombre de notifications non lues
   async getUnreadCount(userId) {
     try {
-      const [result] = await db.query(
+      const [result] = await pool.execute(
         `SELECT COUNT(*) as unread_count
          FROM notification_logs nl
          LEFT JOIN user_notification_reads unr 

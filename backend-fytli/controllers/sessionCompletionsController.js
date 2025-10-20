@@ -5,7 +5,7 @@
 const sessionCompletionsModel = require('../models/sessionCompletionsModel');
 const badgesModel = require('../models/badgesModel');
 const pushNotificationService = require('../services/pushNotificationService');
-const db = require('../db');
+const { pool } = require('../db');
 const { logger } = require('../config/logger');
 
 /**
@@ -75,7 +75,7 @@ const create = async (req, res) => {
     // Envoyer des notifications aux autres membres du programme
     try {
       // Récupérer les infos de l'utilisateur qui a complété
-      const [users] = await db.query(
+      const [users] = await pool.execute(
         'SELECT first_name, last_name FROM users WHERE user_id = ?',
         [userId]
       );

@@ -3,12 +3,12 @@
  */
 
 require('dotenv').config();
-const db = require('./db');
+const { pool } = require('./db');
 
 async function checkUser(userId) {
   try {
     const query = 'SELECT id, email, firstname, lastname, role, created_at FROM users WHERE id = ?';
-    const [results] = await db.query(query, [userId]);
+    const [results] = await pool.execute(query, [userId]);
     
     if (results.length === 0) {
       console.log(`❌ Aucun utilisateur trouvé avec l'ID ${userId}`);

@@ -9,7 +9,7 @@ const { pool } = require('../db');
  * @returns {Promise<Array>} Liste des sessions
  */
 const findAll = async () => {
-  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY `order_index` ASC');
+  const [rows] = await pool.query('SELECT * FROM sessions ORDER BY order_index ASC');
   return rows;
 };
 
@@ -30,7 +30,7 @@ const findById = async (id) => {
  */
 const findByProgramId = async (programId) => {
   const [rows] = await pool.query(
-    'SELECT * FROM sessions WHERE program_id = ? ORDER BY `order_index` ASC',
+    'SELECT * FROM sessions WHERE program_id = ? ORDER BY order_index ASC',
     [programId]
   );
   return rows;
@@ -44,20 +44,20 @@ const findByProgramId = async (programId) => {
 const create = async (data) => {
   const { program_id, title, order, order_index, day_number } = data;
   
-  // Utiliser order_index en priorité, sinon order, sinon day_number
-  const finalOrderIndex = order_index !== undefined ? order_index : (order !== undefined ? order : (day_number || 1));
+  // Utiliser order en priorité, sinon order_index, sinon day_number
+  const finalOrder = order !== undefined ? order : (order_index !== undefined ? order_index : (day_number || 1));
   
   const [result] = await pool.query(
     `INSERT INTO sessions (program_id, title, order_index) 
      VALUES (?, ?, ?)`,
-    [program_id, title, finalOrderIndex]
+    [program_id, title, finalOrder]
   );
   
   return {
     id: result.insertId,
     program_id,
     title,
-    order_index: finalOrderIndex
+    order: finalOrder
   };
 };
 

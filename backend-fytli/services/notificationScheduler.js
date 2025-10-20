@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const db = require('../db');
+const { pool } = require('../db');
 const pushNotificationService = require('./pushNotificationService');
 const pushNotificationsModel = require('../models/pushNotificationsModel');
 const { logger } = require('../config/logger');
@@ -65,8 +65,8 @@ class NotificationScheduler {
       logger.info('🔔 Vérification des rappels d\'entraînement...');
 
       // Récupérer tous les programmes avec time slots actifs
-      const [programs] = await db.query(`
-        SELECT program_id, name, time_slot_start, time_slot_end, is_time_specific
+      const [programs] = await pool.execute(`
+        SELECT id as program_id, title as name, time_slot_start, time_slot_end, is_time_specific
         FROM programs
         WHERE is_time_specific = TRUE
           AND time_slot_start IS NOT NULL
@@ -95,7 +95,7 @@ class NotificationScheduler {
 
           if (!isQuietHours && this.isTimeToNotify(currentTime, reminderTimeStr, program.time_slot_start)) {
             // Vérifier si l'utilisateur n'a pas déjà fait sa session aujourd'hui
-            const [completions] = await db.query(`
+            const [completions] = await pool.execute(`
               SELECT sc.completion_id
               FROM session_completions sc
               INNER JOIN sessions s ON sc.session_id = s.session_id
@@ -125,7 +125,7 @@ class NotificationScheduler {
       logger.info('💪 Envoi de la motivation quotidienne...');
 
       // Récupérer tous les utilisateurs qui ont activé les motivations quotidiennes
-      const [users] = await db.query(`
+      const [users] = await pool.execute(`
         SELECT u.user_id, u.email, u.first_name,
                np.daily_motivation,
                np.quiet_hours_start,
@@ -166,7 +166,7 @@ class NotificationScheduler {
       logger.info('🎯 Vérification des objectifs hebdomadaires...');
 
       // Récupérer les utilisateurs avec leurs sessions complétées cette semaine
-      const [users] = await db.query(`
+      const [users] = await pool.execute(`
         SELECT 
           u.user_id,
           u.email,
@@ -205,7 +205,7 @@ class NotificationScheduler {
     try {
       logger.info('🧹 Nettoyage des abonnements inactifs...');
 
-      const [result] = await db.query(`
+      const [result] = await pool.execute(`
         DELETE FROM push_subscriptions
         WHERE last_used_at < DATE_SUB(NOW(), INTERVAL 90 DAY)
           OR (is_active = FALSE AND created_at < DATE_SUB(NOW(), INTERVAL 30 DAY))
