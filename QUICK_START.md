@@ -1,266 +1,352 @@
-# ⚡ Quick Start - Fytli
+# ⚡ Quick Start - Projet Fytli
 
-Guide de démarrage rapide en 5 minutes.
-
----
-
-## 🚨 Problème de déploiement sur Render ?
-
-**Erreur** : `Cannot find module 'express'`
-
-**Solution rapide** : 
-
-Sur Render, configurez :
-- **Root Directory** : `backend-fytli` ⚠️ (C'EST ESSENTIEL)
-- **Build Command** : `npm install`
-- **Start Command** : `npm start`
-
-📖 **Guide complet** : [RENDER_CONFIG.md](RENDER_CONFIG.md)
+Guide de démarrage rapide pour le projet Fytli après installation ou mise à jour.
 
 ---
 
-## 🚀 Démarrage local en 3 étapes
+## 🚀 Démarrage Rapide (5 minutes)
 
-### 1. Installation (une seule fois)
-
-```bash
-# Méthode automatique
-bash install.sh
-
-# OU méthode manuelle
-cd frontend-fytli && npm install && cd ..
-cd admin-panel && npm install && cd ..
-cd backend-fytli && npm install && cd ..
-```
-
-### 2. Configurer la base de données
+### 1️⃣ Installer les dépendances
 
 ```bash
-# Créer la base
-mysql -u root -p < backend-fytli/database/enrollment_system.sql
-
-# Créer un .env dans backend-fytli/
-cat > backend-fytli/.env << EOF
-NODE_ENV=development
-PORT=9001
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=votre_mot_de_passe
-DB_NAME=fytli
-JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
-EOF
-
-# Créer .env pour frontend et admin
-echo "VITE_API_URL=http://localhost:9001" > frontend-fytli/.env
-echo "VITE_API_URL=http://localhost:9001" > admin-panel/.env
-```
-
-### 3. Lancer les applications
-
-```bash
-# Terminal 1 - Backend (obligatoire)
-cd backend-fytli
-npm run dev
-
-# Terminal 2 - Frontend (obligatoire)
-cd frontend-fytli
-npm run dev
-
-# Terminal 3 - Admin (optionnel)
-cd admin-panel
-npm run dev
-```
-
-**✅ Ouvrir** : http://localhost:5173
-
----
-
-## 📦 Build pour production
-
-```bash
-# Frontend
-cd frontend-fytli
-npm run build
-
-# Admin
-cd admin-panel
-npm run build
-
 # Backend
 cd backend-fytli
-npm run build
-```
+npm install
 
-Les fichiers de build sont dans :
-- `frontend-fytli/dist/`
-- `admin-panel/dist/`
+# Frontend
+cd ../frontend-fytli
+npm install
 
----
+# Admin Panel
+cd ../admin-panel
+npm install
 
-## 🚀 Déployer sur Render
-
-### Option 1 : Automatique (Recommandé)
-
-1. Push sur Git :
-   ```bash
-   git add .
-   git commit -m "Ready for deployment"
-   git push
-   ```
-
-2. Sur [render.com](https://render.com) :
-   - New → Blueprint
-   - Connecter repository
-   - `render.yaml` configure tout automatiquement
-
-3. Configurer les variables d'environnement (seulement le backend) :
-   - `DB_HOST`
-   - `DB_USER`
-   - `DB_PASSWORD`
-   - `DB_NAME=fytli`
-
-### Option 2 : Manuel
-
-Pour chaque service (Backend, Frontend, Admin) :
-
-**Backend - Web Service** :
-- Root Directory : `backend-fytli` ⚠️
-- Build Command : `npm install --production=false` ⚠️
-- Start Command : `npm start`
-- Variables d'environnement : voir ci-dessus
-
-**Frontend - Static Site** :
-- Root Directory : `frontend-fytli` ⚠️
-- Build Command : `npm install && npm run build`
-- Publish Directory : `dist`
-- Variable : `VITE_API_URL=https://votre-backend.onrender.com`
-- Rewrite : `/* → /index.html`
-
-**Admin - Static Site** :
-- Root Directory : `admin-panel` ⚠️
-- Build Command : `npm install && npm run build`
-- Publish Directory : `dist`
-- Variable : `VITE_API_URL=https://votre-backend.onrender.com`
-- Rewrite : `/* → /index.html`
-
-📖 **Guide détaillé** : [RENDER_CONFIG.md](RENDER_CONFIG.md)
-
----
-
-## 📁 Structure du projet
-
-```
-fytli_db/
-├── frontend-fytli/    # App PWA utilisateur
-├── admin-panel/              # Panel d'administration
-├── backend-fytli/      # API REST
-└── [docs & config]
-```
-
-Chaque projet est **indépendant** avec son propre `package.json`.
-
----
-
-## 📚 Documentation
-
-### 🔥 Guides essentiels
-
-- [⚡ QUICK_START.md](QUICK_START.md) - Ce fichier
-- [🚀 RENDER_CONFIG.md](RENDER_CONFIG.md) - Déployer sur Render
-- [⌨️ COMMANDS.md](COMMANDS.md) - Commandes rapides
-
-### 📖 Documentation complète
-
-- [📘 README.md](README.md) - Vue d'ensemble
-- [🚀 DEPLOY.md](DEPLOY.md) - Déploiement (Render, Vercel, VPS)
-- [🏗️ BUILD.md](BUILD.md) - Guide de build
-- [📁 PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - Architecture
-- [🗄️ DATABASE.md](DATABASE.md) - Base de données
-
----
-
-## ❓ Questions fréquentes
-
-### Erreur "Cannot find module" ?
-
-```bash
-cd <projet_concerné>
-rm -rf node_modules package-lock.json
+# Mobile App (si nécessaire)
+cd ../mobilApp-fytli
 npm install
 ```
 
-### Port déjà utilisé ?
+### 2️⃣ Créer les fichiers .env
 
-```bash
-# Trouver le processus
-lsof -i :5173  # ou 5174, 9001
-
-# Tuer
-kill -9 <PID>
+**Backend** (`backend-fytli/.env`) :
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=followSport_app
+DB_PORT=3306
+PORT=9001
+NODE_ENV=development
+JWT_SECRET=55dcd7551dddcf4300a37f9e053e4cd2fd046b0e3fd7db5cc9e5cac8300747e8edb0d87495fa63c5d320af33337c5876b55294947bc86ce4083b3e4372cdc292
+FRONTEND_URL=http://localhost:5173
 ```
 
-### Base de données inaccessible ?
-
-```bash
-# Vérifier que MySQL tourne
-brew services list  # macOS
-sudo systemctl status mysql  # Linux
-
-# Redémarrer
-brew services restart mysql  # macOS
+**Frontend** (`frontend-fytli/.env`) :
+```env
+VITE_API_URL=http://localhost:9001
 ```
 
-### Frontend ne se connecte pas au backend ?
+**Admin Panel** (`admin-panel/.env`) :
+```env
+VITE_API_URL=http://localhost:9001
+```
 
-1. Vérifier que le backend tourne (http://localhost:9001)
-2. Vérifier `VITE_API_URL` dans `.env`
-3. Vérifier la configuration CORS dans `backend-fytli/index.js`
+### 3️⃣ Créer la base de données
+
+```bash
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE IF NOT EXISTS followSport_app;
+EXIT;
+```
+
+### 4️⃣ Ajouter des données de test (optionnel)
+
+```bash
+cd backend-fytli
+mysql -u root -p followSport_app < database/quick_seed_feed.sql
+```
+
+### 5️⃣ Démarrer les services
+
+```bash
+# Terminal 1 - Backend
+cd backend-fytli
+npm run dev
+
+# Terminal 2 - Frontend
+cd frontend-fytli
+npm run dev
+
+# Terminal 3 - Admin Panel (optionnel)
+cd admin-panel
+npm run dev
+```
+
+### 6️⃣ Vérification
+
+- Backend : http://localhost:9001
+- Frontend : http://localhost:5173
+- Admin Panel : http://localhost:5174
 
 ---
 
-## 🆘 Besoin d'aide ?
+## ✅ Vérifications rapides
 
-1. **Commandes** : [COMMANDS.md](COMMANDS.md)
-2. **Déploiement Render** : [RENDER_CONFIG.md](RENDER_CONFIG.md)
-3. **Déploiement complet** : [DEPLOY.md](DEPLOY.md)
-4. **Architecture** : [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
-5. **README** : [README.md](README.md)
+### Dans l'application web :
 
----
+1. **Login** ✓
+   ```
+   http://localhost:5173/login → Se connecter
+   ```
 
-## 🎯 Checklist
+2. **Profil** ✓
+   ```
+   Onglet Profil → Doit afficher votre profil
+   ```
 
-### Développement local
+3. **Programmes** ✓
+   ```
+   Onglet Programmes → Liste des programmes disponibles
+   ```
 
-- [ ] Node.js 20+ installé
-- [ ] MySQL 8+ installé
-- [ ] Dépendances installées (`bash install.sh`)
-- [ ] Base de données créée
-- [ ] Fichiers `.env` créés
-- [ ] Backend lancé (port 9001)
-- [ ] Frontend lancé (port 5173)
-
-### Déploiement Render
-
-- [ ] Code sur Git (GitHub/GitLab)
-- [ ] `render.yaml` à la racine
-- [ ] Base de données MySQL externe créée
-- [ ] Schéma importé
-- [ ] Services créés sur Render
-- [ ] Root Directory configuré pour chaque service ⚠️
-- [ ] Variables d'environnement configurées
-- [ ] `VITE_API_URL` mis à jour avec URL backend
+4. **Feed Social** ✓
+   ```
+   /feed → Feed verrouillé (si pas de séance aujourd'hui)
+   Compléter une séance → Feed déverrouillé ✨
+   ```
 
 ---
 
-**🎉 Vous êtes prêt ! Bon développement !**
+## 🎨 Si les styles ne s'appliquent pas
 
-**⚡ Pro tip** : Créer un alias dans votre `.bashrc` ou `.zshrc` :
+### Frontend/Admin Web
 
 ```bash
-alias fytli-start="cd ~/fytli && bash -c '
-cd backend-fytli && npm run dev &
-cd ../frontend-fytli && npm run dev
-'"
+# Nettoyer le cache
+cd frontend-fytli  # ou admin-panel
+rm -rf node_modules/.cache
+npm run dev
 ```
+
+### Mobile App
+
+```bash
+cd mobilApp-fytli
+
+# Nettoyer le cache Metro
+rm -rf node_modules/.cache
+rm -rf /tmp/metro-* 2>/dev/null || true
+
+# Démarrer avec cache reset
+npx react-native start --reset-cache
+
+# Dans un autre terminal, rebuild
+npx expo run:ios  # ou npx expo run:android
+```
+
+---
+
+## 🐛 Problèmes courants
+
+### "Profil non trouvé" (Mobile)
+```
+1. Allez dans l'onglet Profil
+2. Cliquez sur "🔍 Voir le Debug complet"
+3. Vérifiez que Token et User sont présents
+4. Si non, déconnectez-vous et reconnectez-vous
+```
+
+### "Feed vide"
+```
+1. Exécutez le script SQL de données de test
+2. OU complétez une session dans l'app
+3. Le feed se remplira automatiquement
+```
+
+### "Connection refused" / "Network Error"
+```
+1. Vérifiez que le backend est démarré (http://localhost:9001)
+2. Vérifiez le fichier .env du frontend (VITE_API_URL)
+3. Redémarrez le backend
+```
+
+### "Permissions photo refusées" (Mobile)
+```
+iOS:
+Réglages → Fytli → Activer Caméra et Photos
+
+Android:
+Paramètres → Apps → Fytli → Permissions → Activer Caméra et Stockage
+```
+
+### "Table doesn't exist"
+```bash
+# Exécuter les migrations
+cd backend-fytli
+mysql -u root -p followSport_app < database/migration_social_features.sql
+```
+
+---
+
+## 📝 Logs à surveiller
+
+Ouvrez les terminaux et cherchez :
+
+✅ **Bons signes** :
+```
+✅ Login successful - User: {...}
+✅ Auth stored in AsyncStorage
+✅ Completion enregistrée
+✅ Feed déverrouillé - Streak: X
+✅ Connexion MySQL établie
+🚀 Serveur démarré sur le port 9001
+```
+
+⚠️ **Warnings normaux** (ne pas s'inquiéter) :
+```
+⚠️ Stats non disponibles
+⚠️ Badges non disponibles
+⚠️ 401 sur /social/profile/3
+```
+
+❌ **Erreurs à corriger** :
+```
+❌ Token invalide détecté
+❌ Erreur sauvegarde completion
+❌ Erreur lors de la connexion
+❌ Cannot connect to MySQL
+```
+
+---
+
+## 🎯 Test complet (10 minutes)
+
+### Web (Frontend)
+```
+1. ✓ Déconnexion / Reconnexion
+2. ✓ Aller sur Profil → Voir les stats
+3. ✓ Programmes → Consulter un programme
+4. ✓ Feed → Voir le cercle Fytli
+5. ✓ Share → Générer une carte
+```
+
+### Admin Panel
+```
+1. ✓ Connexion admin
+2. ✓ Programmes → Créer un programme
+3. ✓ Utilisateurs → Voir la liste
+4. ✓ Badges → Gérer les badges
+```
+
+### Mobile App
+```
+1. ✓ Déconnexion / Reconnexion
+2. ✓ Aller sur Profil → Voir les stats
+3. ✓ Programmes → Créer un programme
+4. ✓ S'inscrire au programme
+5. ✓ Démarrer une session
+6. ✓ Compléter la session
+7. ✓ Ajouter une photo
+8. ✓ Sélectionner un feeling
+9. ✓ Vérifier "Feed déverrouillé !"
+10. ✓ Vérifier le streak
+```
+
+---
+
+## 📦 Ports Utilisés
+
+| Service      | Port  | URL                     |
+|-------------|-------|-------------------------|
+| Backend     | 9001  | http://localhost:9001   |
+| Frontend    | 5173  | http://localhost:5173   |
+| Admin Panel | 5174  | http://localhost:5174   |
+
+---
+
+## 📞 Besoin d'aide ?
+
+1. **Logs Backend** : `backend-fytli/logs/error-*.log`
+2. **Logs Frontend** : Console navigateur (F12 → Console)
+3. **Logs Mobile** : Terminal Metro + Device logs
+4. **Database** : Vérifiez que les tables existent et ont des données
+5. **Permissions** : Vérifiez dans les réglages du téléphone
+
+**Commandes de diagnostic :**
+```bash
+# Backend
+curl http://localhost:9001/
+
+# Frontend
+curl http://localhost:5173/
+
+# Base de données
+mysql -u root -p -e "USE followSport_app; SHOW TABLES;"
+```
+
+---
+
+## ✨ Fonctionnalités principales
+
+Votre app Fytli inclut maintenant :
+
+### Core Features
+- ✅ Authentification (JWT)
+- ✅ Gestion des programmes d'entraînement
+- ✅ Sessions et exercices
+- ✅ Inscriptions et complétions
+- ✅ Composition corporelle
+- ✅ Objectifs hebdomadaires
+
+### Cercle Fytli (Social)
+- ✅ Feed social verrouillé/déverrouillé
+- ✅ Cercle d'amis animé
+- ✅ Système de streak
+- ✅ Génération de cartes partageables
+- ✅ Profils publics
+
+### Gamification
+- ✅ Système de badges
+- ✅ Statistiques utilisateur
+- ✅ Progression par programme
+- ✅ Achievements
+
+### UI/UX
+- ✅ Design System cohérent
+- ✅ Composant Soleil Fytli ☀️
+- ✅ Animations Framer Motion
+- ✅ Responsive mobile/tablet/desktop
+
+---
+
+## 🎨 Design System
+
+Pour respecter le design system Fytli :
+- Consultez `DESIGN_SYSTEM_FYTLI.md` pour la documentation complète
+- Consultez `DESIGN_SYSTEM_QUICK_REFERENCE.md` pour une référence rapide
+- Ouvrez `design-system-demo.html` pour une démo interactive
+
+---
+
+## 📚 Documentation Complète
+
+Pour plus de détails, consultez :
+
+| Document | Description |
+|----------|-------------|
+| `CERCLE_FYTLI.md` | Guide complet du système social |
+| `CORRECTIONS_ET_RESOLUTIONS.md` | Toutes les corrections appliquées |
+| `INSTALLATION_ET_CONFIGURATION.md` | Guide d'installation détaillé |
+| `FYTLI_SUN.md` | Documentation du composant Soleil |
+| `DESIGN_SYSTEM_FYTLI.md` | Design System complet |
+| `README.md` | Vue d'ensemble du projet |
+
+---
+
+**✨ C'est tout ! Bon développement ! 🚀**
+
+**Dernière mise à jour : 21 octobre 2025**
 

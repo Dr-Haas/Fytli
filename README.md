@@ -276,31 +276,42 @@ fytli_db/
 
 ## 🎨 Design System
 
-### Couleurs Fytli
+> **"Chaleureux, moderne, accessible"**  
+> Design system complet documenté pour garantir la cohérence de l'expérience Fytli.
 
+### 📚 Documentation Complète
+
+- **[📋 Index & Navigation](DESIGN_SYSTEM_INDEX.md)** - Point d'entrée de la documentation
+- **[📘 Documentation Complète](DESIGN_SYSTEM_FYTLI.md)** - Guide détaillé du design system
+- **[⚡ Référence Rapide](DESIGN_SYSTEM_QUICK_REFERENCE.md)** - Cheat sheet 1-page
+- **[🎨 Démo Interactive](design-system-demo.html)** - Visualisation des composants
+- **[✅ Checklist de Conformité](DESIGN_SYSTEM_CHECKLIST.md)** - Review & QA
+
+### 🎯 Quick Look
+
+#### Couleurs Principales
 ```css
---fytli-red: #FF4D3A      /* Primary */
---fytli-orange: #FF8A3D   /* Secondary */
---fytli-cream: #FBFAF7    /* Background */
---fytli-dark: #0E0E10     /* Foreground */
---fytli-gray: #3A3A3E     /* Muted */
---fytli-line: #D7D7DB     /* Borders */
---fytli-success: #2BB673  /* Success */
---fytli-warning: #FFCA55  /* Warning */
---fytli-info: #2D7FF9     /* Info */
+🔴 Rouge     #FF4D3A / #FF7948  (Primary)
+🟠 Orange    #FF8A3D / #FFA34A  (Secondary)
+🟡 Jaune     #FFD56B            (Accent)
+🤎 Crème     #FBFAF7            (Background)
+⚫ Noir      #0E0E10            (Text)
 ```
 
-### Typography
-
+#### Typographie
 - **UI** : Inter, system-ui, sans-serif
 - **Brand** : Poppins, Inter, sans-serif
+- **Échelle** : 12px → 36px+ (8 tailles)
 
-### Border Radius
+#### Espacements
+- **Base unit** : 4px (tous les espacements sont des multiples de 4)
+- **Tokens** : xs(4), sm(8), md(16), lg(24), xl(32), 2xl(48)
 
-- SM: 12px
-- MD: 16px (default)
-- LG: 20px
-- XL: 28px
+#### Border Radius
+- **SM** : 8-12px - Inputs, petits boutons
+- **MD** : 12-16px - Cards standards ⭐
+- **LG** : 16-20px - Cards importantes
+- **XL** : 24-28px - Boutons hero (signature Fytli)
 
 ---
 
