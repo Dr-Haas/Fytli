@@ -68,7 +68,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
             <Text style={styles.logo}>fytli</Text>
             
             {/* Soleil Fytli comme animation de chargement */}
-            <View style={''}>
+            <View style={styles.sunLoadingContainer}>
               <FytliSun activityLevel={activityLevel} userCount={userCount} />
             </View>
             

@@ -39,9 +39,21 @@ const FriendProfileScreen: React.FC<FriendProfileScreenProps> = ({ navigation, r
       setProfile(data);
       setIsConnected(data.isConnected);
       setConnectionStatus(data.connectionStatus || 'none');
-    } catch (error) {
-      console.error('❌ Erreur chargement profil:', error);
-      Alert.alert('Erreur', 'Impossible de charger le profil');
+    } catch (error: any) {
+      console.error('❌ Erreur chargement profil ami:', error);
+      const errorMessage = error?.response?.data?.message || 'Impossible de charger le profil';
+      
+      if (error?.response?.status === 404) {
+        Alert.alert(
+          'Profil introuvable', 
+          'Ce profil n\'existe pas ou n\'est plus disponible.',
+          [
+            { text: 'Retour', onPress: () => navigation.goBack() }
+          ]
+        );
+      } else {
+        Alert.alert('Erreur', errorMessage);
+      }
     } finally {
       setLoading(false);
     }

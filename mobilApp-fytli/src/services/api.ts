@@ -34,12 +34,25 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.error(`❌ API Error: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, error.response?.data || error.message);
-    if (error.response?.status === 401) {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('user');
-      // TODO: Navigation vers login
+    const status = error.response?.status;
+    const url = error.config?.url;
+    
+    console.error(`❌ API Error: ${error.config?.method?.toUpperCase()} ${url}`, error.response?.data || error.message);
+    
+    // Ne déconnecter QUE si c'est une vraie erreur d'authentification sur les endpoints critiques
+    if (status === 401) {
+      const isAuthEndpoint = url?.includes('/auth/') || url?.includes('/users/me');
+      
+      if (isAuthEndpoint) {
+        console.warn('🚪 Token invalide détecté - Déconnexion de l\'utilisateur');
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('user');
+        // TODO: Navigation vers login ou émission d'un événement
+      } else {
+        console.warn(`⚠️ 401 sur ${url} - Token possiblement expiré, mais on ne déconnecte pas automatiquement`);
+      }
     }
+    
     return Promise.reject(error);
   }
 );

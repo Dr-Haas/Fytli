@@ -25,7 +25,7 @@ interface UserStats {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
-  const { user: authUser, logout } = useAuth();
+  const { user: authUser, logout, isLoading: authLoading } = useAuth();
   
   const [stats, setStats] = useState<UserStats | null>(null);
   const [badges, setBadges] = useState<UserBadge[]>([]);
@@ -34,8 +34,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    console.log('📱 ProfileScreen - authUser:', authUser);
+    console.log('📱 ProfileScreen - authLoading:', authLoading);
+    console.log('📱 ProfileScreen - authUser?.id:', authUser?.id);
     if (authUser?.id) {
       fetchProfileData();
+    } else {
+      console.log('⚠️ Pas d\'authUser disponible');
+      setLoading(false);
     }
   }, [authUser]);
 
@@ -43,11 +49,24 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
     if (!authUser?.id) return;
 
     try {
+      console.log('📊 Chargement des données profil pour userId:', authUser.id);
+      
       const [userStats, userBadges, goals] = await Promise.all([
-        usersService.getUserStats(authUser.id).catch(() => null),
-        badgesService.getUserEarnedBadges(authUser.id).catch(() => []),
-        bodyCompositionService.getGoals().catch(() => []),
+        usersService.getUserStats(authUser.id).catch((err) => {
+          console.log('⚠️ Stats non disponibles:', err.message);
+          return null;
+        }),
+        badgesService.getUserEarnedBadges(authUser.id).catch((err) => {
+          console.log('⚠️ Badges non disponibles:', err.message);
+          return [];
+        }),
+        bodyCompositionService.getGoals().catch((err) => {
+          console.log('⚠️ Objectifs non disponibles:', err.message);
+          return [];
+        }),
       ]);
+
+      console.log('✅ Données chargées - Stats:', userStats, 'Badges:', userBadges?.length, 'Goals:', goals?.length);
 
       setStats(userStats);
       setBadges(userBadges.slice(0, 4)); // Top 4 badges
@@ -103,12 +122,78 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
     return labels[goalType] || goalType;
   };
 
+  // Attendre que l'authentification se charge
+  if (authLoading) {
+    return (
+      <LinearGradient colors={[COLORS.cream, COLORS.white]} style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.orange} />
+            <Text style={styles.loadingText}>Chargement du profil...</Text>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
+
   if (!authUser) {
+    const checkAsyncStorage = async () => {
+      try {
+        const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+        const token = await AsyncStorage.getItem('token');
+        const user = await AsyncStorage.getItem('user');
+        
+        console.log('🔍 Debug AsyncStorage:');
+        console.log('Token présent:', !!token);
+        console.log('User présent:', !!user);
+        if (user) {
+          console.log('User data:', JSON.parse(user));
+        }
+        
+        Alert.alert(
+          'Debug Info',
+          `Token: ${!!token}\nUser: ${!!user}\n\nVoir console pour détails`
+        );
+      } catch (error) {
+        console.error('Erreur debug:', error);
+        Alert.alert('Erreur', String(error));
+      }
+    };
+
     return (
       <LinearGradient colors={[COLORS.cream, COLORS.white]} style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Utilisateur non connecté</Text>
+            <Text style={styles.errorIcon}>😕</Text>
+            <Text style={styles.errorTitle}>Profil non trouvé</Text>
+            <Text style={styles.errorText}>
+              Impossible de charger les informations du profil.{'\n'}
+              L'utilisateur n'est pas disponible dans le contexte.
+            </Text>
+            <TouchableOpacity 
+              style={styles.retryButton} 
+              onPress={() => navigation.navigate('Debug')}
+            >
+              <Text style={styles.retryButtonText}>🔍 Voir le Debug complet</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.retryButton, { marginTop: SPACING.sm, backgroundColor: '#8B5CF6' }]} 
+              onPress={checkAsyncStorage}
+            >
+              <Text style={styles.retryButtonText}>📦 Check Storage</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.retryButton, { marginTop: SPACING.sm, backgroundColor: COLORS.darkGray }]} 
+              onPress={() => navigation.navigate('Main')}
+            >
+              <Text style={styles.retryButtonText}>🏠 Retour à l'accueil</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.retryButton, { marginTop: SPACING.sm, backgroundColor: COLORS.red }]} 
+              onPress={handleLogout}
+            >
+              <Text style={styles.retryButtonText}>🚪 Se déconnecter</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -296,23 +381,51 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: SPACING.xl,
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    fontSize: 16,
-    color: COLORS.darkGray,
-  },
   loadingContainer: {
+    flex: 1,
     paddingVertical: SPACING.xl * 2,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
     marginTop: SPACING.md,
     fontSize: 14,
     color: COLORS.darkGray,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+  },
+  errorIcon: {
+    fontSize: 64,
+    marginBottom: SPACING.lg,
+  },
+  errorTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: COLORS.warmText,
+    marginBottom: SPACING.sm,
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    color: COLORS.darkGray,
+    textAlign: 'center',
+    marginBottom: SPACING.xl,
+  },
+  retryButton: {
+    backgroundColor: COLORS.orange,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.xl,
+    ...SHADOWS.sm,
+  },
+  retryButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
   header: {
     alignItems: 'center',

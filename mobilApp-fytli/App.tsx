@@ -11,6 +11,7 @@ import {
   DashboardScreen,
   ProgramsListScreen,
   ProgramDetailScreen,
+  CreateProgramScreen,
   FeedScreen,
   DailyCardScreen,
   ProfileScreen,
@@ -18,6 +19,7 @@ import {
   WorkoutScreen,
   SessionSummaryScreen,
   LockedFeedScreen,
+  DebugScreen,
 } from './src/screens';
 
 const Stack = createNativeStackNavigator();
@@ -119,6 +121,13 @@ function AppNavigator() {
             }}
           />
           <Stack.Screen 
+            name="CreateProgram" 
+            component={CreateProgramScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen 
             name="Feed" 
             component={FeedScreen}
             options={{
@@ -144,18 +153,27 @@ function AppNavigator() {
             options={{ presentation: 'modal' }}
           />
           <Stack.Screen 
-            name="Profile" 
-            component={ProfileScreen}
+            name="FriendProfile" 
+            component={FriendProfileScreen}
             options={{
               headerShown: true,
-              title: 'Mon Profil',
+              title: 'Profil',
               headerStyle: { backgroundColor: '#FBFAF7' },
               headerTintColor: '#4A2E20',
             }}
           />
-          <Stack.Screen name="FriendProfile" component={FriendProfileScreen} />
           <Stack.Screen name="Workout" component={WorkoutScreen} />
           <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} />
+          <Stack.Screen 
+            name="Debug" 
+            component={DebugScreen}
+            options={{
+              headerShown: true,
+              title: 'Debug',
+              headerStyle: { backgroundColor: '#FBFAF7' },
+              headerTintColor: '#4A2E20',
+            }}
+          />
         </>
       )}
     </Stack.Navigator>

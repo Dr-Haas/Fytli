@@ -5,6 +5,7 @@ export { default as RegisterScreen } from './RegisterScreen';
 export { default as DashboardScreen } from './DashboardScreen';
 export { default as ProgramsListScreen } from './ProgramsListScreen';
 export { default as ProgramDetailScreen } from './ProgramDetailScreen';
+export { default as CreateProgramScreen } from './CreateProgramScreen';
 export { default as FeedScreen } from './FeedScreen';
 export { default as DailyCardScreen } from './DailyCardScreen';
 export { default as ProfileScreen } from './ProfileScreen';
@@ -13,4 +14,5 @@ export { default as WorkoutScreen } from './WorkoutScreen';
 export { default as SessionSummaryScreen } from './SessionSummaryScreen';
 export { default as LockedFeedScreen } from './LockedFeedScreen';
 export { default as HomeScreen } from './HomeScreen';
+export { default as DebugScreen } from './DebugScreen';
 

@@ -95,8 +95,18 @@ const ProgramsListScreen: React.FC<ProgramsListScreenProps> = ({ navigation }) =
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Programmes</Text>
-            <Text style={styles.subtitle}>Choisis ton programme d'entraînement</Text>
+            <View style={styles.headerTop}>
+              <View>
+                <Text style={styles.title}>Programmes</Text>
+                <Text style={styles.subtitle}>Choisis ton programme d'entraînement</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.createButton}
+                onPress={() => navigation.navigate('CreateProgram')}
+              >
+                <Text style={styles.createButtonIcon}>+</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Search Bar */}
@@ -211,6 +221,11 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     marginBottom: SPACING.lg,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
@@ -220,6 +235,21 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: COLORS.darkGray,
+  },
+  createButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.orange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOWS.md,
+  },
+  createButtonIcon: {
+    fontSize: 28,
+    color: COLORS.white,
+    fontWeight: 'bold',
+    lineHeight: 28,
   },
   searchContainer: {
     flexDirection: 'row',

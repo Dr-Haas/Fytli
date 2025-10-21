@@ -44,12 +44,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const storedToken = await authService.getStoredToken();
       const storedUser = await authService.getStoredUser();
 
+      console.log('🔐 Auth - Token stored:', !!storedToken);
+      console.log('🔐 Auth - User stored:', !!storedUser);
+
       if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          console.log('🔐 Auth - User parsed:', parsedUser);
+          setToken(storedToken);
+          setUser(parsedUser);
+        } catch (parseError) {
+          console.error('❌ Erreur parsing user:', parseError);
+          // Si le parsing échoue, nettoyer le storage
+          await authService.logout();
+        }
       }
     } catch (error) {
-      console.error('Erreur lors du chargement de l\'auth:', error);
+      console.error('❌ Erreur lors du chargement de l\'auth:', error);
     } finally {
       setIsLoading(false);
     }
@@ -58,11 +69,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response = await authService.login(credentials);
+      console.log('✅ Login successful - User:', response.user);
+      console.log('✅ Login successful - Token:', response.token.substring(0, 20) + '...');
+      
       setToken(response.token);
       setUser(response.user);
       await authService.storeAuth(response.token, JSON.stringify(response.user));
+      
+      console.log('✅ Auth stored in AsyncStorage');
     } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
+      console.error('❌ Erreur lors de la connexion:', error);
       throw error;
     }
   };
@@ -70,11 +86,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = async (credentials: RegisterCredentials) => {
     try {
       const response = await authService.register(credentials);
+      console.log('✅ Register successful - User:', response.user);
+      
       setToken(response.token);
       setUser(response.user);
       await authService.storeAuth(response.token, JSON.stringify(response.user));
+      
+      console.log('✅ Auth stored in AsyncStorage');
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
+      console.error('❌ Erreur lors de l\'inscription:', error);
       throw error;
     }
   };
