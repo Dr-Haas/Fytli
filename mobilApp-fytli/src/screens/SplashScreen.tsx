@@ -52,9 +52,10 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
   }, []);
 
   return (
-    <LinearGradient colors={['#FF6B35', '#FF8C42', '#FFA552']} style={styles.container}>
+    <LinearGradient colors={['#D94A28', '#E65C35', '#F26B42']} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
+          {/* Logo et header */}
           <Animated.View
             style={[
               styles.logoContainer,
@@ -67,7 +68,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
             <Text style={styles.logo}>fytli</Text>
             
             {/* Soleil Fytli comme animation de chargement */}
-            <View style={styles.sunLoadingContainer}>
+            <View style={''}>
               <FytliSun activityLevel={activityLevel} userCount={userCount} />
             </View>
             
@@ -76,6 +77,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
             </Text>
           </Animated.View>
 
+          {/* Texte central */}
           <Animated.View style={[styles.textContainer, { opacity: fadeAnim }]}>
             <Text style={styles.tagline}>Seul, mais ensemble.</Text>
             <Text style={styles.subtitle}>
@@ -83,13 +85,15 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
             </Text>
           </Animated.View>
 
+          {/* Bouton */}
           <Animated.View style={[styles.buttonContainer, { opacity: fadeAnim }]}>
             <GradientButton
               title="Commencer"
               onPress={() => navigation.navigate('Login')}
               size="large"
               gradient={['#FFFFFF', '#FFFFFF']}
-              textStyle={{ color: '#FF6B35', fontWeight: '900' }}
+              textStyle={{ color: '#D94A28', fontWeight: '900' }}
+              style={styles.button}
             />
           </Animated.View>
         </View>
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingVertical: SPACING['2xl'],
     paddingHorizontal: SPACING.lg,
@@ -123,7 +127,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     letterSpacing: 3,
     marginBottom: SPACING.xl,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 4 },
     textShadowRadius: 15,
   },
@@ -131,10 +135,6 @@ const styles = StyleSheet.create({
     marginVertical: SPACING.xl,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 50,
   },
   loadingText: {
     fontSize: 20,
@@ -142,9 +142,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginTop: SPACING.lg,
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   textContainer: {
     alignItems: 'center',
@@ -155,23 +155,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: SPACING.sm,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 12,
+    marginBottom: SPACING.md,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
   },
   subtitle: {
     fontSize: 18,
     color: '#FFFFFF',
     textAlign: 'center',
-    opacity: 1,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    lineHeight: 26,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   buttonContainer: {
     width: '100%',
     paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
+  },
+  button: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
 

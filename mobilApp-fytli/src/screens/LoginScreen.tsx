@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, GRADIENTS, SPACING, BORDER_RADIUS } from '@config/theme';
@@ -34,13 +34,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={GRADIENTS.soft} style={styles.container}>
+    <LinearGradient colors={['#D94A28', '#E65C35', '#F26B42']} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
         >
-          <View style={styles.content}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.logo}>fytli</Text>
@@ -94,7 +98,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                 Juste du mouvement partagé.
               </Text>
             </View>
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
@@ -111,38 +115,37 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
-  content: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: SPACING.lg,
-    justifyContent: 'space-between',
     paddingVertical: SPACING.xl,
   },
   header: {
     alignItems: 'center',
     marginTop: SPACING.xl,
+    marginBottom: SPACING.xl * 2,
   },
   logo: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: COLORS.orange,
+    color: COLORS.white,
     letterSpacing: 2,
     marginBottom: SPACING.md,
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.warmText,
+    color: COLORS.white,
     textAlign: 'center',
     marginBottom: SPACING.xs,
   },
   subtitle: {
     fontSize: 14,
-    color: COLORS.darkGray,
+    color: COLORS.white,
     textAlign: 'center',
   },
   form: {
-    flex: 1,
-    justifyContent: 'center',
+    marginBottom: SPACING.xl * 2,
   },
   submitButton: {
     marginTop: SPACING.md,
@@ -150,17 +153,18 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 14,
-    color: COLORS.orange,
+    color: COLORS.white,
     textAlign: 'center',
     fontWeight: '600',
   },
   footer: {
     alignItems: 'center',
-    gap: SPACING.lg,
+    marginTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   motivationText: {
     fontSize: 16,
-    color: COLORS.warmText,
+    color: COLORS.white,
     textAlign: 'center',
     lineHeight: 24,
     fontWeight: '500',

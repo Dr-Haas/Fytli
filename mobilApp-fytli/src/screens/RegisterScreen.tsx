@@ -59,7 +59,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={GRADIENTS.soft} style={styles.container}>
+    <LinearGradient colors={['#D94A28', '#E65C35', '#F26B42']} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -183,18 +183,18 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   backButtonText: {
     fontSize: 24,
-    color: COLORS.warmText,
+    color: COLORS.white,
   },
   logo: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: COLORS.orange,
+    color: COLORS.white,
     letterSpacing: 2,
     marginBottom: SPACING.sm,
     marginTop: SPACING.xl,
@@ -202,13 +202,13 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.warmText,
+    color: COLORS.white,
     textAlign: 'center',
     marginBottom: SPACING.xs,
   },
   subtitle: {
     fontSize: 14,
-    color: COLORS.darkGray,
+    color: COLORS.white,
     textAlign: 'center',
     paddingHorizontal: SPACING.xl,
   },
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 14,
-    color: COLORS.orange,
+    color: COLORS.white,
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   motivationText: {
     fontSize: 16,
-    color: COLORS.warmText,
+    color: COLORS.white,
     textAlign: 'center',
     lineHeight: 24,
     fontWeight: '500',
